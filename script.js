@@ -1,146 +1,487 @@
-/* ==========================================================================
-   ROLLA — Landing page interactions
-   Vanilla JS only. No dependencies.
-   ========================================================================== */
+// ============================================================================
+// create-event/script.js
+// Disposable Momment — Create Event flow.
+//
+// Flow: form -> validate -> sendSignInLinkToEmail -> "check your email" ->
+// user clicks magic link -> signInWithEmailLink -> create event in
+// Firestore -> success screen.
+//
+// No passwords, no traditional accounts. Host identity = Firebase Auth uid.
+// ============================================================================
 
-document.addEventListener('DOMContentLoaded', () => {
-  initIcons();
-  initMobileNav();
-  initScrollAnimations();
-  initFaqAccordion();
-  initDevelopTimer();
-});
+import { auth, db } from "../firebase.js";
+import {
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink,
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  doc,
+  setDoc,
+  serverTimestamp,
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* --------------------------------------------------------------------------
-   Icons — small inline SVG set, injected by [data-icon] name.
-   Avoids depending on an external icon CDN.
-   -------------------------------------------------------------------------- */
-function initIcons() {
-  const ICONS = {
-    'calendar-plus': '<path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="M12 14v6M9 17h6"/>',
-    'qr-code': '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM19 14h2v2h-2zM14 19h2v2h-2zM19 19h2v2h-2z"/>',
-    'camera': '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"/><circle cx="12" cy="13" r="4"/>',
-    'sparkles': '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/>',
-    'smartphone': '<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/>',
-    'images': '<rect x="3" y="6" width="14" height="14" rx="2"/><path d="M7 2h14v14"/><circle cx="9" cy="12" r="1.5"/><path d="M4 17l3-3 2 2 4-4 4 4"/>',
-    'sliders-horizontal': '<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h13M21 18h0"/><circle cx="14.5" cy="6" r="2"/><circle cx="7.5" cy="12" r="2"/><circle cx="16.5" cy="18" r="2"/>',
-    'clock': '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>',
-    'zap': '<path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/>',
-    'layout-grid': '<rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/>',
+// ----------------------------------------------------------------------------
+// Storage keys (namespaced so they don't collide with anything else on the
+// same origin).
+// ----------------------------------------------------------------------------
+const LS_EMAIL_KEY = "dm_emailForSignIn";
+const LS_PENDING_EVENT_KEY = "dm_pendingEventData";
+
+// Where the magic link should send the host back to. Must be an authorized
+// domain in the Firebase console (see README for setup steps).
+const REDIRECT_URL = `${window.location.origin}/create-event/`;
+
+// ----------------------------------------------------------------------------
+// DOM references
+// ----------------------------------------------------------------------------
+const views = {
+  form: document.getElementById("view-form"),
+  checkEmail: document.getElementById("view-check-email"),
+  confirmEmail: document.getElementById("view-confirm-email"),
+  verifying: document.getElementById("view-verifying"),
+  success: document.getElementById("view-success"),
+};
+
+const globalError = document.getElementById("globalError");
+const globalErrorText = document.getElementById("globalErrorText");
+
+const eventForm = document.getElementById("eventForm");
+const submitBtn = document.getElementById("submitBtn");
+
+const revealRadios = document.querySelectorAll('input[name="revealMode"]');
+const customRevealFields = document.getElementById("customRevealFields");
+
+const sentToEmailEl = document.getElementById("sentToEmail");
+const resendBtn = document.getElementById("resendBtn");
+const resendNote = document.getElementById("resendNote");
+const useAnotherEmailBtn = document.getElementById("useAnotherEmailBtn");
+
+const confirmEmailForm = document.getElementById("confirmEmailForm");
+const verifyingText = document.getElementById("verifyingText");
+
+const successEventName = document.getElementById("successEventName");
+const successGuestLink = document.getElementById("successGuestLink");
+const copyLinkBtn = document.getElementById("copyLinkBtn");
+const openGuestPageBtn = document.getElementById("openGuestPageBtn");
+const goToManagementBtn = document.getElementById("goToManagementBtn");
+
+// ----------------------------------------------------------------------------
+// View switching
+// ----------------------------------------------------------------------------
+function showView(name) {
+  Object.entries(views).forEach(([key, el]) => {
+    if (!el) return;
+    el.classList.toggle("is-active", key === name);
+  });
+}
+
+function showGlobalError(message) {
+  globalErrorText.textContent = message;
+  globalError.hidden = false;
+  globalError.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function hideGlobalError() {
+  globalError.hidden = true;
+  globalErrorText.textContent = "";
+}
+
+// ----------------------------------------------------------------------------
+// Friendly error messages — never show raw Firebase error text to the user.
+// ----------------------------------------------------------------------------
+function friendlyErrorMessage(error) {
+  const code = error && error.code ? error.code : "";
+
+  const messages = {
+    "auth/invalid-email": "That email address doesn't look right. Please check it and try again.",
+    "auth/missing-email": "Please enter an email address.",
+    "auth/quota-exceeded": "Too many attempts right now. Please try again in a few minutes.",
+    "auth/network-request-failed": "We couldn't reach the server. Check your connection and try again.",
+    "auth/invalid-action-code": "This link has expired or was already used. Please request a new one.",
+    "auth/expired-action-code": "This link has expired. Please request a new one.",
+    "auth/invalid-api-key": "Disposable Momment isn't fully configured yet. Please contact the site owner.",
+    "auth/api-key-not-valid": "Disposable Momment isn't fully configured yet. Please contact the site owner.",
+    "unavailable": "We're having trouble reaching Disposable Momment right now. Please try again shortly.",
   };
 
-  document.querySelectorAll('[data-icon]').forEach((el) => {
-    const name = el.getAttribute('data-icon');
-    const paths = ICONS[name];
-    if (!paths) return;
-    el.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="100%" height="100%">${paths}</svg>`;
-  });
+  if (messages[code]) return messages[code];
+
+  if (!navigator.onLine) {
+    return "You appear to be offline. Please check your connection and try again.";
+  }
+
+  return "Something went wrong. Please try again.";
 }
 
-/* --------------------------------------------------------------------------
-   Mobile navbar toggle
-   -------------------------------------------------------------------------- */
-function initMobileNav() {
-  const toggle = document.getElementById('navbarToggle');
-  const mobile = document.getElementById('navbarMobile');
-  if (!toggle || !mobile) return;
-
-  toggle.addEventListener('click', () => {
-    const isOpen = mobile.classList.toggle('is-open');
-    toggle.setAttribute('aria-expanded', String(isOpen));
-  });
-
-  // Close mobile menu when a link is tapped
-  mobile.querySelectorAll('a').forEach((link) => {
-    link.addEventListener('click', () => {
-      mobile.classList.remove('is-open');
-      toggle.setAttribute('aria-expanded', 'false');
-    });
-  });
+// ----------------------------------------------------------------------------
+// Field-level validation helpers
+// ----------------------------------------------------------------------------
+function setFieldError(fieldId, message) {
+  const input = document.getElementById(fieldId);
+  const errorEl = document.getElementById(`err-${fieldId}`);
+  const group = input ? input.closest(".field-group") : errorEl?.closest(".field-group");
+  if (group) group.classList.add("has-error");
+  if (errorEl) errorEl.textContent = message;
 }
 
-/* --------------------------------------------------------------------------
-   Scroll-triggered fade-up animation via IntersectionObserver
-   -------------------------------------------------------------------------- */
-function initScrollAnimations() {
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const targets = document.querySelectorAll('[data-animate="fade-up"]');
+function clearFieldError(fieldId) {
+  const input = document.getElementById(fieldId);
+  const errorEl = document.getElementById(`err-${fieldId}`);
+  const group = input ? input.closest(".field-group") : errorEl?.closest(".field-group");
+  if (group) group.classList.remove("has-error");
+  if (errorEl) errorEl.textContent = "";
+}
 
-  if (prefersReducedMotion || !('IntersectionObserver' in window)) {
-    targets.forEach((el) => el.classList.add('is-visible'));
+function clearAllFieldErrors(ids) {
+  ids.forEach(clearFieldError);
+}
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function validateEventForm(data) {
+  const errors = {};
+
+  if (!data.eventName) errors.eventName = "Please enter an event name.";
+  if (!data.hostName) errors.hostName = "Please enter your name.";
+
+  if (!data.hostEmail) {
+    errors.hostEmail = "Please enter your email.";
+  } else if (!EMAIL_RE.test(data.hostEmail)) {
+    errors.hostEmail = "Please enter a valid email address.";
+  }
+
+  if (!data.eventDate) errors.eventDate = "Please choose the event date.";
+  if (!data.startTime) errors.startTime = "Please choose a start time.";
+  if (!data.endTime) errors.endTime = "Please choose an end time.";
+
+  if (data.startTime && data.endTime && data.endTime <= data.startTime) {
+    errors.endTime = "End time can't be before the start time.";
+  }
+
+  if (!data.photoLimit || Number(data.photoLimit) < 1) {
+    errors.photoLimit = "Photo limit must be at least 1.";
+  }
+
+  if (data.revealMode === "custom") {
+    if (!data.revealDate) errors.revealDate = "Please choose a reveal date.";
+    if (!data.revealTime) errors.revealTime = "Please choose a reveal time.";
+  }
+
+  return errors;
+}
+
+function collectFormData() {
+  const formData = new FormData(eventForm);
+  return {
+    eventName: (formData.get("eventName") || "").toString().trim(),
+    hostName: (formData.get("hostName") || "").toString().trim(),
+    hostEmail: (formData.get("hostEmail") || "").toString().trim().toLowerCase(),
+    eventDate: (formData.get("eventDate") || "").toString(),
+    startTime: (formData.get("startTime") || "").toString(),
+    endTime: (formData.get("endTime") || "").toString(),
+    photoLimit: Number(formData.get("photoLimit") || 0),
+    revealMode: (formData.get("revealMode") || "after-event").toString(),
+    revealDate: (formData.get("revealDate") || "").toString(),
+    revealTime: (formData.get("revealTime") || "").toString(),
+  };
+}
+
+// ----------------------------------------------------------------------------
+// Custom reveal fields toggle
+// ----------------------------------------------------------------------------
+function updateCustomRevealVisibility() {
+  const selected = document.querySelector('input[name="revealMode"]:checked');
+  const isCustom = selected && selected.value === "custom";
+  customRevealFields.hidden = !isCustom;
+  if (!isCustom) {
+    clearFieldError("revealDate");
+    clearFieldError("revealTime");
+  }
+}
+
+revealRadios.forEach((radio) => {
+  radio.addEventListener("change", updateCustomRevealVisibility);
+});
+
+// ----------------------------------------------------------------------------
+// Submit button loading state
+// ----------------------------------------------------------------------------
+function setSubmitLoading(isLoading) {
+  submitBtn.disabled = isLoading;
+  submitBtn.querySelector(".btn__label").textContent = isLoading ? "Sending link…" : "Create Event";
+  submitBtn.querySelector(".btn__spinner").hidden = !isLoading;
+}
+
+// ----------------------------------------------------------------------------
+// Step 1 — form submit: validate, then send the magic link
+// ----------------------------------------------------------------------------
+const ALL_FIELD_IDS = [
+  "eventName", "hostName", "hostEmail", "eventDate",
+  "startTime", "endTime", "photoLimit", "revealDate", "revealTime",
+];
+
+eventForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  hideGlobalError();
+  clearAllFieldErrors(ALL_FIELD_IDS);
+
+  const data = collectFormData();
+  const errors = validateEventForm(data);
+
+  if (Object.keys(errors).length > 0) {
+    Object.entries(errors).forEach(([field, message]) => setFieldError(field, message));
+    const firstInvalidId = Object.keys(errors)[0];
+    const firstInvalidEl = document.getElementById(firstInvalidId);
+    if (firstInvalidEl) firstInvalidEl.focus();
     return;
   }
 
-  targets.forEach((el) => {
-    const delay = el.getAttribute('data-delay');
-    if (delay) el.style.transitionDelay = `${delay}ms`;
-  });
+  setSubmitLoading(true);
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
-  );
+  try {
+    // Persist form data + email locally so we can resume after the host
+    // clicks the magic link (same browser/device).
+    window.localStorage.setItem(LS_PENDING_EVENT_KEY, JSON.stringify(data));
+    window.localStorage.setItem(LS_EMAIL_KEY, data.hostEmail);
 
-  targets.forEach((el) => observer.observe(el));
-}
-
-/* --------------------------------------------------------------------------
-   FAQ accordion
-   -------------------------------------------------------------------------- */
-function initFaqAccordion() {
-  const items = document.querySelectorAll('.faq-item');
-
-  items.forEach((item) => {
-    const question = item.querySelector('.faq-item__question');
-    const answer = item.querySelector('.faq-item__answer');
-
-    question.addEventListener('click', () => {
-      const isOpen = item.classList.contains('is-open');
-
-      // Close all other items (single-open accordion)
-      items.forEach((other) => {
-        other.classList.remove('is-open');
-        other.querySelector('.faq-item__question').setAttribute('aria-expanded', 'false');
-        other.querySelector('.faq-item__answer').style.maxHeight = null;
-      });
-
-      if (!isOpen) {
-        item.classList.add('is-open');
-        question.setAttribute('aria-expanded', 'true');
-        answer.style.maxHeight = `${answer.scrollHeight}px`;
-      }
+    await sendSignInLinkToEmail(auth, data.hostEmail, {
+      url: REDIRECT_URL,
+      handleCodeInApp: true,
     });
-  });
-}
 
-/* --------------------------------------------------------------------------
-   Reveal-section countdown display
-   Purely decorative front-end demo — not wired to a real event time yet.
-   TODO: connect to the actual event's scheduled reveal timestamp.
-   -------------------------------------------------------------------------- */
-function initDevelopTimer() {
-  const timerEl = document.getElementById('developTimer');
-  if (!timerEl) return;
+    sentToEmailEl.textContent = data.hostEmail;
+    showView("checkEmail");
+  } catch (error) {
+    console.error("sendSignInLinkToEmail failed:", error);
+    showGlobalError(friendlyErrorMessage(error));
+  } finally {
+    setSubmitLoading(false);
+  }
+});
 
-  let totalSeconds = 1 * 3600 + 24 * 60 + 36; // 01:24:36 starting point
+// ----------------------------------------------------------------------------
+// Resend link
+// ----------------------------------------------------------------------------
+let resendCooldownTimer = null;
 
-  setInterval(() => {
-    if (totalSeconds <= 0) {
-      totalSeconds = 1 * 3600 + 24 * 60 + 36; // loop for demo purposes
+function startResendCooldown(seconds) {
+  let remaining = seconds;
+  resendBtn.disabled = true;
+  resendNote.textContent = `You can resend in ${remaining}s.`;
+
+  clearInterval(resendCooldownTimer);
+  resendCooldownTimer = setInterval(() => {
+    remaining -= 1;
+    if (remaining <= 0) {
+      clearInterval(resendCooldownTimer);
+      resendBtn.disabled = false;
+      resendNote.textContent = "";
+    } else {
+      resendNote.textContent = `You can resend in ${remaining}s.`;
     }
-    totalSeconds -= 1;
-
-    const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
-    const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
-    const s = String(totalSeconds % 60).padStart(2, '0');
-
-    timerEl.textContent = `${h} : ${m} : ${s}`;
   }, 1000);
 }
+
+resendBtn.addEventListener("click", async () => {
+  const email = window.localStorage.getItem(LS_EMAIL_KEY);
+  if (!email) {
+    showView("form");
+    return;
+  }
+
+  hideGlobalError();
+  resendBtn.disabled = true;
+
+  try {
+    await sendSignInLinkToEmail(auth, email, {
+      url: REDIRECT_URL,
+      handleCodeInApp: true,
+    });
+    resendNote.textContent = "Link sent again — check your inbox.";
+    startResendCooldown(30);
+  } catch (error) {
+    console.error("Resend failed:", error);
+    showGlobalError(friendlyErrorMessage(error));
+    resendBtn.disabled = false;
+  }
+});
+
+useAnotherEmailBtn.addEventListener("click", () => {
+  window.localStorage.removeItem(LS_EMAIL_KEY);
+  hideGlobalError();
+  showView("form");
+});
+
+// ----------------------------------------------------------------------------
+// Step 2 — confirm email (cross-device magic link open)
+// ----------------------------------------------------------------------------
+confirmEmailForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  clearFieldError("confirmEmail");
+
+  const email = document.getElementById("confirmEmail").value.trim().toLowerCase();
+
+  if (!email) {
+    setFieldError("confirmEmail", "Please enter your email.");
+    return;
+  }
+  if (!EMAIL_RE.test(email)) {
+    setFieldError("confirmEmail", "Please enter a valid email address.");
+    return;
+  }
+
+  window.localStorage.setItem(LS_EMAIL_KEY, email);
+  completeSignIn(email);
+});
+
+// ----------------------------------------------------------------------------
+// Step 3 — complete sign-in with the magic link, then create the event
+// ----------------------------------------------------------------------------
+async function completeSignIn(email) {
+  showView("verifying");
+  verifyingText.textContent = "Verifying your link…";
+  hideGlobalError();
+
+  try {
+    const result = await signInWithEmailLink(auth, email, window.location.href);
+
+    // Clean the sign-in params out of the URL so a refresh doesn't retrigger this.
+    window.history.replaceState({}, document.title, REDIRECT_URL);
+    window.localStorage.removeItem(LS_EMAIL_KEY);
+
+    await createEventForUser(result.user);
+  } catch (error) {
+    console.error("signInWithEmailLink failed:", error);
+    showView("form");
+    showGlobalError(friendlyErrorMessage(error));
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Step 4 — create the event document in Firestore
+// ----------------------------------------------------------------------------
+function generateEventId() {
+  // Short, URL-friendly random id (not sequential/guessable).
+  const bytes = new Uint8Array(6);
+  window.crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => b.toString(36).padStart(2, "0")).join("").slice(0, 9);
+}
+
+async function createEventForUser(user) {
+  verifyingText.textContent = "Setting up your event…";
+
+  const pendingRaw = window.localStorage.getItem(LS_PENDING_EVENT_KEY);
+
+  if (!pendingRaw) {
+    // The event details live in this browser's localStorage only. If the
+    // host opened the magic link on a different device/browser, we won't
+    // have them here.
+    showView("form");
+    showGlobalError(
+      "We couldn't find your event details on this device. Please open the magic link on the same device and browser where you created the event, or fill out the form again."
+    );
+    return;
+  }
+
+  let pending;
+  try {
+    pending = JSON.parse(pendingRaw);
+  } catch (e) {
+    showView("form");
+    showGlobalError("We couldn't find your event details. Please fill out the form again.");
+    return;
+  }
+
+  const eventId = generateEventId();
+
+  try {
+    await setDoc(doc(db, "events", eventId), {
+      eventName: pending.eventName,
+      hostName: pending.hostName,
+      hostEmail: pending.hostEmail,
+      hostUid: user.uid,
+      eventDate: pending.eventDate,
+      startTime: pending.startTime,
+      endTime: pending.endTime,
+      photoLimit: pending.photoLimit,
+      revealMode: pending.revealMode,
+      revealDate: pending.revealMode === "custom" ? pending.revealDate : null,
+      revealTime: pending.revealMode === "custom" ? pending.revealTime : null,
+      status: "active",
+      createdAt: serverTimestamp(),
+    });
+
+    window.localStorage.removeItem(LS_PENDING_EVENT_KEY);
+    showEventCreated(eventId, pending);
+  } catch (error) {
+    console.error("Firestore write failed:", error);
+    showView("form");
+    showGlobalError("We couldn't save your event. Please try again.");
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Step 5 — success screen
+// ----------------------------------------------------------------------------
+function showEventCreated(eventId, pending) {
+  const guestUrl = `${window.location.origin}/event/${eventId}`;
+  const manageUrl = `${window.location.origin}/manage/${eventId}`;
+
+  successEventName.textContent = pending.eventName;
+  successGuestLink.textContent = guestUrl;
+  openGuestPageBtn.href = `/event/${eventId}`;
+  goToManagementBtn.href = `/manage/${eventId}`;
+
+  showView("success");
+}
+
+copyLinkBtn.addEventListener("click", async () => {
+  const text = successGuestLink.textContent;
+  const originalLabel = copyLinkBtn.textContent;
+
+  try {
+    await navigator.clipboard.writeText(text);
+    copyLinkBtn.textContent = "Copied!";
+  } catch (e) {
+    // Clipboard API unavailable — fall back to selecting the text.
+    const range = document.createRange();
+    range.selectNode(successGuestLink);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    copyLinkBtn.textContent = "Selected";
+  }
+
+  setTimeout(() => { copyLinkBtn.textContent = originalLabel; }, 2000);
+});
+
+// ----------------------------------------------------------------------------
+// Boot: figure out which view to show on page load
+// ----------------------------------------------------------------------------
+(function init() {
+  updateCustomRevealVisibility();
+
+  if (isSignInWithEmailLink(auth, window.location.href)) {
+    const storedEmail = window.localStorage.getItem(LS_EMAIL_KEY);
+
+    if (storedEmail) {
+      completeSignIn(storedEmail);
+    } else {
+      // Opened on a different device/browser — ask the host to confirm their email.
+      showView("confirmEmail");
+    }
+    return;
+  }
+
+  // Not a magic-link visit. If there's a pending request from earlier in
+  // this browser, resume the "check your email" state instead of losing it.
+  const storedEmail = window.localStorage.getItem(LS_EMAIL_KEY);
+  const pendingEvent = window.localStorage.getItem(LS_PENDING_EVENT_KEY);
+
+  if (storedEmail && pendingEvent) {
+    sentToEmailEl.textContent = storedEmail;
+    showView("checkEmail");
+  } else {
+    showView("form");
+  }
+})();
