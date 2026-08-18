@@ -4201,10 +4201,17 @@ function hideManagementLoading() {
    MANAGEMENT ACCESS VALIDATION
    ================================================== */
 
+/* ==================================================
+   MANAGEMENT ACCESS VALIDATION
+   ================================================== */
+
 async function handleManagementAccess() {
 
-  const params = new URLSearchParams(window.location.search);
-  const managementToken = params.get("manage");
+  const params =
+    new URLSearchParams(window.location.search);
+
+  const managementToken =
+    params.get("manage");
 
   if (!managementToken) return;
 
@@ -4215,7 +4222,9 @@ async function handleManagementAccess() {
   try {
 
     /*
-     * Show dashboard immediately.
+     * Show dashboard container.
+     * Loading screen remains above it
+     * until everything is ready.
      */
     managementDashboard.classList.add(
       "is-visible"
@@ -4225,17 +4234,21 @@ async function handleManagementAccess() {
     /*
      * Authenticate browser anonymously.
      */
-if (!auth.currentUser) {
+    if (!auth.currentUser) {
 
-  managementLoadingText.textContent =
-    "Securing your management session...";
+      managementLoadingText.textContent =
+        "Securing your management session...";
 
-  await signInAnonymously(auth);
+      await signInAnonymously(auth);
 
-}
+    }
 
-managementLoadingText.textContent =
-  "Verifying your management access...";
+
+    /*
+     * Verify management access token.
+     */
+    managementLoadingText.textContent =
+      "Verifying your management access...";
 
     const accessRef =
       doc(
@@ -4243,7 +4256,6 @@ managementLoadingText.textContent =
         "managementAccess",
         managementToken
       );
-
 
     const accessSnap =
       await getDoc(accessRef);
@@ -4274,6 +4286,9 @@ managementLoadingText.textContent =
     }
 
 
+    /*
+     * Get current anonymous user.
+     */
     const currentUser =
       auth.currentUser;
 
@@ -4286,7 +4301,8 @@ managementLoadingText.textContent =
      * Create logical management session.
      */
     managementLoadingText.textContent =
-  "Preparing your management dashboard...";
+      "Preparing your management dashboard...";
+
 
     await setDoc(
       doc(
@@ -4295,6 +4311,7 @@ managementLoadingText.textContent =
         sessionId
       ),
       {
+
         eventId:
           accessData.eventId,
 
@@ -4309,10 +4326,14 @@ managementLoadingText.textContent =
 
         createdAt:
           serverTimestamp()
+
       }
     );
 
 
+    /*
+     * Remember management session.
+     */
     localStorage.setItem(
       "disposableMomment_managementSession",
       sessionId
@@ -4320,31 +4341,37 @@ managementLoadingText.textContent =
 
 
     /*
-     * Open dashboard.
+     * Load dashboard data.
      */
-await openManagementDashboard(
-  accessData.eventId,
-  sessionId
-);
+    await openManagementDashboard(
+      accessData.eventId,
+      sessionId
+    );
 
-hideManagementLoading();
+
+    /*
+     * Dashboard is ready.
+     * Hide loading screen.
+     */
+    hideManagementLoading();
+
 
   } catch (error) {
 
-  console.error("Management access error:", error);
+    console.error(
+      "Management access error:",
+      error
+    );
 
-  hideManagementLoading();
 
-  alert(
-    "This host management link could not be verified."
-  );
-
-}
+    hideManagementLoading();
 
 
     managementDashboardLoading.innerHTML = `
       <div class="management-loading-inner">
+
         <strong>Access Denied</strong>
+
         <p>
           This host management link is invalid,
           inactive, or could not be verified.
@@ -4358,14 +4385,21 @@ hideManagementLoading();
         >
           Back to Home
         </button>
+
       </div>
     `;
+
+
+    /*
+     * Optional alert.
+     */
+    alert(
+      "This host management link could not be verified."
+    );
 
   }
 
 }
-
-
 /* ==================================================
    DASHBOARD BACK BUTTON
    ================================================== */
