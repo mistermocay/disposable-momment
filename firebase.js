@@ -15,7 +15,10 @@ import {
   "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 import {
-  getFirestore
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp
 } from
   "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
@@ -82,6 +85,12 @@ export {
   auth,
 
   db,
+
+  collection,
+
+  addDoc,
+
+  serverTimestamp,
 
   sendSignInLinkToEmail,
 
