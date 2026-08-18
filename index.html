@@ -1342,6 +1342,249 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 
 }
 
+/* ==================================================
+   HOST MANAGEMENT DASHBOARD
+   ================================================== */
+
+#managementDashboard {
+  display: none;
+  min-height: 100vh;
+  background: var(--bg);
+  padding: 90px 0 60px;
+}
+
+#managementDashboard.is-visible {
+  display: block;
+}
+
+.management-dashboard-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 34px;
+}
+
+.management-dashboard-kicker {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+  margin-bottom: 8px;
+}
+
+.management-dashboard-title {
+  margin: 0;
+  font-size: clamp(32px, 5vw, 54px);
+  line-height: .98;
+  letter-spacing: -.04em;
+}
+
+.management-dashboard-subtitle {
+  margin: 12px 0 0;
+  max-width: 620px;
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.management-dashboard-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.management-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.management-stat-card {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+}
+
+.management-stat-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 10px;
+}
+
+.management-stat-value {
+  display: block;
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: -.025em;
+}
+
+.management-stat-value.status-active {
+  color: #287a4b;
+}
+
+.management-dashboard-card {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #fff;
+  padding: 28px;
+  margin-bottom: 18px;
+}
+
+.management-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.management-card-header h3 {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: -.02em;
+}
+
+.management-card-kicker {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+}
+
+.management-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+}
+
+.management-info-item {
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+
+.management-info-item:nth-child(1),
+.management-info-item:nth-child(2) {
+  border-top: 0;
+}
+
+.management-info-label {
+  display: block;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.management-info-value {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.management-event-id {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.management-empty {
+  padding: 48px 20px;
+  text-align: center;
+  border: 1px dashed var(--line-strong);
+  border-radius: 16px;
+  color: var(--ink-soft);
+}
+
+.management-empty strong {
+  display: block;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.management-loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.management-loading-inner {
+  max-width: 420px;
+  padding: 30px;
+}
+
+.management-loading-inner strong {
+  display: block;
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.management-loading-inner p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+@media (max-width: 800px) {
+  #managementDashboard {
+    padding: 76px 0 40px;
+  }
+
+  .management-dashboard-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .management-dashboard-actions {
+    width: 100%;
+  }
+
+  .management-dashboard-actions .btn {
+    flex: 1;
+  }
+
+  .management-dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .management-dashboard-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .management-dashboard-card {
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .management-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .management-info-item:nth-child(2) {
+    border-top: 1px solid var(--line);
+  }
+
+  .management-dashboard-actions {
+    flex-direction: column;
+  }
+}
 </style>
 </head>
 
@@ -2406,6 +2649,308 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 
 </section>
 <!-- ==================================================
+     HOST MANAGEMENT DASHBOARD
+     ================================================== -->
+<section id="managementDashboard">
+
+  <div class="container">
+
+    <div
+      id="managementDashboardLoading"
+      class="management-loading"
+    >
+      <div class="management-loading-inner">
+        <strong>Opening Host Management</strong>
+        <p>
+          Verifying your management access and loading your event...
+        </p>
+      </div>
+    </div>
+
+
+    <div id="managementDashboardContent" style="display:none;">
+
+      <!-- HEADER -->
+      <div class="management-dashboard-header">
+
+        <div>
+          <span class="management-dashboard-kicker">
+            Host Management
+          </span>
+
+          <h1
+            id="managementDashboardTitle"
+            class="management-dashboard-title"
+          >
+            Event Management
+          </h1>
+
+          <p
+            id="managementDashboardSubtitle"
+            class="management-dashboard-subtitle"
+          >
+            Manage your shared photo event from this dashboard.
+          </p>
+        </div>
+
+        <div class="management-dashboard-actions">
+
+          <button
+            type="button"
+            id="managementBackButton"
+            class="btn btn-ghost"
+          >
+            Back
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- QUICK STATS -->
+      <div class="management-dashboard-grid">
+
+        <div class="management-stat-card">
+          <span class="management-stat-label">
+            Status
+          </span>
+
+          <span
+            id="managementStatus"
+            class="management-stat-value status-active"
+          >
+            —
+          </span>
+        </div>
+
+
+        <div class="management-stat-card">
+          <span class="management-stat-label">
+            Photos
+          </span>
+
+          <span
+            id="managementPhotoCount"
+            class="management-stat-value"
+          >
+            0
+          </span>
+        </div>
+
+
+        <div class="management-stat-card">
+          <span class="management-stat-label">
+            Photo Limit
+          </span>
+
+          <span
+            id="managementPhotoLimit"
+            class="management-stat-value"
+          >
+            —
+          </span>
+        </div>
+
+
+        <div class="management-stat-card">
+          <span class="management-stat-label">
+            Reveal
+          </span>
+
+          <span
+            id="managementRevealMode"
+            class="management-stat-value"
+          >
+            —
+          </span>
+        </div>
+
+      </div>
+
+
+      <!-- EVENT INFORMATION -->
+      <div class="management-dashboard-card">
+
+        <div class="management-card-header">
+
+          <div>
+            <span class="management-card-kicker">
+              Event
+            </span>
+
+            <h3>Event Information</h3>
+          </div>
+
+        </div>
+
+
+        <div class="management-info-grid">
+
+          <div class="management-info-item">
+
+            <span class="management-info-label">
+              Event Name
+            </span>
+
+            <span
+              id="managementEventName"
+              class="management-info-value"
+            >
+              —
+            </span>
+
+          </div>
+
+
+          <div class="management-info-item">
+
+            <span class="management-info-label">
+              Host
+            </span>
+
+            <span
+              id="managementHostName"
+              class="management-info-value"
+            >
+              —
+            </span>
+
+          </div>
+
+
+          <div class="management-info-item">
+
+            <span class="management-info-label">
+              Event Date
+            </span>
+
+            <span
+              id="managementEventDate"
+              class="management-info-value"
+            >
+              —
+            </span>
+
+          </div>
+
+
+          <div class="management-info-item">
+
+            <span class="management-info-label">
+              Event Time
+            </span>
+
+            <span
+              id="managementEventTime"
+              class="management-info-value"
+            >
+              —
+            </span>
+
+          </div>
+
+
+          <div class="management-info-item">
+
+            <span class="management-info-label">
+              Reveal Date
+            </span>
+
+            <span
+              id="managementRevealDate"
+              class="management-info-value"
+            >
+              —
+            </span>
+
+          </div>
+
+
+          <div class="management-info-item">
+
+            <span class="management-info-label">
+              Reveal Time
+            </span>
+
+            <span
+              id="managementRevealTime"
+              class="management-info-value"
+            >
+              —
+            </span>
+
+          </div>
+
+
+          <div class="management-info-item">
+
+            <span class="management-info-label">
+              Event ID
+            </span>
+
+            <span
+              id="managementEventId"
+              class="management-info-value management-event-id"
+            >
+              —
+            </span>
+
+          </div>
+
+
+          <div class="management-info-item">
+
+            <span class="management-info-label">
+              Management Session
+            </span>
+
+            <span
+              id="managementSessionId"
+              class="management-info-value management-event-id"
+            >
+              —
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- PHOTO ALBUM — PLACEHOLDER -->
+      <div class="management-dashboard-card">
+
+        <div class="management-card-header">
+
+          <div>
+            <span class="management-card-kicker">
+              Album
+            </span>
+
+            <h3>Shared Memories</h3>
+          </div>
+
+        </div>
+
+        <div class="management-empty">
+
+          <strong>No photos loaded yet</strong>
+
+          Photo gallery and guest submissions will be connected
+          in the next phase.
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+<!-- ==================================================
      FOOTER
      ================================================== -->
 <footer>
@@ -3170,76 +3715,483 @@ document.addEventListener(
   }
 );
 /* ==================================================
-   HOST MANAGEMENT ACCESS VALIDATION
+   HOST MANAGEMENT DASHBOARD
+   ================================================== */
+
+const managementDashboard =
+  document.getElementById("managementDashboard");
+
+const managementDashboardLoading =
+  document.getElementById("managementDashboardLoading");
+
+const managementDashboardContent =
+  document.getElementById("managementDashboardContent");
+
+const managementDashboardTitle =
+  document.getElementById("managementDashboardTitle");
+
+const managementDashboardSubtitle =
+  document.getElementById("managementDashboardSubtitle");
+
+const managementStatus =
+  document.getElementById("managementStatus");
+
+const managementPhotoCount =
+  document.getElementById("managementPhotoCount");
+
+const managementPhotoLimit =
+  document.getElementById("managementPhotoLimit");
+
+const managementRevealMode =
+  document.getElementById("managementRevealMode");
+
+const managementEventName =
+  document.getElementById("managementEventName");
+
+const managementHostName =
+  document.getElementById("managementHostName");
+
+const managementEventDate =
+  document.getElementById("managementEventDate");
+
+const managementEventTime =
+  document.getElementById("managementEventTime");
+
+const managementRevealDate =
+  document.getElementById("managementRevealDate");
+
+const managementRevealTime =
+  document.getElementById("managementRevealTime");
+
+const managementEventId =
+  document.getElementById("managementEventId");
+
+const managementSessionId =
+  document.getElementById("managementSessionId");
+
+const managementBackButton =
+  document.getElementById("managementBackButton");
+
+
+/* ==================================================
+   FORMATTERS
+   ================================================== */
+
+function formatManagementDate(dateValue) {
+
+  if (!dateValue) {
+    return "—";
+  }
+
+  try {
+
+    return new Date(
+      `${dateValue}T00:00:00`
+    ).toLocaleDateString(
+      "en-US",
+      {
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+      }
+    );
+
+  } catch (error) {
+
+    return dateValue;
+
+  }
+
+}
+
+
+function formatRevealMode(mode) {
+
+  if (!mode) {
+    return "—";
+  }
+
+  if (mode === "custom") {
+    return "Custom";
+  }
+
+  if (mode === "after-event") {
+    return "After Event";
+  }
+
+  if (mode === "immediate") {
+    return "Immediate";
+  }
+
+  return mode;
+
+}
+
+
+/* ==================================================
+   OPEN DASHBOARD
+   ================================================== */
+
+async function openManagementDashboard(
+  eventId,
+  sessionId
+) {
+
+  try {
+
+    if (!eventId) {
+      throw new Error("Event ID is missing.");
+    }
+
+
+    managementDashboard.classList.add(
+      "is-visible"
+    );
+
+
+    /*
+     * Hide the normal landing page.
+     */
+    document.querySelector("header")?.style.setProperty(
+      "display",
+      "none"
+    );
+
+
+    document.querySelector("main")?.style.setProperty(
+      "display",
+      "none"
+    );
+
+
+    document.querySelector("footer")?.style.setProperty(
+      "display",
+      "none"
+    );
+
+
+    /*
+     * Load event document.
+     */
+    const eventRef =
+      doc(db, "events", eventId);
+
+    const eventSnap =
+      await getDoc(eventRef);
+
+
+    if (!eventSnap.exists()) {
+      throw new Error(
+        "Event not found."
+      );
+    }
+
+
+    const eventData =
+      eventSnap.data();
+
+
+    /*
+     * Populate dashboard.
+     */
+
+    managementDashboardTitle.textContent =
+      eventData.eventName ||
+      "Event Management";
+
+
+    managementDashboardSubtitle.textContent =
+      `Hosted by ${eventData.hostName || "Unknown Host"}. Manage your shared photo event from this dashboard.`;
+
+
+    managementStatus.textContent =
+      eventData.status || "unknown";
+
+
+    managementStatus.classList.toggle(
+      "status-active",
+      eventData.status === "active"
+    );
+
+
+    managementPhotoCount.textContent =
+      "0";
+
+
+    managementPhotoLimit.textContent =
+      eventData.photoLimit || "—";
+
+
+    managementRevealMode.textContent =
+      formatRevealMode(
+        eventData.revealMode
+      );
+
+
+    managementEventName.textContent =
+      eventData.eventName || "—";
+
+
+    managementHostName.textContent =
+      eventData.hostName || "—";
+
+
+    managementEventDate.textContent =
+      formatManagementDate(
+        eventData.eventDate
+      );
+
+
+    managementEventTime.textContent =
+      `${eventData.startTime || "—"} — ${eventData.endTime || "—"}`;
+
+
+    managementRevealDate.textContent =
+      eventData.revealDate
+        ? formatManagementDate(
+            eventData.revealDate
+          )
+        : "—";
+
+
+    managementRevealTime.textContent =
+      eventData.revealTime || "—";
+
+
+    managementEventId.textContent =
+      eventId;
+
+
+    managementSessionId.textContent =
+      sessionId || "—";
+
+
+    /*
+     * Show dashboard content.
+     */
+
+    managementDashboardLoading.style.display =
+      "none";
+
+    managementDashboardContent.style.display =
+      "block";
+
+
+    window.scrollTo({
+      top: 0,
+      behavior: "instant"
+    });
+
+
+    console.log(
+      "Host management dashboard loaded:",
+      {
+        eventId,
+        sessionId,
+        eventData
+      }
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Dashboard loading error:",
+      error
+    );
+
+
+    alert(
+      "The event could not be loaded. Please check your management link."
+    );
+
+    window.location.href =
+      window.location.origin +
+      window.location.pathname;
+
+  }
+
+}
+
+
+/* ==================================================
+   MANAGEMENT ACCESS VALIDATION
    ================================================== */
 
 async function handleManagementAccess() {
 
-  const params = new URLSearchParams(window.location.search);
-  const managementToken = params.get("manage");
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
 
-  if (!managementToken) return;
+
+  const managementToken =
+    params.get("manage");
+
+
+  /*
+   * Normal landing page.
+   */
+  if (!managementToken) {
+    return;
+  }
+
 
   try {
-    /* Ensure this browser has an authenticated Firebase session. */
+
+    /*
+     * Show dashboard immediately.
+     */
+    managementDashboard.classList.add(
+      "is-visible"
+    );
+
+
+    /*
+     * Authenticate browser anonymously.
+     */
     if (!auth.currentUser) {
+
       await signInAnonymously(auth);
+
     }
+
 
     const accessRef =
-      doc(db, "managementAccess", managementToken);
+      doc(
+        db,
+        "managementAccess",
+        managementToken
+      );
 
-    const accessSnap = await getDoc(accessRef);
+
+    const accessSnap =
+      await getDoc(accessRef);
+
 
     if (!accessSnap.exists()) {
-      throw new Error("Management access token not found.");
+
+      throw new Error(
+        "Management access token not found."
+      );
+
     }
 
-    const accessData = accessSnap.data();
 
-    if (accessData.active !== true || !accessData.eventId) {
-      throw new Error("Management access token is inactive or invalid.");
+    const accessData =
+      accessSnap.data();
+
+
+    if (
+      accessData.active !== true ||
+      !accessData.eventId
+    ) {
+
+      throw new Error(
+        "Management access token is inactive or invalid."
+      );
+
     }
 
-    const currentUser = auth.currentUser;
+
+    const currentUser =
+      auth.currentUser;
+
+
     const sessionId =
       `${accessData.eventId}_${currentUser.uid}`;
 
+
     /*
-     * Create a short-lived logical management session. The Firestore Rules
-     * will use this document to authorize the current anonymous UID for the
-     * event without exposing the secret token to the event document.
+     * Create logical management session.
      */
     await setDoc(
-      doc(db, "managementSessions", sessionId),
+      doc(
+        db,
+        "managementSessions",
+        sessionId
+      ),
       {
-        eventId: accessData.eventId,
-        uid: currentUser.uid,
-        managementToken,
-        active: true,
-        createdAt: serverTimestamp()
+        eventId:
+          accessData.eventId,
+
+        uid:
+          currentUser.uid,
+
+        managementToken:
+          managementToken,
+
+        active:
+          true,
+
+        createdAt:
+          serverTimestamp()
       }
     );
+
 
     localStorage.setItem(
       "disposableMomment_managementSession",
       sessionId
     );
 
-    console.log("Host management access verified:", {
-      eventId: accessData.eventId,
-      sessionId
-    });
 
-    alert(
-      "Host management access verified. The management dashboard will be connected in the next phase."
+    /*
+     * Open dashboard.
+     */
+    await openManagementDashboard(
+      accessData.eventId,
+      sessionId
     );
 
+
   } catch (error) {
-    console.error("Management access error:", error);
-    alert("This host management link could not be verified.");
+
+    console.error(
+      "Management access error:",
+      error
+    );
+
+
+    managementDashboardLoading.innerHTML = `
+      <div class="management-loading-inner">
+        <strong>Access Denied</strong>
+        <p>
+          This host management link is invalid,
+          inactive, or could not be verified.
+        </p>
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          onclick="window.location.href=window.location.origin + window.location.pathname"
+          style="margin-top:18px;"
+        >
+          Back to Home
+        </button>
+      </div>
+    `;
+
   }
+
 }
+
+
+/* ==================================================
+   DASHBOARD BACK BUTTON
+   ================================================== */
+
+managementBackButton?.addEventListener(
+  "click",
+  function() {
+
+    window.location.href =
+      window.location.origin +
+      window.location.pathname;
+
+  }
+);
+
 
 /* ==================================================
    COPY MANAGEMENT LINK
