@@ -1509,12 +1509,11 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
   </section>
 
 </main>
-
 <!-- ==================================================
-     CREATE EVENT VIEW
+     CREATE EVENT MODAL
      ================================================== -->
 
-<section id="createEventView">
+<section id="createEventView" aria-hidden="true">
 
   <div class="create-event-page">
 
@@ -1522,6 +1521,7 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 
       <div class="create-event-card">
 
+        <!-- CLOSE -->
         <button
           type="button"
           class="create-event-close"
@@ -1531,6 +1531,8 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
           ×
         </button>
 
+
+        <!-- HEADER -->
         <div class="create-event-header">
 
           <span class="eyebrow">
@@ -1550,42 +1552,23 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 
         </div>
 
-        <!-- FORM DI SINI -->
 
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-        <span class="eyebrow">
-          <span class="dot"></span>
-          Create your event
-        </span>
-
-        <h1>
-          Set the stage<br>
-          for your memories.
-        </h1>
-
-        <p>
-          Create your event in seconds, then invite everyone
-          with one simple QR code.
-        </p>
-
-      </div>
-
-      <div class="create-event-card">
-
-        <form id="createEventForm" class="create-form">
+        <!-- FORM -->
+        <form
+          id="createEventForm"
+          class="create-form"
+        >
 
           <!-- EVENT NAME -->
+          <div
+            class="form-field"
+            data-field="eventName"
+          >
 
-          <div class="form-field" data-field="eventName">
-
-            <label class="form-label" for="eventName">
+            <label
+              class="form-label"
+              for="eventName"
+            >
               Event Name
             </label>
 
@@ -1604,10 +1587,15 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 
 
           <!-- HOST NAME -->
+          <div
+            class="form-field"
+            data-field="hostName"
+          >
 
-          <div class="form-field" data-field="hostName">
-
-            <label class="form-label" for="hostName">
+            <label
+              class="form-label"
+              for="hostName"
+            >
               Your Name
             </label>
 
@@ -1626,10 +1614,15 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 
 
           <!-- HOST EMAIL -->
+          <div
+            class="form-field"
+            data-field="hostEmail"
+          >
 
-          <div class="form-field" data-field="hostEmail">
-
-            <label class="form-label" for="hostEmail">
+            <label
+              class="form-label"
+              for="hostEmail"
+            >
               Your Email
             </label>
 
@@ -1652,10 +1645,15 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 
 
           <!-- DATE -->
+          <div
+            class="form-field"
+            data-field="eventDate"
+          >
 
-          <div class="form-field" data-field="eventDate">
-
-            <label class="form-label" for="eventDate">
+            <label
+              class="form-label"
+              for="eventDate"
+            >
               Event Date
             </label>
 
@@ -1672,12 +1670,17 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 
 
           <!-- TIME -->
-
           <div class="form-row">
 
-            <div class="form-field" data-field="startTime">
+            <div
+              class="form-field"
+              data-field="startTime"
+            >
 
-              <label class="form-label" for="startTime">
+              <label
+                class="form-label"
+                for="startTime"
+              >
                 Start Time
               </label>
 
@@ -1692,9 +1695,16 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 
             </div>
 
-            <div class="form-field" data-field="endTime">
 
-              <label class="form-label" for="endTime">
+            <div
+              class="form-field"
+              data-field="endTime"
+            >
+
+              <label
+                class="form-label"
+                for="endTime"
+              >
                 End Time
               </label>
 
@@ -1713,10 +1723,15 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 
 
           <!-- PHOTO LIMIT -->
+          <div
+            class="form-field"
+            data-field="photoLimit"
+          >
 
-          <div class="form-field" data-field="photoLimit">
-
-            <label class="form-label" for="photoLimit">
+            <label
+              class="form-label"
+              for="photoLimit"
+            >
               Photos Per Guest
             </label>
 
@@ -1740,7 +1755,6 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 
 
           <!-- REVEAL -->
-
           <div class="form-field">
 
             <div class="form-label">
@@ -1764,7 +1778,9 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 
                   <div>
                     <strong>Immediately</strong>
-                    <span>Photos become visible right away.</span>
+                    <span>
+                      Photos become visible right away.
+                    </span>
                   </div>
 
                 </label>
@@ -1788,7 +1804,9 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 
                   <div>
                     <strong>After the event</strong>
-                    <span>Keep the album hidden until the event ends.</span>
+                    <span>
+                      Keep the album hidden until the event ends.
+                    </span>
                   </div>
 
                 </label>
@@ -1811,7 +1829,9 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 
                   <div>
                     <strong>Custom time</strong>
-                    <span>Choose exactly when the memories are revealed.</span>
+                    <span>
+                      Choose exactly when the memories are revealed.
+                    </span>
                   </div>
 
                 </label>
@@ -1821,11 +1841,21 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
             </div>
 
 
-            <div class="custom-reveal" id="customReveal">
+            <!-- CUSTOM REVEAL -->
+            <div
+              class="custom-reveal"
+              id="customReveal"
+            >
 
-              <div class="form-field" data-field="revealDate">
+              <div
+                class="form-field"
+                data-field="revealDate"
+              >
 
-                <label class="form-label" for="revealDate">
+                <label
+                  class="form-label"
+                  for="revealDate"
+                >
                   Reveal Date
                 </label>
 
@@ -1841,9 +1871,15 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
               </div>
 
 
-              <div class="form-field" data-field="revealTime">
+              <div
+                class="form-field"
+                data-field="revealTime"
+              >
 
-                <label class="form-label" for="revealTime">
+                <label
+                  class="form-label"
+                  for="revealTime"
+                >
                   Reveal Time
                 </label>
 
@@ -1864,13 +1900,14 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 
 
           <!-- SUBMIT -->
-
           <button
             type="submit"
             class="btn btn-primary create-submit"
             id="createEventSubmit"
           >
+
             Create Event
+
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -1882,9 +1919,11 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
               <path d="M5 12h14"/>
               <path d="M13 6l6 6-6 6"/>
             </svg>
+
           </button>
 
         </form>
+
 
         <div class="create-event-note">
           No app required for your guests.
@@ -2473,27 +2512,45 @@ createEventForm.addEventListener(
     });
 
 
-    alert(
-      "Form is valid. Firebase will be connected in the next step."
-    );
+alert(
+  "Form is valid. Firebase will be connected in the next step."
+);
 
   }
-createEventView.addEventListener("click", function(event) {
+);
+/* ==================================================
+   CLOSE MODAL — CLICK OUTSIDE
+   ================================================== */
 
-  if (event.target === createEventView) {
-    closeCreateEvent();
-  }
+createEventView.addEventListener(
+  "click",
+  function(event) {
 
-document.addEventListener("keydown", function(event) {
+    if (event.target === createEventView) {
+      closeCreateEvent();
+    }
 
-  if (
-    event.key === "Escape" &&
-    createEventView.classList.contains("is-active")
-  ) {
-    closeCreateEvent();
   }
 );
 
+
+/* ==================================================
+   CLOSE MODAL — ESC
+   ================================================== */
+
+document.addEventListener(
+  "keydown",
+  function(event) {
+
+    if (
+      event.key === "Escape" &&
+      createEventView.classList.contains("is-active")
+    ) {
+      closeCreateEvent();
+    }
+
+  }
+);
 </script>
 
 </body>
