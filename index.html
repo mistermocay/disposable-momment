@@ -3,923 +3,1332 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Create Your Event — Disposable Momment</title>
-<meta name="description" content="Set up your event and start collecting memories. No password, no app for your guests.">
+<title>Disposable Momment — One QR. Everyone Captures.</title>
+<meta name="description" content="Turn every guest into a photographer. Share one QR code, capture the moments together, and reveal the memories when the time is right.">
 
+<!-- Google Fonts: Space Grotesk (display) + DM Sans (body) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
-/* ==========================================================================
-   DISPOSABLE MOMMENT — Create Event page
-   Same design tokens as the landing page, extended with form/status
-   components.
-   ========================================================================== */
+/* ==================================================
+   DESIGN TOKENS
+   ================================================== */
+:root{
+  --bg:            #FAF9F6;
+  --bg-deep:       #F3F0E9;
+  --card:          #FFFFFF;
+  --ink:           #111111;
+  --ink-soft:      #6B6B6B;
+  --ink-faint:     #A6A29A;
+  --line:          rgba(17,17,17,0.09);
+  --line-strong:   rgba(17,17,17,0.16);
 
-:root {
-  --color-bg: #FAF9F6;
-  --color-surface: #FFFFFF;
-  --color-primary: #111111;
-  --color-secondary: #6B6B6B;
-  --color-accent: #E8A33D;
-  --color-accent-ink: #8A5A16;
-  --color-accent-deep: #C1432A;
-  --color-border: rgba(17, 17, 17, 0.08);
-  --color-border-strong: rgba(17, 17, 17, 0.14);
-  --color-danger: #C1432A;
-  --color-danger-bg: #FBEAE5;
+  --accent:        #E15B27;
+  --accent-deep:   #B8451A;
+  --accent-soft:   #FBD9BE;
+  --accent-wash:   #FDEEE2;
 
-  --font-display: 'Space Grotesk', 'Inter', sans-serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-display:  'Space Grotesk', 'DM Sans', sans-serif;
+  --font-body:     'DM Sans', sans-serif;
+  --font-mono:     'DM Mono', monospace;
 
-  --radius-sm: 12px;
-  --radius-md: 20px;
-  --radius-lg: 32px;
-  --radius-full: 999px;
+  --radius-sm:     14px;
+  --radius-md:     22px;
+  --radius-lg:     32px;
+  --radius-pill:   999px;
 
-  --container-w: 640px;
-  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --shadow-soft:   0 1px 2px rgba(17,17,17,0.04), 0 12px 30px -12px rgba(17,17,17,0.10);
+  --shadow-lift:   0 4px 10px rgba(17,17,17,0.05), 0 30px 60px -20px rgba(17,17,17,0.20);
+
+  --ease:          cubic-bezier(.22,.9,.32,1);
+  --dur:           .7s;
 }
 
-*, *::before, *::after { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  background: var(--color-bg);
-  color: var(--color-primary);
-  font-family: var(--font-body);
-  font-size: 16px;
-  line-height: 1.55;
-  -webkit-font-smoothing: antialiased;
+*,*::before,*::after{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
 }
+img,svg{ display:block; max-width:100%; }
+a{ color:inherit; text-decoration:none; }
+ul{ list-style:none; margin:0; padding:0; }
+button{ font-family:inherit; cursor:pointer; }
+h1,h2,h3,h4{ font-family:var(--font-display); font-weight:600; margin:0; letter-spacing:-0.01em; }
+p{ margin:0; }
+.container{ width:100%; max-width:1180px; margin:0 auto; padding:0 24px; }
 
-img { max-width: 100%; display: block; }
-a { color: inherit; text-decoration: none; }
-button { font-family: inherit; cursor: pointer; }
+::selection{ background:var(--accent-soft); color:var(--accent-deep); }
 
-h1, h2 { font-family: var(--font-display); font-weight: 600; margin: 0; letter-spacing: -0.01em; }
-p { margin: 0; }
-
-.container {
-  max-width: var(--container-w);
-  margin: 0 auto;
-  padding: 0 24px;
-}
-
-:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 3px;
-  border-radius: 4px;
+:focus-visible{
+  outline:2.5px solid var(--accent);
+  outline-offset:3px;
+  border-radius:6px;
 }
 
-/* ==========================================================================
-   Navbar
-   ========================================================================== */
-
-.navbar {
-  border-bottom: 1px solid var(--color-border);
-  background: rgba(250, 249, 246, 0.9);
-  backdrop-filter: blur(10px);
-}
-.navbar__inner {
-  max-width: 900px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 72px;
-}
-.navbar__logo {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(0.95rem, 3.4vw, 1.2rem);
-  letter-spacing: -0.02em;
-  white-space: nowrap;
-}
-.navbar__logo-dot { color: var(--color-accent-deep); }
-.navbar__back {
-  font-size: 0.88rem;
-  font-weight: 500;
-  color: var(--color-secondary);
-  white-space: nowrap;
-  transition: color 0.2s;
-}
-.navbar__back:hover { color: var(--color-primary); }
-
-/* ==========================================================================
-   Page shell
-   ========================================================================== */
-
-.page { padding: 56px 0 100px; }
-.page__inner { max-width: 560px; }
-
-.eyebrow {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--color-accent-ink);
-  margin: 0 0 14px;
-}
-.eyebrow--mono {
-  font-family: var(--font-mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+    scroll-behavior:auto !important;
+  }
 }
 
-.page__title {
-  font-size: clamp(1.7rem, 5vw, 2.2rem);
-  margin-bottom: 10px;
+/* Fade-up on scroll */
+.reveal{ opacity:0; transform:translateY(28px); transition:opacity .8s var(--ease), transform .8s var(--ease); }
+.reveal.is-visible{ opacity:1; transform:translateY(0); }
+.reveal-stagger > *{ opacity:0; transform:translateY(24px); transition:opacity .7s var(--ease), transform .7s var(--ease); }
+.reveal-stagger.is-visible > *{ opacity:1; transform:translateY(0); }
+.reveal-stagger.is-visible > *:nth-child(1){ transition-delay:.04s; }
+.reveal-stagger.is-visible > *:nth-child(2){ transition-delay:.12s; }
+.reveal-stagger.is-visible > *:nth-child(3){ transition-delay:.20s; }
+.reveal-stagger.is-visible > *:nth-child(4){ transition-delay:.28s; }
+.reveal-stagger.is-visible > *:nth-child(5){ transition-delay:.36s; }
+.reveal-stagger.is-visible > *:nth-child(6){ transition-delay:.44s; }
+.reveal-stagger.is-visible > *:nth-child(7){ transition-delay:.52s; }
+.reveal-stagger.is-visible > *:nth-child(8){ transition-delay:.60s; }
+
+/* ==================================================
+   SHARED UI
+   ================================================== */
+.eyebrow{
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:var(--font-mono);
+  font-size:12.5px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--accent-deep);
+  background:var(--accent-wash);
+  padding:7px 14px 7px 12px;
+  border-radius:var(--radius-pill);
 }
-.page__subtitle {
-  color: var(--color-secondary);
-  font-size: 1.02rem;
-  margin-bottom: 36px;
+.eyebrow .dot{ width:6px; height:6px; border-radius:50%; background:var(--accent); flex:none; }
+
+.section-head{ max-width:640px; }
+.section-head h2{ font-size:clamp(28px,4vw,42px); line-height:1.12; margin-top:14px; }
+.section-head p{ color:var(--ink-soft); font-size:17px; margin-top:14px; }
+.section-head.center{ margin-left:auto; margin-right:auto; text-align:center; }
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  font-family:var(--font-body); font-weight:700; font-size:15px;
+  padding:15px 26px;
+  border-radius:var(--radius-pill);
+  border:1.5px solid transparent;
+  transition:transform .35s var(--ease), box-shadow .35s var(--ease), background .3s ease, border-color .3s ease;
+  white-space:nowrap;
+}
+.btn-primary{
+  background:var(--ink); color:#fff;
+  box-shadow:0 1px 1px rgba(17,17,17,.1), 0 14px 28px -14px rgba(17,17,17,.55);
+}
+.btn-primary:hover{ background:var(--accent-deep); transform:translateY(-2px); box-shadow:0 1px 1px rgba(17,17,17,.1), 0 18px 32px -12px rgba(225,91,39,.45); }
+.btn-primary:active{ transform:translateY(0); }
+.btn-ghost{
+  background:transparent; color:var(--ink); border-color:var(--line-strong);
+}
+.btn-ghost:hover{ border-color:var(--ink); background:var(--card); }
+.btn-sm{ padding:11px 20px; font-size:14px; }
+.btn svg{ width:17px; height:17px; flex:none; transition:transform .3s var(--ease); }
+.btn-primary:hover svg{ transform:translateX(3px); }
+
+/* ==================================================
+   NAVBAR
+   ================================================== */
+.navbar{
+  position:sticky; top:0; z-index:100;
+  background:rgba(250,249,246,0.78);
+  backdrop-filter:blur(14px) saturate(1.4);
+  -webkit-backdrop-filter:blur(14px) saturate(1.4);
+  border-bottom:1px solid transparent;
+  transition:border-color .3s ease, box-shadow .3s ease;
+}
+.navbar.scrolled{ border-bottom-color:var(--line); box-shadow:0 8px 24px -20px rgba(17,17,17,.4); }
+.nav-inner{
+  max-width:1180px; margin:0 auto; padding:16px 24px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.brand{ display:flex; align-items:center; gap:10px; font-family:var(--font-display); font-weight:700; font-size:18px; letter-spacing:-.01em; }
+.brand-mark{
+  width:34px; height:34px; border-radius:10px; background:var(--ink);
+  display:flex; align-items:center; justify-content:center; flex:none;
+}
+.brand-mark svg{ width:18px; height:18px; }
+.brand-dot{ color:var(--accent); }
+
+.nav-links{ display:flex; align-items:center; gap:36px; }
+.nav-links a{
+  font-size:14.5px; font-weight:500; color:var(--ink-soft);
+  position:relative; padding:4px 0; transition:color .25s ease;
+}
+.nav-links a::after{
+  content:''; position:absolute; left:0; right:100%; bottom:-2px; height:1.5px; background:var(--ink);
+  transition:right .3s var(--ease);
+}
+.nav-links a:hover{ color:var(--ink); }
+.nav-links a:hover::after{ right:0; }
+
+.nav-right{ display:flex; align-items:center; gap:14px; }
+
+.hamburger{
+  display:none; width:42px; height:42px; border-radius:12px; border:1.5px solid var(--line-strong);
+  background:var(--card); align-items:center; justify-content:center; flex:none;
+}
+.hamburger span{ display:block; width:18px; height:1.6px; background:var(--ink); position:relative; transition:transform .3s ease, opacity .3s ease; }
+.hamburger span::before,.hamburger span::after{
+  content:''; position:absolute; left:0; width:18px; height:1.6px; background:var(--ink); transition:transform .3s ease, top .3s ease;
+}
+.hamburger span::before{ top:-6px; }
+.hamburger span::after{ top:6px; }
+.hamburger.open span{ background:transparent; }
+.hamburger.open span::before{ transform:rotate(45deg); top:0; }
+.hamburger.open span::after{ transform:rotate(-45deg); top:0; }
+
+.mobile-menu{
+  display:none; max-height:0; overflow:hidden; background:var(--bg);
+  border-bottom:1px solid var(--line); transition:max-height .4s var(--ease);
+}
+.mobile-menu.open{ max-height:340px; }
+.mobile-menu-inner{ padding:8px 24px 26px; display:flex; flex-direction:column; gap:4px; }
+.mobile-menu a{
+  padding:13px 4px; font-size:15.5px; font-weight:500; border-bottom:1px solid var(--line); color:var(--ink);
+}
+.mobile-menu .btn{ margin-top:14px; width:100%; }
+
+@media (max-width:880px){
+  .nav-links{ display:none; }
+  .hamburger{ display:flex; }
+  .mobile-menu{ display:block; }
+  .nav-right .btn-primary{ display:none; }
 }
 
-/* ==========================================================================
-   View switching
-   ========================================================================== */
-
-.view { display: none; }
-.view.is-active { display: block; animation: fadeIn 0.4s var(--ease); }
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ==================================================
+   HERO
+   ================================================== */
+.hero{
+  position:relative;
+  padding:64px 0 40px;
+  overflow:hidden;
 }
-
-/* ==========================================================================
-   Global error banner
-   ========================================================================== */
-
-.banner {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: var(--radius-sm);
-  margin-bottom: 28px;
-  font-size: 0.92rem;
+.hero-bg-grain{
+  position:absolute; inset:0; pointer-events:none; opacity:.5; z-index:0;
+  background-image:radial-gradient(var(--line-strong) .6px, transparent .6px);
+  background-size:18px 18px;
+  mask-image:radial-gradient(ellipse 70% 55% at 70% 20%, #000 0%, transparent 75%);
 }
-.banner--error {
-  background: var(--color-danger-bg);
-  color: #7A2C1B;
-  border: 1px solid rgba(193, 67, 42, 0.25);
+.hero-inner{
+  position:relative; z-index:1;
+  display:grid; grid-template-columns:1.02fr .98fr; gap:36px; align-items:center;
 }
-.banner__icon {
-  flex-shrink: 0;
-  width: 20px; height: 20px;
-  border-radius: 50%;
-  background: var(--color-danger);
-  color: #fff;
-  font-size: 0.78rem;
-  font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
+.hero-copy h1{
+  font-size:clamp(38px,5.6vw,64px);
+  line-height:1.04;
+  margin-top:20px;
 }
-.banner p { line-height: 1.5; }
-
-/* ==========================================================================
-   Form
-   ========================================================================== */
-
-.event-form { display: flex; flex-direction: column; gap: 22px; }
-.event-form--narrow { max-width: 380px; }
-
-.field-row {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 22px;
+.hero-copy h1 .accent-word{ color:var(--accent); }
+.hero-copy .lede{
+  margin-top:22px; font-size:18px; color:var(--ink-soft); max-width:470px;
 }
-@media (min-width: 560px) {
-  .field-row { grid-template-columns: 1fr 1fr; }
+.hero-cta-row{ display:flex; flex-wrap:wrap; gap:14px; margin-top:32px; }
+.hero-note{ display:flex; align-items:center; gap:9px; margin-top:26px; font-size:13.5px; color:var(--ink-faint); }
+.hero-note svg{ width:15px; height:15px; color:var(--accent); flex:none; }
+
+/* Hero visual: camera-ish stage with floating photo cards */
+.hero-visual{ position:relative; height:560px; }
+.stage{
+  position:absolute; inset:0;
+  border-radius:var(--radius-lg);
+  background:linear-gradient(160deg,#161513 0%, #0d0c0b 100%);
+  overflow:hidden;
+  box-shadow:var(--shadow-lift);
 }
+.stage::before{
+  content:''; position:absolute; inset:0;
+  background-image:radial-gradient(rgba(255,255,255,.045) 1px, transparent 1px);
+  background-size:16px 16px;
+}
+.viewfinder-corner{ position:absolute; width:26px; height:26px; border-color:rgba(255,255,255,.5); }
+.viewfinder-corner.tl{ top:20px; left:20px; border-top:2px solid; border-left:2px solid; border-radius:6px 0 0 0; }
+.viewfinder-corner.tr{ top:20px; right:20px; border-top:2px solid; border-right:2px solid; border-radius:0 6px 0 0; }
+.viewfinder-corner.bl{ bottom:20px; left:20px; border-bottom:2px solid; border-left:2px solid; border-radius:0 0 0 6px; }
+.viewfinder-corner.br{ bottom:20px; right:20px; border-bottom:2px solid; border-right:2px solid; border-radius:0 0 6px 0; }
 
-.field-group { display: flex; flex-direction: column; gap: 8px; }
-.field-group--narrow { max-width: 200px; }
+.stage-badge{
+  position:absolute; top:20px; left:56px;
+  display:flex; align-items:center; gap:7px;
+  font-family:var(--font-mono); font-size:11.5px; color:#fff; opacity:.85;
+}
+.rec-dot{ width:7px; height:7px; border-radius:50%; background:#FF5B4C; animation:pulse-rec 1.6s ease-in-out infinite; }
+@keyframes pulse-rec{ 0%,100%{ opacity:1; } 50%{ opacity:.3; } }
 
-.field-group label,
-.field-group legend {
-  font-size: 0.88rem;
-  font-weight: 600;
-  padding: 0;
+.frame-counter{
+  position:absolute; top:20px; right:56px;
+  font-family:var(--font-mono); font-size:11.5px; color:#fff; opacity:.85; letter-spacing:.04em;
 }
 
-.field-group input[type="text"],
-.field-group input[type="email"],
-.field-group input[type="date"],
-.field-group input[type="time"],
-.field-group input[type="number"] {
-  font-family: var(--font-body);
-  font-size: 0.98rem;
-  padding: 13px 15px;
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
-  color: var(--color-primary);
-  transition: border-color 0.2s, box-shadow 0.2s;
-  width: 100%;
+.photo-card{
+  position:absolute;
+  background:#fff; border-radius:12px; padding:8px 8px 22px;
+  box-shadow:0 20px 40px -12px rgba(0,0,0,.5);
+  width:150px;
 }
-.field-group input::placeholder { color: rgba(17,17,17,0.35); }
+.photo-card .frame{
+  width:100%; aspect-ratio:4/5; border-radius:6px; overflow:hidden; background:#ddd;
+}
+.photo-card .frame img{ width:100%; height:100%; object-fit:cover; }
+.photo-card .cap{
+  position:absolute; bottom:6px; left:8px; right:8px;
+  font-family:var(--font-mono); font-size:9.5px; color:#8a8a8a; display:flex; justify-content:space-between;
+}
+.pc-1{ width:172px; top:64px; left:34px; transform:rotate(-7deg); animation:float-a 7s ease-in-out infinite; z-index:3; }
+.pc-2{ width:158px; top:150px; right:30px; transform:rotate(6deg); animation:float-b 8s ease-in-out infinite; z-index:2; }
+.pc-3{ width:146px; bottom:74px; left:64px; transform:rotate(4deg); animation:float-c 6.5s ease-in-out infinite; z-index:2; }
+.pc-4{ width:132px; bottom:52px; right:78px; transform:rotate(-5deg); animation:float-a 7.5s ease-in-out infinite .4s; z-index:1; }
 
-.field-group input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(17,17,17,0.08);
-}
+@keyframes float-a{ 0%,100%{ transform:translateY(0) rotate(-7deg); } 50%{ transform:translateY(-10px) rotate(-5deg); } }
+@keyframes float-b{ 0%,100%{ transform:translateY(0) rotate(6deg); } 50%{ transform:translateY(-14px) rotate(8deg); } }
+@keyframes float-c{ 0%,100%{ transform:translateY(0) rotate(4deg); } 50%{ transform:translateY(-8px) rotate(2deg); } }
 
-.field-group.has-error input {
-  border-color: var(--color-danger);
-  background: var(--color-danger-bg);
+.filmstrip{
+  position:absolute; left:0; right:0; bottom:0; height:34px;
+  background:#0a0a09;
+  display:flex; align-items:center; gap:10px; padding:0 14px;
+  overflow:hidden;
 }
-.field-group.has-error input:focus {
-  box-shadow: 0 0 0 3px rgba(193, 67, 42, 0.15);
-}
+.filmstrip::before,.filmstrip::after{ content:''; }
+.sprocket-row{ display:flex; gap:10px; width:100%; }
+.sprocket{ width:6px; height:9px; border-radius:2px; background:rgba(255,255,255,.28); flex:none; }
 
-.field-error {
-  font-size: 0.82rem;
-  color: var(--color-danger);
-  min-height: 0;
-  display: none;
+@media (max-width:960px){
+  .hero-inner{ grid-template-columns:1fr; }
+  .hero-visual{ height:420px; order:-1; }
+  .hero-copy .lede{ max-width:none; }
 }
-.field-group.has-error .field-error { display: block; }
-
-fieldset.field-group {
-  border: none;
-  padding: 0;
-  margin: 0;
-}
-
-/* Radio group */
-.radio-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 4px;
+@media (max-width:520px){
+  .hero{ padding-top:36px; }
+  .hero-visual{ height:360px; }
+  .pc-1{ width:130px; left:18px; top:52px; }
+  .pc-2{ width:118px; right:16px; top:120px; }
+  .pc-3{ width:110px; left:34px; bottom:64px; }
+  .pc-4{ display:none; }
 }
 
-.radio-option {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 14px 16px;
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: border-color 0.2s, background-color 0.2s;
+/* ==================================================
+   SOCIAL PROOF STRIP
+   ================================================== */
+.proof{ padding:52px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.proof-inner{ display:flex; flex-direction:column; align-items:center; gap:22px; text-align:center; }
+.proof-inner h3{ font-size:15.5px; font-weight:600; color:var(--ink-soft); letter-spacing:.01em; }
+.proof-tags{ display:flex; flex-wrap:wrap; justify-content:center; gap:10px; }
+.proof-tag{
+  font-family:var(--font-mono); font-size:12.5px; letter-spacing:.02em;
+  padding:9px 16px; border-radius:var(--radius-pill); border:1px solid var(--line-strong); color:var(--ink-soft);
+  transition:border-color .3s ease, color .3s ease;
 }
-.radio-option:hover { border-color: var(--color-primary); }
+.proof-tag:hover{ border-color:var(--accent); color:var(--accent-deep); }
 
-.radio-option input[type="radio"] {
-  position: absolute;
-  opacity: 0;
-  width: 0; height: 0;
-}
+/* ==================================================
+   HOW IT WORKS
+   ================================================== */
+.section{ padding:104px 0; }
+.section-tight{ padding:88px 0; }
 
-.radio-option__dot {
-  flex-shrink: 0;
-  width: 18px; height: 18px;
-  border-radius: 50%;
-  border: 1.5px solid var(--color-border-strong);
-  margin-top: 2px;
-  position: relative;
-  transition: border-color 0.2s;
-}
-.radio-option__dot::after {
-  content: '';
-  position: absolute;
-  inset: 3px;
-  border-radius: 50%;
-  background: var(--color-accent-deep);
-  transform: scale(0);
-  transition: transform 0.2s var(--ease);
-}
+.steps-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; }
 
-.radio-option input:checked ~ .radio-option__dot {
-  border-color: var(--color-accent-deep);
+.steps-grid{
+  margin-top:56px;
+  display:grid; grid-template-columns:repeat(4,1fr); gap:20px;
 }
-.radio-option input:checked ~ .radio-option__dot::after {
-  transform: scale(1);
+.step-card{
+  position:relative;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius-md);
+  padding:30px 24px 28px;
+  transition:transform .4s var(--ease), box-shadow .4s var(--ease), border-color .4s ease;
 }
-.radio-option:has(input:checked) {
-  border-color: var(--color-accent-deep);
-  background: color-mix(in srgb, var(--color-accent) 8%, white);
+.step-card:hover{ transform:translateY(-6px); box-shadow:var(--shadow-lift); border-color:transparent; }
+.step-num{
+  font-family:var(--font-mono); font-size:13px; color:var(--accent-deep);
+  background:var(--accent-wash); display:inline-block; padding:4px 10px; border-radius:var(--radius-pill);
 }
+.step-icon{
+  width:46px; height:46px; border-radius:13px; background:var(--ink); color:#fff;
+  display:flex; align-items:center; justify-content:center; margin-top:20px;
+}
+.step-icon svg{ width:22px; height:22px; }
+.step-card h3{ font-size:19px; margin-top:20px; }
+.step-card p{ font-size:14.5px; color:var(--ink-soft); margin-top:10px; line-height:1.6; }
+.step-connector{
+  position:absolute; top:44px; left:-20px; width:20px; height:1px; background:var(--line-strong);
+  display:none;
+}
+@media (min-width:961px){ .step-card:not(:first-child) .step-connector{ display:block; } }
 
-.radio-option__label { display: flex; flex-direction: column; gap: 2px; }
-.radio-option__label strong { font-size: 0.95rem; }
-.radio-option__label small { font-size: 0.82rem; color: var(--color-secondary); }
+@media (max-width:960px){ .steps-grid{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:560px){ .steps-grid{ grid-template-columns:1fr; } }
 
-.field-custom-reveal { margin-top: -6px; }
+/* ==================================================
+   FEATURES
+   ================================================== */
+.features-bg{ background:var(--bg-deep); }
+.features-grid{
+  margin-top:56px;
+  display:grid; grid-template-columns:repeat(4,1fr); gap:18px;
+}
+.feature-card{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius-md);
+  padding:26px 22px;
+  transition:transform .4s var(--ease), box-shadow .4s var(--ease);
+}
+.feature-card:hover{ transform:translateY(-5px); box-shadow:var(--shadow-soft); }
+.feature-icon{
+  width:42px; height:42px; border-radius:12px; background:var(--accent-wash); color:var(--accent-deep);
+  display:flex; align-items:center; justify-content:center;
+}
+.feature-icon svg{ width:20px; height:20px; }
+.feature-card h4{ font-size:16px; margin-top:18px; }
+.feature-card p{ font-size:13.8px; color:var(--ink-soft); margin-top:8px; line-height:1.55; }
 
-/* ==========================================================================
-   Buttons
-   ========================================================================== */
+@media (max-width:960px){ .features-grid{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:560px){ .features-grid{ grid-template-columns:1fr; } }
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.95rem;
-  padding: 13px 24px;
-  border: none;
-  border-radius: var(--radius-full);
-  transition: transform 0.25s var(--ease), background-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
+/* ==================================================
+   PRODUCT SHOWCASE
+   ================================================== */
+.showcase-strip{
+  margin-top:60px;
+  display:flex; gap:22px; overflow-x:auto; padding:10px 4px 26px;
+  scroll-snap-type:x proximity;
 }
-.btn--primary { background: var(--color-primary); color: var(--color-bg); }
-.btn--primary:hover:not(:disabled) {
-  background: var(--color-accent-deep);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px -8px rgba(193, 67, 42, 0.45);
-}
-.btn--primary:disabled { opacity: 0.6; cursor: not-allowed; }
+.showcase-strip::-webkit-scrollbar{ height:6px; }
+.showcase-strip::-webkit-scrollbar-thumb{ background:var(--line-strong); border-radius:10px; }
 
-.btn--ghost {
-  background: transparent;
-  color: var(--color-primary);
-  border: 1px solid var(--color-border-strong);
+.phone{
+  flex:none; width:238px; scroll-snap-align:start;
 }
-.btn--ghost:hover:not(:disabled) { border-color: var(--color-primary); transform: translateY(-2px); }
+.phone-frame{
+  width:100%; aspect-ratio:9/18.5;
+  background:#0d0c0b; border-radius:34px; padding:11px;
+  box-shadow:var(--shadow-lift);
+  position:relative;
+}
+.phone-notch{
+  position:absolute; top:11px; left:50%; transform:translateX(-50%);
+  width:70px; height:18px; background:#0d0c0b; border-radius:0 0 14px 14px; z-index:2;
+}
+.phone-screen{
+  width:100%; height:100%; border-radius:24px; background:var(--bg); overflow:hidden;
+  display:flex; flex-direction:column; position:relative;
+}
+.phone-label{ text-align:center; margin-top:14px; font-family:var(--font-mono); font-size:11.5px; color:var(--ink-faint); }
 
-.btn--lg { padding: 16px 28px; font-size: 1rem; }
-.btn--sm { padding: 8px 16px; font-size: 0.85rem; }
-.btn--block { width: 100%; }
+/* screen 1: welcome */
+.scr-welcome{ display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; padding:20px; text-align:center; gap:10px; }
+.scr-welcome .ring{ width:52px; height:52px; border-radius:50%; border:1.5px solid var(--line-strong); display:flex; align-items:center; justify-content:center; color:var(--accent-deep); }
+.scr-welcome .ring svg{ width:24px; height:24px; }
+.scr-welcome h5{ font-family:var(--font-display); font-size:15px; font-weight:600; margin-top:6px; }
+.scr-welcome p{ font-size:11.5px; color:var(--ink-soft); }
+.scr-btn{ margin-top:14px; background:var(--ink); color:#fff; font-size:11px; font-weight:700; padding:10px 20px; border-radius:var(--radius-pill); }
 
-.btn__spinner {
-  width: 16px; height: 16px;
-  border-radius: 50%;
-  border: 2px solid rgba(250,249,246,0.4);
-  border-top-color: var(--color-bg);
-  animation: spin 0.7s linear infinite;
+/* screen 2: name */
+.scr-name{ display:flex; flex-direction:column; justify-content:center; height:100%; padding:22px; gap:14px; }
+.scr-name .q{ font-size:11px; color:var(--ink-faint); font-family:var(--font-mono); }
+.scr-name h5{ font-family:var(--font-display); font-size:16.5px; font-weight:600; }
+.scr-input{
+  background:var(--card); border:1.5px solid var(--line-strong); border-radius:13px; padding:12px 14px; font-size:12.5px; color:var(--ink);
 }
+.scr-input.filled{ border-color:var(--accent); color:var(--ink); font-weight:600; }
 
-.link-btn {
-  background: none;
-  border: none;
-  color: var(--color-secondary);
-  font-size: 0.88rem;
-  font-weight: 500;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  padding: 8px 0;
-  margin-top: 6px;
-}
-.link-btn:hover { color: var(--color-primary); }
+/* screen 3: camera */
+.scr-camera{ height:100%; background:#111; position:relative; display:flex; flex-direction:column; }
+.scr-camera .top-bar{ display:flex; justify-content:space-between; padding:14px; font-family:var(--font-mono); font-size:10px; color:#fff; opacity:.85; }
+.scr-camera .viewport{ flex:1; background:linear-gradient(160deg,#2b2a28,#151412); margin:0 12px; border-radius:14px; position:relative; overflow:hidden; }
+.scr-camera .viewport::after{ content:''; position:absolute; inset:0; background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px); background-size:12px 12px; }
+.scr-camera .shutter-wrap{ display:flex; justify-content:center; padding:18px; }
+.scr-camera .shutter{ width:52px; height:52px; border-radius:50%; border:3px solid #fff; }
+.scr-camera .shutter::after{ content:''; display:block; width:38px; height:38px; margin:4px; border-radius:50%; background:#fff; }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+/* screen 4: captured */
+.scr-captured{ display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; padding:20px; text-align:center; gap:10px; }
+.scr-captured .flash{ width:56px; height:56px; border-radius:50%; background:var(--accent-wash); color:var(--accent-deep); display:flex; align-items:center; justify-content:center; }
+.scr-captured .flash svg{ width:26px; height:26px; }
+.scr-captured h5{ font-family:var(--font-display); font-size:15.5px; font-weight:600; }
+.scr-captured p{ font-size:11.5px; color:var(--ink-soft); max-width:170px; }
 
-.event-form__note {
-  text-align: center;
-  font-size: 0.84rem;
-  color: var(--color-secondary);
-}
+@media (max-width:560px){ .phone{ width:200px; } }
 
-/* ==========================================================================
-   Status blocks (check email / confirm / verifying / success)
-   ========================================================================== */
+/* ==================================================
+   REVEAL SECTION (signature)
+   ================================================== */
+.reveal-section{
+  position:relative;
+  background:#100F0D;
+  color:#F4F1EA;
+  padding:110px 0;
+  overflow:hidden;
+}
+.reveal-section::before{
+  content:''; position:absolute; inset:0;
+  background-image:radial-gradient(rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size:20px 20px;
+  opacity:.7;
+}
+.reveal-grid{ position:relative; z-index:1; display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center; }
+.reveal-copy .eyebrow{ background:rgba(225,91,39,.15); color:#FFB88C; }
+.reveal-copy h2{ font-size:clamp(28px,4vw,42px); line-height:1.14; margin-top:16px; color:#fff; }
+.reveal-copy p{ color:rgba(244,241,234,.62); margin-top:16px; font-size:16.5px; max-width:440px; }
 
-.status-block {
-  text-align: center;
-  padding: 24px 0 8px;
+/* film roll device */
+.roll-device{
+  background:#1B1A17; border:1px solid rgba(255,255,255,.08); border-radius:var(--radius-lg);
+  padding:28px 26px 24px;
+  box-shadow:0 30px 70px -30px rgba(0,0,0,.7);
 }
-.status-block--wide { max-width: 560px; }
+.roll-top{ display:flex; justify-content:space-between; align-items:center; }
+.roll-top .tag{ font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; color:rgba(244,241,234,.5); text-transform:uppercase; }
+.roll-top .status{ display:flex; align-items:center; gap:7px; font-family:var(--font-mono); font-size:11px; color:#FFB88C; }
+.roll-top .status .blink{ width:6px; height:6px; border-radius:50%; background:#FFB88C; animation:pulse-rec 1.4s ease-in-out infinite; }
 
-.status-block__icon {
-  width: 64px; height: 64px;
-  border-radius: 50%;
-  margin: 0 auto 24px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.6rem;
-  font-weight: 700;
+.roll-track{
+  margin-top:22px; height:16px; border-radius:8px; background:rgba(255,255,255,.06);
+  position:relative; overflow:hidden;
 }
-.status-block__icon--mail {
-  background: color-mix(in srgb, var(--color-accent) 22%, white);
-  color: var(--color-accent-deep);
+.roll-track .fill{
+  position:absolute; left:0; top:0; bottom:0; width:0%;
+  background:linear-gradient(90deg,#B8451A,#E15B27);
+  border-radius:8px;
+  transition:width 1s linear;
 }
-.status-block__icon--mail::before {
-  content: '';
-  width: 26px; height: 20px;
-  border: 2px solid currentColor;
-  border-radius: 4px;
-}
-.status-block__icon--check {
-  background: color-mix(in srgb, var(--color-accent) 22%, white);
-  color: var(--color-accent-deep);
-}
+.roll-track .sprockets{ position:absolute; inset:0; display:flex; align-items:center; justify-content:space-evenly; }
+.roll-track .sprockets span{ width:4px; height:4px; border-radius:50%; background:rgba(0,0,0,.35); }
 
-.status-block__text {
-  font-size: 1rem;
-  margin-bottom: 10px;
-  line-height: 1.6;
-}
-.status-block__text--muted { color: var(--color-secondary); font-size: 0.92rem; }
-.status-block__email {
-  font-family: var(--font-mono);
-  font-size: 0.92rem;
-  word-break: break-all;
-}
+.roll-caption{ margin-top:12px; font-family:var(--font-mono); font-size:11.5px; color:rgba(244,241,234,.45); }
 
-.status-block__resend-note {
-  font-size: 0.8rem;
-  color: var(--color-secondary);
-  margin-top: 10px;
-  min-height: 18px;
+.countdown{
+  margin-top:26px; display:flex; gap:14px;
 }
+.countdown .unit{ flex:1; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:16px 6px; text-align:center; }
+.countdown .num{ font-family:var(--font-mono); font-size:28px; font-weight:500; color:#fff; font-variant-numeric:tabular-nums; }
+.countdown .lbl{ font-family:var(--font-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:rgba(244,241,234,.42); margin-top:4px; }
 
-.loading-spinner {
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  border: 3px solid var(--color-border-strong);
-  border-top-color: var(--color-accent-deep);
-  margin: 0 auto 24px;
-  animation: spin 0.8s linear infinite;
-}
+.roll-footnote{ margin-top:20px; font-size:13px; color:rgba(244,241,234,.4); font-style:italic; }
 
-/* ==========================================================================
-   Success card
-   ========================================================================== */
+@media (max-width:900px){ .reveal-grid{ grid-template-columns:1fr; } }
 
-.success-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 28px;
-  margin: 32px 0;
-  text-align: left;
+/* ==================================================
+   USE CASES
+   ================================================== */
+.usecase-grid{ margin-top:56px; display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+.usecase-card{
+  position:relative; border-radius:var(--radius-md); overflow:hidden; height:280px;
+  display:flex; align-items:flex-end; padding:22px;
+  transition:transform .45s var(--ease);
 }
-.success-card__label {
-  font-size: 0.78rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-secondary);
-  margin-bottom: 6px;
+.usecase-card:hover{ transform:translateY(-6px); }
+.usecase-card .bg{
+  position:absolute; inset:0; z-index:0;
 }
-.success-card__label--spaced { margin-top: 22px; }
-.success-card__event-name {
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-  font-weight: 600;
-}
+.usecase-card .bg::after{ content:''; position:absolute; inset:0; background:linear-gradient(190deg, transparent 30%, rgba(10,9,8,.82) 100%); }
+.usecase-card .label{ position:relative; z-index:1; color:#fff; font-family:var(--font-display); font-size:20px; font-weight:600; }
+.usecase-card .tagline{ position:relative; z-index:1; color:rgba(255,255,255,.72); font-size:12.5px; margin-top:4px; }
 
-.success-card__link-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: 10px 10px 10px 14px;
-}
-.success-card__link {
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  color: var(--color-primary);
-  flex: 1;
-  overflow-x: auto;
-  white-space: nowrap;
-}
+.uc-1 .bg{ background:linear-gradient(150deg,#5b4033,#2c211b); }
+.uc-2 .bg{ background:linear-gradient(150deg,#7a4a2c,#3a2517); }
+.uc-3 .bg{ background:linear-gradient(150deg,#4a3f5c,#211c2c); }
+.uc-4 .bg{ background:linear-gradient(150deg,#6b5233,#2b2114); }
+.uc-5 .bg{ background:linear-gradient(150deg,#3f5147,#1c2620); }
+.uc-6 .bg{ background:linear-gradient(150deg,#4c4237,#211d18); }
 
-.qr-placeholder {
-  margin-top: 22px;
-  height: 180px;
-  border: 1.5px dashed var(--color-border-strong);
-  border-radius: var(--radius-md);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--color-secondary);
-  font-size: 0.85rem;
-  background: repeating-linear-gradient(
-    45deg,
-    rgba(17,17,17,0.02),
-    rgba(17,17,17,0.02) 10px,
-    transparent 10px,
-    transparent 20px
-  );
-}
+@media (max-width:900px){ .usecase-grid{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:560px){ .usecase-grid{ grid-template-columns:1fr; } .usecase-card{ height:220px; } }
 
-.success-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+/* ==================================================
+   CTA SECTION
+   ================================================== */
+.cta-section{
+  margin:0 24px; max-width:1132px; margin-left:auto; margin-right:auto;
+  background:var(--ink); color:#fff; border-radius:var(--radius-lg);
+  padding:74px 40px; text-align:center; position:relative; overflow:hidden;
 }
-@media (min-width: 480px) {
-  .success-actions { flex-direction: row; }
-  .success-actions .btn { flex: 1; }
+.cta-section::before{
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(circle at 80% 0%, rgba(225,91,39,.35), transparent 55%);
 }
+.cta-inner{ position:relative; z-index:1; max-width:560px; margin:0 auto; }
+.cta-section h2{ font-size:clamp(28px,4.4vw,44px); color:#fff; line-height:1.12; }
+.cta-section .sub{ margin-top:16px; color:rgba(255,255,255,.66); font-size:16.5px; }
+.cta-section .btn-primary{ margin-top:30px; background:#fff; color:var(--ink); }
+.cta-section .btn-primary:hover{ background:var(--accent); color:#fff; }
+.cta-section .fine{ margin-top:18px; font-size:13px; color:rgba(255,255,255,.42); }
 
-/* ==========================================================================
-   Footer
-   ========================================================================== */
-
-.footer--compact {
-  border-top: 1px solid var(--color-border);
-  padding: 28px 0;
+/* ==================================================
+   FAQ
+   ================================================== */
+.faq-list{ margin-top:48px; max-width:760px; margin-left:auto; margin-right:auto; }
+.faq-item{ border-bottom:1px solid var(--line); }
+.faq-q{
+  width:100%; background:none; border:none; text-align:left;
+  display:flex; align-items:center; justify-content:space-between; gap:20px;
+  padding:22px 4px; font-family:var(--font-display); font-size:16.5px; font-weight:600; color:var(--ink);
 }
-.footer__copyright {
-  font-size: 0.82rem;
-  color: var(--color-secondary);
-  text-align: center;
+.faq-q .plus{
+  flex:none; width:26px; height:26px; border-radius:50%; border:1.5px solid var(--line-strong);
+  display:flex; align-items:center; justify-content:center; position:relative; transition:transform .35s var(--ease), border-color .3s ease;
 }
+.faq-q .plus svg{ width:12px; height:12px; }
+.faq-q .plus svg .v{ transition:opacity .25s ease; }
+.faq-item.open .faq-q .plus{ transform:rotate(135deg); border-color:var(--accent); color:var(--accent); }
+.faq-a{ max-height:0; overflow:hidden; transition:max-height .45s var(--ease); }
+.faq-a-inner{ padding:0 4px 24px; color:var(--ink-soft); font-size:15px; max-width:640px; line-height:1.65; }
+.faq-item.open .faq-a{ max-height:220px; }
 
-/* ==========================================================================
-   Reduced motion
-   ========================================================================== */
+/* ==================================================
+   FINAL CTA
+   ================================================== */
+.final-cta{ padding:110px 0 100px; text-align:center; }
+.final-cta h2{ font-size:clamp(30px,5vw,50px); line-height:1.08; }
+.final-cta h2 span{ display:block; }
+.final-cta h2 .a2{ color:var(--accent); }
+.final-cta .btn-primary{ margin-top:34px; }
 
-@media (prefers-reduced-motion: reduce) {
-  .view.is-active { animation: none; }
-  .loading-spinner, .btn__spinner { animation-duration: 1.4s; }
+/* ==================================================
+   FOOTER
+   ================================================== */
+footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64px 0 32px; }
+.footer-grid{ display:grid; grid-template-columns:1.6fr 1fr 1fr 1fr; gap:32px; }
+.footer-brand p{ margin-top:14px; color:var(--ink-soft); font-size:14px; max-width:280px; line-height:1.6; }
+.footer-col h5{ font-family:var(--font-mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); }
+.footer-col ul{ margin-top:16px; display:flex; flex-direction:column; gap:11px; }
+.footer-col a{ font-size:14.5px; color:var(--ink-soft); transition:color .25s ease; }
+.footer-col a:hover{ color:var(--ink); }
+.footer-bottom{
+  margin-top:56px; padding-top:24px; border-top:1px solid var(--line);
+  display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;
+}
+.footer-bottom p{ font-size:13px; color:var(--ink-faint); }
+.footer-social{ display:flex; gap:12px; }
+.footer-social a{
+  width:36px; height:36px; border-radius:50%; border:1px solid var(--line-strong);
+  display:flex; align-items:center; justify-content:center; color:var(--ink-soft); transition:all .25s ease;
+}
+.footer-social a:hover{ border-color:var(--accent); color:var(--accent-deep); }
+.footer-social svg{ width:15px; height:15px; }
+
+@media (max-width:820px){
+  .footer-grid{ grid-template-columns:1fr 1fr; }
+  .footer-brand{ grid-column:1 / -1; }
+}
+@media (max-width:520px){
+  .footer-grid{ grid-template-columns:1fr; }
+  .section{ padding:76px 0; }
+  .cta-section{ padding:52px 24px; margin:0 16px; }
 }
 </style>
 </head>
 <body>
 
-<!-- =========================================
-     MINIMAL NAVBAR — consistent branding, focused flow
-========================================= -->
-<header class="navbar">
-  <div class="container navbar__inner">
-    <a href="/" class="navbar__logo">Disposable Momment<span class="navbar__logo-dot">.</span></a>
-    <a href="/" class="navbar__back">← Back to home</a>
+<!-- ==================================================
+     NAVBAR
+     ================================================== -->
+<header class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="#top" class="brand">
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#FAF9F6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M8 7l1.4-2.6A1.8 1.8 0 0 1 11 3.4h2a1.8 1.8 0 0 1 1.6 1L16 7"/><circle cx="12" cy="13.5" r="3.6"/></svg>
+      </span>
+      Disposable Momment<span class="brand-dot">.</span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="#how-it-works">How It Works</a>
+      <a href="#features">Features</a>
+      <a href="#use-cases">Events</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <div class="nav-right">
+      <!-- TODO: Connect to Create Event flow -->
+      <a href="#" class="btn btn-primary btn-sm">
+        Create Event
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-inner">
+      <a href="#how-it-works">How It Works</a>
+      <a href="#features">Features</a>
+      <a href="#use-cases">Events</a>
+      <a href="#faq">FAQ</a>
+      <!-- TODO: Connect to Create Event flow -->
+      <a href="#" class="btn btn-primary">
+        Create Event
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
   </div>
 </header>
 
-<main class="page">
-  <div class="container page__inner">
+<main id="top">
 
-    <!-- Global error banner, reused across views -->
-    <div class="banner banner--error" id="globalError" role="alert" hidden>
-      <span class="banner__icon">!</span>
-      <p id="globalErrorText"></p>
+  <!-- ==================================================
+       HERO
+       ================================================== -->
+  <section class="hero">
+    <div class="hero-bg-grain"></div>
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <span class="eyebrow"><span class="dot"></span>No app. No account. Just scan.</span>
+        <h1>Everyone's a photographer.<br>One event. <span class="accent-word">One album.</span></h1>
+        <p class="lede">Turn every guest into a photographer. Share one QR code, capture the moments together, and reveal the memories when the time is right.</p>
+        <div class="hero-cta-row">
+          <!-- TODO: Connect to Create Event flow -->
+          <a href="#" class="btn btn-primary">
+            Create Your Event
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a href="#how-it-works" class="btn btn-ghost">See How It Works</a>
+        </div>
+        <div class="hero-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+          Guests join straight from their phone browser — nothing to install.
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <div class="stage">
+          <span class="stage-badge"><span class="rec-dot"></span> LIVE ALBUM</span>
+          <span class="frame-counter">037 / ROLL</span>
+          <div class="viewfinder-corner tl"></div>
+          <div class="viewfinder-corner tr"></div>
+          <div class="viewfinder-corner bl"></div>
+          <div class="viewfinder-corner br"></div>
+
+          <div class="photo-card pc-1">
+            <div class="frame"><img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=300&q=60&auto=format&fit=crop" alt="Wedding guests dancing"></div>
+            <div class="cap"><span>#014</span><span>SARA</span></div>
+          </div>
+          <div class="photo-card pc-2">
+            <div class="frame"><img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=300&q=60&auto=format&fit=crop" alt="Friends laughing at a party"></div>
+            <div class="cap"><span>#022</span><span>JOY</span></div>
+          </div>
+          <div class="photo-card pc-3">
+            <div class="frame"><img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=300&q=60&auto=format&fit=crop" alt="Birthday celebration"></div>
+            <div class="cap"><span>#031</span><span>RIO</span></div>
+          </div>
+          <div class="photo-card pc-4">
+            <div class="frame"><img src="https://images.unsplash.com/photo-1529636798458-92182e662485?w=300&q=60&auto=format&fit=crop" alt="Group photo at a gathering"></div>
+            <div class="cap"><span>#036</span><span>MEI</span></div>
+          </div>
+
+          <div class="filmstrip">
+            <div class="sprocket-row" id="sprocketRow"></div>
+          </div>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <!-- =========================================
-         VIEW 1 — CREATE EVENT FORM
-    ========================================= -->
-    <section class="view is-active" id="view-form" data-view>
-      <p class="eyebrow eyebrow--mono">FRAME 001 / NEW EVENT</p>
-      <h1 class="page__title">Create Your Event</h1>
-      <p class="page__subtitle">Set up your event and start collecting memories.</p>
-
-      <form id="eventForm" class="event-form" novalidate>
-
-        <div class="field-group">
-          <label for="eventName">Event Name</label>
-          <input type="text" id="eventName" name="eventName" placeholder="Sarah &amp; Fahral Wedding" autocomplete="off">
-          <p class="field-error" id="err-eventName" aria-live="polite"></p>
-        </div>
-
-        <div class="field-row">
-          <div class="field-group">
-            <label for="hostName">Host Name</label>
-            <input type="text" id="hostName" name="hostName" placeholder="Fahral" autocomplete="name">
-            <p class="field-error" id="err-hostName" aria-live="polite"></p>
-          </div>
-
-          <div class="field-group">
-            <label for="hostEmail">Host Email</label>
-            <input type="email" id="hostEmail" name="hostEmail" placeholder="you@example.com" autocomplete="email" inputmode="email">
-            <p class="field-error" id="err-hostEmail" aria-live="polite"></p>
-          </div>
-        </div>
-
-        <div class="field-group">
-          <label for="eventDate">Event Date</label>
-          <input type="date" id="eventDate" name="eventDate">
-          <p class="field-error" id="err-eventDate" aria-live="polite"></p>
-        </div>
-
-        <div class="field-row">
-          <div class="field-group">
-            <label for="startTime">Event Start Time</label>
-            <input type="time" id="startTime" name="startTime">
-            <p class="field-error" id="err-startTime" aria-live="polite"></p>
-          </div>
-
-          <div class="field-group">
-            <label for="endTime">Event End Time</label>
-            <input type="time" id="endTime" name="endTime">
-            <p class="field-error" id="err-endTime" aria-live="polite"></p>
-          </div>
-        </div>
-
-        <div class="field-group field-group--narrow">
-          <label for="photoLimit">Photo Limit Per Guest</label>
-          <input type="number" id="photoLimit" name="photoLimit" value="15" min="1" step="1">
-          <p class="field-error" id="err-photoLimit" aria-live="polite"></p>
-        </div>
-
-        <fieldset class="field-group">
-          <legend>Photo Reveal</legend>
-
-          <div class="radio-group">
-            <label class="radio-option">
-              <input type="radio" name="revealMode" value="immediately">
-              <span class="radio-option__dot"></span>
-              <span class="radio-option__label">
-                <strong>Immediately</strong>
-                <small>Guests see photos as they're taken.</small>
-              </span>
-            </label>
-
-            <label class="radio-option">
-              <input type="radio" name="revealMode" value="after-event" checked>
-              <span class="radio-option__dot"></span>
-              <span class="radio-option__label">
-                <strong>After Event</strong>
-                <small>Album unlocks once the event ends.</small>
-              </span>
-            </label>
-
-            <label class="radio-option">
-              <input type="radio" name="revealMode" value="custom">
-              <span class="radio-option__dot"></span>
-              <span class="radio-option__label">
-                <strong>Custom Time</strong>
-                <small>Pick your own reveal date and time.</small>
-              </span>
-            </label>
-          </div>
-          <p class="field-error" id="err-revealMode" aria-live="polite"></p>
-        </fieldset>
-
-        <div class="field-row field-custom-reveal" id="customRevealFields" hidden>
-          <div class="field-group">
-            <label for="revealDate">Reveal Date</label>
-            <input type="date" id="revealDate" name="revealDate">
-            <p class="field-error" id="err-revealDate" aria-live="polite"></p>
-          </div>
-
-          <div class="field-group">
-            <label for="revealTime">Reveal Time</label>
-            <input type="time" id="revealTime" name="revealTime">
-            <p class="field-error" id="err-revealTime" aria-live="polite"></p>
-          </div>
-        </div>
-
-        <button type="submit" class="btn btn--primary btn--lg btn--block" id="submitBtn">
-          <span class="btn__label">Create Event</span>
-          <span class="btn__spinner" hidden></span>
-        </button>
-
-        <p class="event-form__note">We'll email you a secure link — no password to remember.</p>
-      </form>
-    </section>
-
-    <!-- =========================================
-         VIEW 2 — CHECK YOUR EMAIL
-    ========================================= -->
-    <section class="view" id="view-check-email" data-view>
-      <div class="status-block">
-        <div class="status-block__icon status-block__icon--mail" aria-hidden="true"></div>
-        <p class="eyebrow eyebrow--mono">FRAME 002 / VERIFY</p>
-        <h1 class="page__title">Check your email</h1>
-        <p class="page__subtitle">Your magic link is on its way.</p>
-
-        <p class="status-block__text">
-          Open the email we sent to<br>
-          <strong id="sentToEmail" class="status-block__email"></strong>
-        </p>
-        <p class="status-block__text status-block__text--muted">
-          Click the link to continue creating your event.
-        </p>
-
-        <button type="button" class="btn btn--ghost" id="resendBtn">Resend link</button>
-        <p class="status-block__resend-note" id="resendNote"></p>
-
-        <button type="button" class="link-btn" id="useAnotherEmailBtn">Use a different email</button>
+  <!-- ==================================================
+       SOCIAL PROOF / SIMPLE STATEMENT
+       ================================================== -->
+  <section class="proof reveal">
+    <div class="container proof-inner">
+      <h3>Made for moments worth remembering.</h3>
+      <div class="proof-tags">
+        <span class="proof-tag">Weddings</span>
+        <span class="proof-tag">Birthdays</span>
+        <span class="proof-tag">Parties</span>
+        <span class="proof-tag">Graduations</span>
+        <span class="proof-tag">Gatherings</span>
+        <span class="proof-tag">Corporate Events</span>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- =========================================
-         VIEW 3 — CONFIRM EMAIL (opened on a different device)
-    ========================================= -->
-    <section class="view" id="view-confirm-email" data-view>
-      <div class="status-block">
-        <p class="eyebrow eyebrow--mono">FRAME 002 / VERIFY</p>
-        <h1 class="page__title">Confirm your email</h1>
-        <p class="page__subtitle">
-          This link was opened on a different device or browser. Enter the email you used to request it.
-        </p>
+  <!-- ==================================================
+       HOW IT WORKS
+       ================================================== -->
+  <section class="section" id="how-it-works">
+    <div class="container">
+      <div class="steps-head reveal">
+        <div class="section-head">
+          <span class="eyebrow"><span class="dot"></span>How it works</span>
+          <h2>One QR. Everyone captures.</h2>
+        </div>
+      </div>
 
-        <form id="confirmEmailForm" class="event-form event-form--narrow" novalidate>
-          <div class="field-group">
-            <label for="confirmEmail">Email</label>
-            <input type="email" id="confirmEmail" name="confirmEmail" placeholder="you@example.com" autocomplete="email" inputmode="email">
-            <p class="field-error" id="err-confirmEmail" aria-live="polite"></p>
+      <div class="steps-grid reveal-stagger">
+        <div class="step-card">
+          <div class="step-connector"></div>
+          <span class="step-num">STEP 01</span>
+          <div class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
           </div>
+          <h3>Create Your Event</h3>
+          <p>Create an event in seconds and customize when your photo album opens.</p>
+        </div>
 
-          <button type="submit" class="btn btn--primary btn--lg btn--block">
-            <span class="btn__label">Continue</span>
+        <div class="step-card">
+          <div class="step-connector"></div>
+          <span class="step-num">STEP 02</span>
+          <div class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v3M14 20h3"/></svg>
+          </div>
+          <h3>Share One QR Code</h3>
+          <p>Put the QR code on tables, invitations, screens, or anywhere your guests can see it.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-connector"></div>
+          <span class="step-num">STEP 03</span>
+          <div class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M8 7l1.4-2.6A1.8 1.8 0 0 1 11 3.4h2a1.8 1.8 0 0 1 1.6 1L16 7"/><circle cx="12" cy="13.5" r="3.6"/></svg>
+          </div>
+          <h3>Let Guests Capture</h3>
+          <p>Guests scan, enter their name, and start taking photos directly from their phone. No app. No account. No hassle.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-connector"></div>
+          <span class="step-num">STEP 04</span>
+          <div class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <h3>Reveal the Memories</h3>
+          <p>Photos stay hidden until your chosen reveal time. Then everyone can experience the album together.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================
+       FEATURES
+       ================================================== -->
+  <section class="section features-bg" id="features">
+    <div class="container">
+      <div class="section-head center reveal" style="margin:0 auto;">
+        <span class="eyebrow"><span class="dot"></span>Features</span>
+        <h2>Everything you need for a shared photo experience.</h2>
+      </div>
+
+      <div class="features-grid reveal-stagger">
+        <div class="feature-card">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-9.33-5"/><path d="M4 6l3 3-3 3"/><path d="M2 15a6 6 0 0 0 9.33 5"/><path d="M20 18l-3-3 3-3"/></svg></div>
+          <h4>No App Required</h4>
+          <p>Guests simply scan and start shooting from their browser.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2.5"/><path d="M3 9h18M8 4v14"/></svg></div>
+          <h4>One Shared Album</h4>
+          <p>Every guest contributes to the same event album.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2.5"/><circle cx="12" cy="13.5" r="3.6"/><path d="M7 7l1-3h8l1 3"/></svg></div>
+          <h4>Custom Photo Limits</h4>
+          <p>Control how many photos each guest can take.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>
+          <h4>Scheduled Reveal</h4>
+          <p>Keep photos hidden until the moment you choose.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><path d="M14 15h2.5v2.5M14 20.5h2M20.5 15v2M20.5 20.5h-2"/></svg></div>
+          <h4>QR Code Ready</h4>
+          <p>Generate a unique QR code for every event.</p>
+        </div>
+        <div class="feature-icon"></div>
+        <div class="feature-card" style="margin-top:-64px;">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg></div>
+          <h4>Mobile Camera</h4>
+          <p>Designed specifically for smartphone cameras.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14l4-4 3 3 5-6 4 4"/><path d="M4 20h16"/></svg></div>
+          <h4>Photo Compression</h4>
+          <p>Automatically optimize photos before uploading to reduce storage usage.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="7" height="7" rx="1.5"/><rect x="14" y="5" width="7" height="7" rx="1.5"/><rect x="3" y="16" width="7" height="7" rx="1.5"/><rect x="14" y="16" width="7" height="7" rx="1.5"/></svg></div>
+          <h4>Easy Gallery</h4>
+          <p>Browse all event memories in one beautiful gallery.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================
+       PRODUCT SHOWCASE
+       ================================================== -->
+  <section class="section-tight">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow"><span class="dot"></span>Guest experience</span>
+        <h2>From scan to snapshot in four screens.</h2>
+        <p>This is what your guests see — no downloads, no friction, just a camera and a countdown.</p>
+      </div>
+
+      <div class="showcase-strip reveal">
+        <div class="phone">
+          <div class="phone-frame">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="scr-welcome">
+                <div class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4L12 20l-3-7-7-3z"/></svg></div>
+                <h5>Sarah &amp; Fahral</h5>
+                <p>Welcome to our wedding</p>
+                <div class="scr-btn">Enter Event</div>
+              </div>
+            </div>
+          </div>
+          <p class="phone-label">01 — Event Welcome</p>
+        </div>
+
+        <div class="phone">
+          <div class="phone-frame">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="scr-name">
+                <span class="q">GUEST NAME</span>
+                <h5>What's your name?</h5>
+                <div class="scr-input filled">Fahral</div>
+                <div class="scr-btn" style="align-self:flex-start;">Continue</div>
+              </div>
+            </div>
+          </div>
+          <p class="phone-label">02 — Guest Name</p>
+        </div>
+
+        <div class="phone">
+          <div class="phone-frame">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="scr-camera">
+                <div class="top-bar"><span>● REC</span><span>12 / 15 PHOTOS</span></div>
+                <div class="viewport"></div>
+                <div class="shutter-wrap"><div class="shutter"></div></div>
+              </div>
+            </div>
+          </div>
+          <p class="phone-label">03 — Camera</p>
+        </div>
+
+        <div class="phone">
+          <div class="phone-frame">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="scr-captured">
+                <div class="flash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+                <h5>Captured!</h5>
+                <p>Your memory has been added to the roll.</p>
+              </div>
+            </div>
+          </div>
+          <p class="phone-label">04 — Photo Captured</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================
+       REVEAL SECTION (signature element)
+       ================================================== -->
+  <section class="reveal-section">
+    <div class="container reveal-grid">
+      <div class="reveal-copy reveal">
+        <span class="eyebrow"><span class="dot"></span>The reveal</span>
+        <h2>Some memories are better when you wait.</h2>
+        <p>Keep everyone's photos hidden during the event and reveal the complete album when the celebration is over.</p>
+      </div>
+
+      <div class="roll-device reveal" id="rollDevice">
+        <div class="roll-top">
+          <span class="tag">Photo Roll</span>
+          <span class="status"><span class="blink"></span> Developing…</span>
+        </div>
+        <div class="roll-track">
+          <div class="sprockets">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="fill" id="rollFill"></div>
+        </div>
+        <p class="roll-caption">86 photos captured · album locked until reveal</p>
+
+        <div class="countdown">
+          <div class="unit"><div class="num" id="cdH">01</div><div class="lbl">Hours</div></div>
+          <div class="unit"><div class="num" id="cdM">24</div><div class="lbl">Minutes</div></div>
+          <div class="unit"><div class="num" id="cdS">36</div><div class="lbl">Seconds</div></div>
+        </div>
+
+        <p class="roll-footnote">"Your memories will be revealed after the party." — demo preview only</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================
+       USE CASES
+       ================================================== -->
+  <section class="section" id="use-cases">
+    <div class="container">
+      <div class="section-head center reveal" style="margin:0 auto;">
+        <span class="eyebrow"><span class="dot"></span>Use cases</span>
+        <h2>Made for every kind of celebration.</h2>
+      </div>
+
+      <div class="usecase-grid reveal-stagger">
+        <div class="usecase-card uc-1">
+          <div class="bg"></div>
+          <div>
+            <div class="label">Weddings</div>
+            <div class="tagline">Every table, every toast, every guest</div>
+          </div>
+        </div>
+        <div class="usecase-card uc-2">
+          <div class="bg"></div>
+          <div>
+            <div class="label">Birthdays</div>
+            <div class="tagline">Candles, cake, and candid chaos</div>
+          </div>
+        </div>
+        <div class="usecase-card uc-3">
+          <div class="bg"></div>
+          <div>
+            <div class="label">Graduations</div>
+            <div class="tagline">Caps in the air, memories on the roll</div>
+          </div>
+        </div>
+        <div class="usecase-card uc-4">
+          <div class="bg"></div>
+          <div>
+            <div class="label">Parties</div>
+            <div class="tagline">Let the whole crowd shoot the night</div>
+          </div>
+        </div>
+        <div class="usecase-card uc-5">
+          <div class="bg"></div>
+          <div>
+            <div class="label">Family Gatherings</div>
+            <div class="tagline">One album, every generation</div>
+          </div>
+        </div>
+        <div class="usecase-card uc-6">
+          <div class="bg"></div>
+          <div>
+            <div class="label">Corporate Events</div>
+            <div class="tagline">A shared record of the room</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================
+       CTA SECTION
+       ================================================== -->
+  <section class="section-tight">
+    <div class="cta-section reveal">
+      <div class="cta-inner">
+        <h2>Ready to create your event album?</h2>
+        <p class="sub">Give your guests a camera. Let them create the memories.</p>
+        <!-- TODO: Connect to Create Event flow -->
+        <a href="#" class="btn btn-primary">
+          Create Your Event
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <p class="fine">No app. No complicated setup.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================
+       FAQ
+       ================================================== -->
+  <section class="section" id="faq">
+    <div class="container">
+      <div class="section-head center reveal" style="margin:0 auto;">
+        <span class="eyebrow"><span class="dot"></span>FAQ</span>
+        <h2>Questions, answered.</h2>
+      </div>
+
+      <div class="faq-list reveal" id="faqList">
+        <div class="faq-item open">
+          <button class="faq-q" aria-expanded="true">
+            Do guests need to install an app?
+            <span class="plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14" class="v"/></svg></span>
           </button>
-        </form>
-      </div>
-    </section>
-
-    <!-- =========================================
-         VIEW 4 — VERIFYING / CREATING EVENT
-    ========================================= -->
-    <section class="view" id="view-verifying" data-view>
-      <div class="status-block">
-        <div class="loading-spinner" aria-hidden="true"></div>
-        <p class="status-block__text" id="verifyingText">Verifying your link…</p>
-      </div>
-    </section>
-
-    <!-- =========================================
-         VIEW 5 — EVENT CREATED
-    ========================================= -->
-    <section class="view" id="view-success" data-view>
-      <div class="status-block status-block--wide">
-        <div class="status-block__icon status-block__icon--check" aria-hidden="true">✓</div>
-        <p class="eyebrow eyebrow--mono">FRAME 003 / READY</p>
-        <h1 class="page__title">Your event is ready!</h1>
-        <p class="page__subtitle">Your event has been created successfully.</p>
-
-        <div class="success-card">
-          <p class="success-card__label">Event Name</p>
-          <p class="success-card__event-name" id="successEventName"></p>
-
-          <p class="success-card__label success-card__label--spaced">Guest Link</p>
-          <div class="success-card__link-row">
-            <code class="success-card__link" id="successGuestLink"></code>
-            <button type="button" class="btn btn--ghost btn--sm" id="copyLinkBtn">Copy</button>
-          </div>
-
-          <div class="qr-placeholder" id="qrPlaceholder">
-            <span>QR code will appear here</span>
-            <!-- TODO: replace with a real generated QR code once the QR feature is built -->
-          </div>
+          <div class="faq-a"><div class="faq-a-inner">No. Guests can access the event directly from their mobile browser.</div></div>
         </div>
 
-        <div class="success-actions">
-          <a href="#" class="btn btn--primary btn--lg" id="openGuestPageBtn">Open Guest Page</a>
-          <a href="#" class="btn btn--ghost btn--lg" id="goToManagementBtn">Go to Event Management</a>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            Do guests need an account?
+            <span class="plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14" class="v"/></svg></span>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">No. Guests do not need an account.</div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            How do guests join an event?
+            <span class="plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14" class="v"/></svg></span>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">They scan the event's unique QR code or open its event link.</div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            Can I control when photos are revealed?
+            <span class="plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14" class="v"/></svg></span>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">Yes. The platform is designed around a scheduled reveal experience.</div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            Can guests use their phone camera?
+            <span class="plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14" class="v"/></svg></span>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">Yes. The guest experience is optimized for smartphone cameras.</div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            Do hosts need an account?
+            <span class="plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14" class="v"/></svg></span>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">No traditional account or password is required. Hosts will eventually access event management through a secure email Magic Link.</div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            Is it free?
+            <span class="plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14" class="v"/></svg></span>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">The goal of this project is to build a free-to-use version of the platform.</div></div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-  </div>
+  <!-- ==================================================
+       FINAL CTA
+       ================================================== -->
+  <section class="final-cta reveal">
+    <div class="container">
+      <h2><span>Your event.</span><span class="a2">Everyone's memories.</span></h2>
+      <!-- TODO: Connect to Create Event flow -->
+      <a href="#" class="btn btn-primary">
+        Create Your Event
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </section>
+
 </main>
 
-<footer class="footer footer--compact">
+<!-- ==================================================
+     FOOTER
+     ================================================== -->
+<footer>
   <div class="container">
-    <p class="footer__copyright">© 2026 Disposable Momment. All rights reserved.</p>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#top" class="brand">
+          <span class="brand-mark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#FAF9F6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M8 7l1.4-2.6A1.8 1.8 0 0 1 11 3.4h2a1.8 1.8 0 0 1 1.6 1L16 7"/><circle cx="12" cy="13.5" r="3.6"/></svg>
+          </span>
+          Disposable Momment<span class="brand-dot">.</span>
+        </a>
+        <p>A simple way to collect everyone's moments in one place.</p>
+      </div>
+
+      <div class="footer-col">
+        <h5>Product</h5>
+        <ul>
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Legal</h5>
+        <ul>
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Terms</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 Disposable Momment. All rights reserved.</p>
+      <div class="footer-social">
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+        <a href="#" aria-label="Twitter/X"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4l16 16M20 4L4 20"/></svg></a>
+      </div>
+    </div>
   </div>
 </footer>
 
 <script>
-/* ==========================================================================
-   ROLLA — Landing page interactions
-   Vanilla JS only. No dependencies.
-   ========================================================================== */
+/* ==================================================
+   NAVBAR: scroll shadow + mobile menu toggle
+   ================================================== */
+(function(){
+  var navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', function(){
+    navbar.classList.toggle('scrolled', window.scrollY > 8);
+  }, { passive:true });
 
-document.addEventListener('DOMContentLoaded', () => {
-  initIcons();
-  initMobileNav();
-  initScrollAnimations();
-  initFaqAccordion();
-  initDevelopTimer();
-});
-
-/* --------------------------------------------------------------------------
-   Icons — small inline SVG set, injected by [data-icon] name.
-   Avoids depending on an external icon CDN.
-   -------------------------------------------------------------------------- */
-function initIcons() {
-  const ICONS = {
-    'calendar-plus': '<path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="M12 14v6M9 17h6"/>',
-    'qr-code': '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM19 14h2v2h-2zM14 19h2v2h-2zM19 19h2v2h-2z"/>',
-    'camera': '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"/><circle cx="12" cy="13" r="4"/>',
-    'sparkles': '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/>',
-    'smartphone': '<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/>',
-    'images': '<rect x="3" y="6" width="14" height="14" rx="2"/><path d="M7 2h14v14"/><circle cx="9" cy="12" r="1.5"/><path d="M4 17l3-3 2 2 4-4 4 4"/>',
-    'sliders-horizontal': '<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h13M21 18h0"/><circle cx="14.5" cy="6" r="2"/><circle cx="7.5" cy="12" r="2"/><circle cx="16.5" cy="18" r="2"/>',
-    'clock': '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>',
-    'zap': '<path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/>',
-    'layout-grid': '<rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/>',
-  };
-
-  document.querySelectorAll('[data-icon]').forEach((el) => {
-    const name = el.getAttribute('data-icon');
-    const paths = ICONS[name];
-    if (!paths) return;
-    el.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="100%" height="100%">${paths}</svg>`;
+  var hamburger = document.getElementById('hamburger');
+  var mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', function(){
+    var isOpen = mobileMenu.classList.toggle('open');
+    hamburger.classList.toggle('open', isOpen);
+    hamburger.setAttribute('aria-expanded', isOpen);
   });
-}
-
-/* --------------------------------------------------------------------------
-   Mobile navbar toggle
-   -------------------------------------------------------------------------- */
-function initMobileNav() {
-  const toggle = document.getElementById('navbarToggle');
-  const mobile = document.getElementById('navbarMobile');
-  if (!toggle || !mobile) return;
-
-  toggle.addEventListener('click', () => {
-    const isOpen = mobile.classList.toggle('is-open');
-    toggle.setAttribute('aria-expanded', String(isOpen));
-  });
-
-  // Close mobile menu when a link is tapped
-  mobile.querySelectorAll('a').forEach((link) => {
-    link.addEventListener('click', () => {
-      mobile.classList.remove('is-open');
-      toggle.setAttribute('aria-expanded', 'false');
+  mobileMenu.querySelectorAll('a').forEach(function(link){
+    link.addEventListener('click', function(){
+      mobileMenu.classList.remove('open');
+      hamburger.classList.remove('open');
+      hamburger.setAttribute('aria-expanded','false');
     });
   });
-}
+})();
 
-/* --------------------------------------------------------------------------
-   Scroll-triggered fade-up animation via IntersectionObserver
-   -------------------------------------------------------------------------- */
-function initScrollAnimations() {
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const targets = document.querySelectorAll('[data-animate="fade-up"]');
+/* ==================================================
+   SCROLL REVEAL: IntersectionObserver fade-up
+   ================================================== */
+(function(){
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var targets = document.querySelectorAll('.reveal, .reveal-stagger');
 
-  if (prefersReducedMotion || !('IntersectionObserver' in window)) {
-    targets.forEach((el) => el.classList.add('is-visible'));
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    targets.forEach(function(el){ el.classList.add('is-visible'); });
     return;
   }
 
-  targets.forEach((el) => {
-    const delay = el.getAttribute('data-delay');
-    if (delay) el.style.transitionDelay = `${delay}ms`;
-  });
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold:0.15, rootMargin:'0px 0px -40px 0px' });
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target);
-        }
+  targets.forEach(function(el){ observer.observe(el); });
+})();
+
+/* ==================================================
+   HERO FILMSTRIP: generate sprocket holes responsively
+   ================================================== */
+(function(){
+  var row = document.getElementById('sprocketRow');
+  if (!row) return;
+  var count = 40;
+  for (var i = 0; i < count; i++) {
+    var s = document.createElement('span');
+    s.className = 'sprocket';
+    row.appendChild(s);
+  }
+})();
+
+/* ==================================================
+   REVEAL SECTION: demo-only developing bar + countdown
+   (visual simulation only — not connected to any backend)
+   ================================================== */
+(function(){
+  var fill = document.getElementById('rollFill');
+  var device = document.getElementById('rollDevice');
+  var cdH = document.getElementById('cdH');
+  var cdM = document.getElementById('cdM');
+  var cdS = document.getElementById('cdS');
+  if (!fill || !device) return;
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var started = false;
+
+  function pad(n){ return String(n).padStart(2,'0'); }
+
+  function runDemo(){
+    if (started) return;
+    started = true;
+
+    // developing bar fill
+    requestAnimationFrame(function(){ fill.style.width = '64%'; });
+
+    if (reduceMotion) return;
+
+    // fixed demo countdown starting at 01:24:36, ticking down for effect only
+    var total = 1*3600 + 24*60 + 36;
+    var tick = setInterval(function(){
+      total -= 1;
+      if (total <= 0) { clearInterval(tick); total = 0; }
+      var h = Math.floor(total/3600);
+      var m = Math.floor((total%3600)/60);
+      var s = total%60;
+      cdH.textContent = pad(h);
+      cdM.textContent = pad(m);
+      cdS.textContent = pad(s);
+    }, 1000);
+  }
+
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) { runDemo(); obs.disconnect(); }
       });
-    },
-    { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
-  );
+    }, { threshold:0.3 });
+    obs.observe(device);
+  } else {
+    runDemo();
+  }
+})();
 
-  targets.forEach((el) => observer.observe(el));
-}
-
-/* --------------------------------------------------------------------------
-   FAQ accordion
-   -------------------------------------------------------------------------- */
-function initFaqAccordion() {
-  const items = document.querySelectorAll('.faq-item');
-
-  items.forEach((item) => {
-    const question = item.querySelector('.faq-item__question');
-    const answer = item.querySelector('.faq-item__answer');
-
-    question.addEventListener('click', () => {
-      const isOpen = item.classList.contains('is-open');
-
-      // Close all other items (single-open accordion)
-      items.forEach((other) => {
-        other.classList.remove('is-open');
-        other.querySelector('.faq-item__question').setAttribute('aria-expanded', 'false');
-        other.querySelector('.faq-item__answer').style.maxHeight = null;
+/* ==================================================
+   FAQ ACCORDION
+   ================================================== */
+(function(){
+  var items = document.querySelectorAll('.faq-item');
+  items.forEach(function(item){
+    var btn = item.querySelector('.faq-q');
+    btn.addEventListener('click', function(){
+      var isOpen = item.classList.contains('open');
+      items.forEach(function(other){
+        other.classList.remove('open');
+        other.querySelector('.faq-q').setAttribute('aria-expanded','false');
       });
-
       if (!isOpen) {
-        item.classList.add('is-open');
-        question.setAttribute('aria-expanded', 'true');
-        answer.style.maxHeight = `${answer.scrollHeight}px`;
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded','true');
       }
     });
   });
-}
-
-/* --------------------------------------------------------------------------
-   Reveal-section countdown display
-   Purely decorative front-end demo — not wired to a real event time yet.
-   TODO: connect to the actual event's scheduled reveal timestamp.
-   -------------------------------------------------------------------------- */
-function initDevelopTimer() {
-  const timerEl = document.getElementById('developTimer');
-  if (!timerEl) return;
-
-  let totalSeconds = 1 * 3600 + 24 * 60 + 36; // 01:24:36 starting point
-
-  setInterval(() => {
-    if (totalSeconds <= 0) {
-      totalSeconds = 1 * 3600 + 24 * 60 + 36; // loop for demo purposes
-    }
-    totalSeconds -= 1;
-
-    const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
-    const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
-    const s = String(totalSeconds % 60).padStart(2, '0');
-
-    timerEl.textContent = `${h} : ${m} : ${s}`;
-  }, 1000);
-}
+})();
 </script>
-
-<!-- Firebase tetap terpisah di firebase.js dan diimpor sebagai module di sini. -->
-<script type="module" src="firebase.js"></script>
 
 </body>
 </html>
