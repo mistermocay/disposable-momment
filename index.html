@@ -634,22 +634,60 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 }
 
 /* ==================================================
-   CREATE EVENT FLOW
+   CREATE EVENT MODAL
    ================================================== */
 
 #createEventView {
-  display: none;
-  min-height: 100vh;
-  background: var(--bg);
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background: rgba(17, 17, 17, 0.58);
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transition:
+    opacity .3s ease,
+    visibility .3s ease;
 }
 
 #createEventView.is-active {
-  display: block;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .create-event-page {
-  min-height: 100vh;
-  padding: 42px 24px 80px;
+  width: 100%;
+  max-width: 700px;
+  max-height: calc(100vh - 48px);
+
+  padding: 0;
+
+  overflow-y: auto;
+
+  transform: translateY(20px) scale(.98);
+  opacity: 0;
+
+  transition:
+    transform .35s var(--ease),
+    opacity .3s ease;
+}
+
+#createEventView.is-active .create-event-page {
+  transform: translateY(0) scale(1);
+  opacity: 1;
 }
 
 .create-event-container {
@@ -676,7 +714,19 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 
 .create-event-header {
   text-align: center;
-  margin-bottom: 42px;
+  margin-bottom: 22px;
+}
+
+.create-event-header h1 {
+  font-size: clamp(28px, 5vw, 42px);
+  line-height: 1.08;
+}
+
+.create-event-header p {
+  max-width: 500px;
+  margin: 12px auto 0;
+  color: var(--ink-soft);
+  font-size: 14.5px;
 }
 
 .create-event-header .eyebrow {
@@ -696,11 +746,53 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 }
 
 .create-event-card {
+  position: relative;
+
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
+
   padding: 32px;
-  box-shadow: var(--shadow-soft);
+
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, .25);
+}
+
+.create-event-close {
+  position: absolute;
+
+  top: 18px;
+  right: 18px;
+
+  width: 38px;
+  height: 38px;
+
+  border: 1px solid var(--line);
+  border-radius: 50%;
+
+  background: var(--bg);
+
+  color: var(--ink-soft);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 24px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background .25s ease,
+    color .25s ease,
+    transform .25s ease;
+}
+
+.create-event-close:hover {
+  background: var(--ink);
+  color: #fff;
+  transform: rotate(90deg);
 }
 
 .create-form {
@@ -871,13 +963,31 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 }
 
 @media (max-width: 600px) {
+
+  #createEventView {
+    padding: 12px;
+    align-items: center;
+  }
+
   .create-event-page {
-    padding: 28px 16px 60px;
+    max-height: calc(100vh - 24px);
   }
 
   .create-event-card {
-    padding: 22px 18px;
-    border-radius: 22px;
+    padding: 24px 18px 22px;
+    border-radius: 24px;
+  }
+
+  .create-event-header {
+    padding-right: 20px;
+  }
+
+  .create-event-header h1 {
+    font-size: 30px;
+  }
+
+  .create-event-header p {
+    font-size: 14px;
   }
 
   .form-row {
@@ -887,6 +997,7 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
   .custom-reveal {
     grid-template-columns: 1fr;
   }
+
 }
 
 </style>
@@ -1409,11 +1520,45 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 
     <div class="create-event-container">
 
-      <a href="#top" class="create-event-back" id="backToLanding">
-        ← Back to home
-      </a>
+      <div class="create-event-card">
 
-      <div class="create-event-header">
+        <button
+          type="button"
+          class="create-event-close"
+          id="backToLanding"
+          aria-label="Close create event"
+        >
+          ×
+        </button>
+
+        <div class="create-event-header">
+
+          <span class="eyebrow">
+            <span class="dot"></span>
+            Create your event
+          </span>
+
+          <h1>
+            Set the stage<br>
+            for your memories.
+          </h1>
+
+          <p>
+            Create your event in seconds, then invite everyone
+            with one simple QR code.
+          </p>
+
+        </div>
+
+        <!-- FORM DI SINI -->
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
 
         <span class="eyebrow">
           <span class="dot"></span>
@@ -1948,21 +2093,20 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 const createEventView = document.getElementById("createEventView");
 
 function openCreateEvent() {
+
   createEventView.classList.add("is-active");
 
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
+  document.body.style.overflow = "hidden";
+
 }
 
+
 function closeCreateEvent() {
+
   createEventView.classList.remove("is-active");
 
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
+  document.body.style.overflow = "";
+
 }
 
 
@@ -2334,8 +2478,22 @@ createEventForm.addEventListener(
     );
 
   }
+createEventView.addEventListener("click", function(event) {
+
+  if (event.target === createEventView) {
+    closeCreateEvent();
+  }
+
+document.addEventListener("keydown", function(event) {
+
+  if (
+    event.key === "Escape" &&
+    createEventView.classList.contains("is-active")
+  ) {
+    closeCreateEvent();
+  }
 );
-  
+
 </script>
 
 </body>
