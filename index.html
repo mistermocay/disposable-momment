@@ -632,8 +632,267 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
   .section{ padding:76px 0; }
   .cta-section{ padding:52px 24px; margin:0 16px; }
 }
+
+/* ==================================================
+   CREATE EVENT FLOW
+   ================================================== */
+
+#createEventView {
+  display: none;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+#createEventView.is-active {
+  display: block;
+}
+
+.create-event-page {
+  min-height: 100vh;
+  padding: 42px 24px 80px;
+}
+
+.create-event-container {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.create-event-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-soft);
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 42px;
+  transition: color .25s ease, transform .25s ease;
+}
+
+.create-event-back:hover {
+  color: var(--ink);
+  transform: translateX(-3px);
+}
+
+.create-event-header {
+  text-align: center;
+  margin-bottom: 42px;
+}
+
+.create-event-header .eyebrow {
+  margin-bottom: 16px;
+}
+
+.create-event-header h1 {
+  font-size: clamp(34px, 5vw, 48px);
+  line-height: 1.08;
+}
+
+.create-event-header p {
+  max-width: 500px;
+  margin: 16px auto 0;
+  color: var(--ink-soft);
+  font-size: 16px;
+}
+
+.create-event-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-soft);
+}
+
+.create-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.form-hint {
+  color: var(--ink-faint);
+  font-size: 12.5px;
+}
+
+.form-input {
+  width: 100%;
+  height: 52px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 14px;
+  background: var(--bg);
+  color: var(--ink);
+  padding: 0 15px;
+  font: inherit;
+  font-size: 15px;
+  outline: none;
+  transition:
+    border-color .25s ease,
+    box-shadow .25s ease,
+    background .25s ease;
+}
+
+.form-input:focus {
+  border-color: var(--accent);
+  background: #fff;
+  box-shadow: 0 0 0 4px var(--accent-wash);
+}
+
+.form-input::placeholder {
+  color: var(--ink-faint);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.reveal-options {
+  display: grid;
+  gap: 10px;
+}
+
+.reveal-option {
+  position: relative;
+}
+
+.reveal-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.reveal-option label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 14px;
+  cursor: pointer;
+  transition:
+    border-color .25s ease,
+    background .25s ease,
+    box-shadow .25s ease;
+}
+
+.reveal-option label:hover {
+  border-color: var(--ink);
+}
+
+.reveal-option input:checked + label {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+  box-shadow: 0 0 0 3px rgba(225,91,39,.08);
+}
+
+.reveal-radio {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.reveal-option input:checked + label .reveal-radio {
+  border-color: var(--accent);
+}
+
+.reveal-option input:checked + label .reveal-radio::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.reveal-option strong {
+  display: block;
+  font-size: 14px;
+}
+
+.reveal-option span {
+  display: block;
+  margin-top: 2px;
+  color: var(--ink-soft);
+  font-size: 12.5px;
+}
+
+.custom-reveal {
+  display: none;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.custom-reveal.is-visible {
+  display: grid;
+}
+
+.form-error {
+  display: none;
+  color: var(--accent-deep);
+  font-size: 12.5px;
+}
+
+.form-field.has-error .form-input {
+  border-color: var(--accent-deep);
+}
+
+.form-field.has-error .form-error {
+  display: block;
+}
+
+.create-submit {
+  width: 100%;
+  min-height: 54px;
+  margin-top: 4px;
+}
+
+.create-event-note {
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: 12.5px;
+  margin-top: 18px;
+}
+
+@media (max-width: 600px) {
+  .create-event-page {
+    padding: 28px 16px 60px;
+  }
+
+  .create-event-card {
+    padding: 22px 18px;
+    border-radius: 22px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .custom-reveal {
+    grid-template-columns: 1fr;
+  }
+}
+
 </style>
 </head>
+
+
 <body>
 
 <!-- ==================================================
@@ -1141,6 +1400,359 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 </main>
 
 <!-- ==================================================
+     CREATE EVENT VIEW
+     ================================================== -->
+
+<section id="createEventView">
+
+  <div class="create-event-page">
+
+    <div class="create-event-container">
+
+      <a href="#top" class="create-event-back" id="backToLanding">
+        ← Back to home
+      </a>
+
+      <div class="create-event-header">
+
+        <span class="eyebrow">
+          <span class="dot"></span>
+          Create your event
+        </span>
+
+        <h1>
+          Set the stage<br>
+          for your memories.
+        </h1>
+
+        <p>
+          Create your event in seconds, then invite everyone
+          with one simple QR code.
+        </p>
+
+      </div>
+
+      <div class="create-event-card">
+
+        <form id="createEventForm" class="create-form">
+
+          <!-- EVENT NAME -->
+
+          <div class="form-field" data-field="eventName">
+
+            <label class="form-label" for="eventName">
+              Event Name
+            </label>
+
+            <input
+              id="eventName"
+              name="eventName"
+              class="form-input"
+              type="text"
+              placeholder="Sarah & Fahral Wedding"
+              autocomplete="off"
+            >
+
+            <div class="form-error"></div>
+
+          </div>
+
+
+          <!-- HOST NAME -->
+
+          <div class="form-field" data-field="hostName">
+
+            <label class="form-label" for="hostName">
+              Your Name
+            </label>
+
+            <input
+              id="hostName"
+              name="hostName"
+              class="form-input"
+              type="text"
+              placeholder="Fahral"
+              autocomplete="name"
+            >
+
+            <div class="form-error"></div>
+
+          </div>
+
+
+          <!-- HOST EMAIL -->
+
+          <div class="form-field" data-field="hostEmail">
+
+            <label class="form-label" for="hostEmail">
+              Your Email
+            </label>
+
+            <input
+              id="hostEmail"
+              name="hostEmail"
+              class="form-input"
+              type="email"
+              placeholder="you@example.com"
+              autocomplete="email"
+            >
+
+            <div class="form-hint">
+              We'll use this later to send your secure event access link.
+            </div>
+
+            <div class="form-error"></div>
+
+          </div>
+
+
+          <!-- DATE -->
+
+          <div class="form-field" data-field="eventDate">
+
+            <label class="form-label" for="eventDate">
+              Event Date
+            </label>
+
+            <input
+              id="eventDate"
+              name="eventDate"
+              class="form-input"
+              type="date"
+            >
+
+            <div class="form-error"></div>
+
+          </div>
+
+
+          <!-- TIME -->
+
+          <div class="form-row">
+
+            <div class="form-field" data-field="startTime">
+
+              <label class="form-label" for="startTime">
+                Start Time
+              </label>
+
+              <input
+                id="startTime"
+                name="startTime"
+                class="form-input"
+                type="time"
+              >
+
+              <div class="form-error"></div>
+
+            </div>
+
+            <div class="form-field" data-field="endTime">
+
+              <label class="form-label" for="endTime">
+                End Time
+              </label>
+
+              <input
+                id="endTime"
+                name="endTime"
+                class="form-input"
+                type="time"
+              >
+
+              <div class="form-error"></div>
+
+            </div>
+
+          </div>
+
+
+          <!-- PHOTO LIMIT -->
+
+          <div class="form-field" data-field="photoLimit">
+
+            <label class="form-label" for="photoLimit">
+              Photos Per Guest
+            </label>
+
+            <input
+              id="photoLimit"
+              name="photoLimit"
+              class="form-input"
+              type="number"
+              min="1"
+              max="999"
+              value="15"
+            >
+
+            <div class="form-hint">
+              Set the maximum number of photos each guest can take.
+            </div>
+
+            <div class="form-error"></div>
+
+          </div>
+
+
+          <!-- REVEAL -->
+
+          <div class="form-field">
+
+            <div class="form-label">
+              When should the album be revealed?
+            </div>
+
+            <div class="reveal-options">
+
+              <div class="reveal-option">
+
+                <input
+                  type="radio"
+                  id="revealImmediately"
+                  name="revealMode"
+                  value="immediately"
+                >
+
+                <label for="revealImmediately">
+
+                  <span class="reveal-radio"></span>
+
+                  <div>
+                    <strong>Immediately</strong>
+                    <span>Photos become visible right away.</span>
+                  </div>
+
+                </label>
+
+              </div>
+
+
+              <div class="reveal-option">
+
+                <input
+                  type="radio"
+                  id="revealAfterEvent"
+                  name="revealMode"
+                  value="after-event"
+                  checked
+                >
+
+                <label for="revealAfterEvent">
+
+                  <span class="reveal-radio"></span>
+
+                  <div>
+                    <strong>After the event</strong>
+                    <span>Keep the album hidden until the event ends.</span>
+                  </div>
+
+                </label>
+
+              </div>
+
+
+              <div class="reveal-option">
+
+                <input
+                  type="radio"
+                  id="revealCustom"
+                  name="revealMode"
+                  value="custom"
+                >
+
+                <label for="revealCustom">
+
+                  <span class="reveal-radio"></span>
+
+                  <div>
+                    <strong>Custom time</strong>
+                    <span>Choose exactly when the memories are revealed.</span>
+                  </div>
+
+                </label>
+
+              </div>
+
+            </div>
+
+
+            <div class="custom-reveal" id="customReveal">
+
+              <div class="form-field" data-field="revealDate">
+
+                <label class="form-label" for="revealDate">
+                  Reveal Date
+                </label>
+
+                <input
+                  id="revealDate"
+                  name="revealDate"
+                  class="form-input"
+                  type="date"
+                >
+
+                <div class="form-error"></div>
+
+              </div>
+
+
+              <div class="form-field" data-field="revealTime">
+
+                <label class="form-label" for="revealTime">
+                  Reveal Time
+                </label>
+
+                <input
+                  id="revealTime"
+                  name="revealTime"
+                  class="form-input"
+                  type="time"
+                >
+
+                <div class="form-error"></div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- SUBMIT -->
+
+          <button
+            type="submit"
+            class="btn btn-primary create-submit"
+            id="createEventSubmit"
+          >
+            Create Event
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12h14"/>
+              <path d="M13 6l6 6-6 6"/>
+            </svg>
+          </button>
+
+        </form>
+
+        <div class="create-event-note">
+          No app required for your guests.
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+<!-- ==================================================
      FOOTER
      ================================================== -->
 <footer>
@@ -1328,6 +1940,402 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
     });
   });
 })();
+
+/* ==================================================
+   CREATE EVENT NAVIGATION
+   ================================================== */
+
+const createEventView = document.getElementById("createEventView");
+
+function openCreateEvent() {
+  createEventView.classList.add("is-active");
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+function closeCreateEvent() {
+  createEventView.classList.remove("is-active");
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+
+/* Create Event buttons */
+
+document.querySelectorAll(
+  'a[href="#"]'
+).forEach((button) => {
+
+  const text = button.textContent.trim();
+
+  if (
+    text.includes("Create Event") ||
+    text.includes("Create Your Event")
+  ) {
+
+    button.addEventListener("click", (event) => {
+
+      event.preventDefault();
+
+      openCreateEvent();
+
+    });
+
+  }
+
+});
+
+
+/* Back to landing */
+
+document
+  .getElementById("backToLanding")
+  ?.addEventListener("click", (event) => {
+
+    event.preventDefault();
+
+    closeCreateEvent();
+
+  });
+
+/* ==================================================
+   CREATE EVENT FORM — FRONTEND ONLY
+   ================================================== */
+
+const createEventForm =
+  document.getElementById("createEventForm");
+
+const customReveal =
+  document.getElementById("customReveal");
+
+const revealRadios =
+  document.querySelectorAll(
+    'input[name="revealMode"]'
+  );
+
+
+/* Reveal mode */
+
+revealRadios.forEach((radio) => {
+
+  radio.addEventListener("change", () => {
+
+    const customSelected =
+      document.querySelector(
+        'input[name="revealMode"]:checked'
+      )?.value === "custom";
+
+    customReveal.classList.toggle(
+      "is-visible",
+      customSelected
+    );
+
+  });
+
+});
+
+
+/* Field error */
+
+function setCreateFieldError(fieldId, message) {
+
+  const field =
+    document.querySelector(
+      `[data-field="${fieldId}"]`
+    );
+
+  if (!field) return;
+
+  field.classList.add("has-error");
+
+  const error =
+    field.querySelector(".form-error");
+
+  if (error) {
+    error.textContent = message;
+  }
+
+}
+
+
+function clearCreateFieldErrors() {
+
+  document
+    .querySelectorAll(
+      "#createEventForm .form-field"
+    )
+    .forEach((field) => {
+
+      field.classList.remove("has-error");
+
+      const error =
+        field.querySelector(".form-error");
+
+      if (error) {
+        error.textContent = "";
+      }
+
+    });
+
+}
+
+
+/* Form submit */
+
+createEventForm.addEventListener(
+  "submit",
+  function(event) {
+
+    event.preventDefault();
+
+    clearCreateFieldErrors();
+
+    const eventName =
+      document.getElementById("eventName")
+        .value.trim();
+
+    const hostName =
+      document.getElementById("hostName")
+        .value.trim();
+
+    const hostEmail =
+      document.getElementById("hostEmail")
+        .value.trim();
+
+    const eventDate =
+      document.getElementById("eventDate")
+        .value;
+
+    const startTime =
+      document.getElementById("startTime")
+        .value;
+
+    const endTime =
+      document.getElementById("endTime")
+        .value;
+
+    const photoLimit =
+      Number(
+        document.getElementById("photoLimit")
+          .value
+      );
+
+    const revealMode =
+      document.querySelector(
+        'input[name="revealMode"]:checked'
+      )?.value;
+
+    const revealDate =
+      document.getElementById("revealDate")
+        .value;
+
+    const revealTime =
+      document.getElementById("revealTime")
+        .value;
+
+
+    let valid = true;
+
+
+    /* Event name */
+
+    if (!eventName) {
+
+      setCreateFieldError(
+        "eventName",
+        "Please enter your event name."
+      );
+
+      valid = false;
+
+    }
+
+
+    /* Host */
+
+    if (!hostName) {
+
+      setCreateFieldError(
+        "hostName",
+        "Please enter your name."
+      );
+
+      valid = false;
+
+    }
+
+
+    /* Email */
+
+    const emailRegex =
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!hostEmail) {
+
+      setCreateFieldError(
+        "hostEmail",
+        "Please enter your email."
+      );
+
+      valid = false;
+
+    }
+    else if (!emailRegex.test(hostEmail)) {
+
+      setCreateFieldError(
+        "hostEmail",
+        "Please enter a valid email address."
+      );
+
+      valid = false;
+
+    }
+
+
+    /* Date */
+
+    if (!eventDate) {
+
+      setCreateFieldError(
+        "eventDate",
+        "Please choose your event date."
+      );
+
+      valid = false;
+
+    }
+
+
+    /* Time */
+
+    if (!startTime) {
+
+      setCreateFieldError(
+        "startTime",
+        "Please choose a start time."
+      );
+
+      valid = false;
+
+    }
+
+    if (!endTime) {
+
+      setCreateFieldError(
+        "endTime",
+        "Please choose an end time."
+      );
+
+      valid = false;
+
+    }
+
+
+    if (
+      startTime &&
+      endTime &&
+      endTime <= startTime
+    ) {
+
+      setCreateFieldError(
+        "endTime",
+        "End time must be after start time."
+      );
+
+      valid = false;
+
+    }
+
+
+    /* Photo limit */
+
+    if (
+      !photoLimit ||
+      photoLimit < 1
+    ) {
+
+      setCreateFieldError(
+        "photoLimit",
+        "Photo limit must be at least 1."
+      );
+
+      valid = false;
+
+    }
+
+
+    /* Custom reveal */
+
+    if (revealMode === "custom") {
+
+      if (!revealDate) {
+
+        setCreateFieldError(
+          "revealDate",
+          "Please choose a reveal date."
+        );
+
+        valid = false;
+
+      }
+
+      if (!revealTime) {
+
+        setCreateFieldError(
+          "revealTime",
+          "Please choose a reveal time."
+        );
+
+        valid = false;
+
+      }
+
+    }
+
+
+    if (!valid) {
+
+      const firstError =
+        document.querySelector(
+          "#createEventForm .has-error input"
+        );
+
+      firstError?.focus();
+
+      return;
+
+    }
+
+
+    /* TEMPORARY */
+
+    console.log("Create Event data:", {
+      eventName,
+      hostName,
+      hostEmail,
+      eventDate,
+      startTime,
+      endTime,
+      photoLimit,
+      revealMode,
+      revealDate,
+      revealTime
+    });
+
+
+    alert(
+      "Form is valid. Firebase will be connected in the next step."
+    );
+
+  }
+);
+  
 </script>
 
 </body>
