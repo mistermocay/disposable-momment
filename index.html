@@ -2664,6 +2664,156 @@ document.addEventListener(
 
   }
 );
+/* ==================================================
+   PHASE 2 — HANDLE MAGIC LINK
+   ================================================== */
+
+async function handleMagicLink() {
+
+  /*
+   * Check whether the current URL is a Firebase
+   * email sign-in link.
+   */
+
+  if (
+    !isSignInWithEmailLink(
+      auth,
+      window.location.href
+    )
+  ) {
+    return;
+  }
+
+
+  console.log(
+    "Firebase magic link detected."
+  );
+
+
+  /*
+   * Get the email address that was saved when
+   * the magic link was originally sent.
+   */
+
+  let email =
+    localStorage.getItem(
+      "disposableMomment_emailForSignIn"
+    );
+
+
+  /*
+   * If the email is not available in this browser,
+   * ask the user to enter it.
+   */
+
+  if (!email) {
+
+    email = window.prompt(
+      "Please enter the email address you used to create the event."
+    );
+
+  }
+
+
+  if (!email) {
+
+    console.error(
+      "No email address available for magic link sign-in."
+    );
+
+    return;
+
+  }
+
+
+  try {
+
+    console.log(
+      "Signing in with magic link..."
+    );
+
+
+    /*
+     * Complete Firebase passwordless authentication.
+     */
+
+    const result =
+      await signInWithEmailLink(
+        auth,
+        email,
+        window.location.href
+      );
+
+
+    console.log(
+      "Magic link authentication successful.",
+      result.user
+    );
+
+
+    /*
+     * Save authenticated email for later use.
+     */
+
+    localStorage.setItem(
+      "disposableMomment_hostEmail",
+      email
+    );
+
+
+    /*
+     * Remove temporary email because
+     * authentication has completed.
+     */
+
+    localStorage.removeItem(
+      "disposableMomment_emailForSignIn"
+    );
+
+
+    /*
+     * Remove Firebase authentication parameters
+     * from the browser URL.
+     */
+
+    window.history.replaceState(
+      {},
+      document.title,
+      window.location.pathname
+    );
+
+
+    /*
+     * PHASE 3 WILL CONTINUE HERE.
+     */
+
+    alert(
+      "Magic link authentication successful!"
+    );
+
+  }
+  catch (error) {
+
+    console.error(
+      "Magic link verification failed:",
+      error
+    );
+
+
+    alert(
+      "This magic link is invalid or has expired."
+    );
+
+  }
+
+}
+
+
+/*
+ * Run the magic link handler when the page loads.
+ */
+
+handleMagicLink();
 </script>
 
 </body>
