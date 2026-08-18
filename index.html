@@ -1988,7 +1988,21 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
   </div>
 </footer>
 
-<script>
+<script type="module">
+
+import {
+  auth,
+  db,
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink
+} from "./firebase.js";
+
+
+console.log("Firebase loaded successfully:", {
+  auth,
+  db
+});
 /* ==================================================
    NAVBAR: scroll shadow + mobile menu toggle
    ================================================== */
@@ -2273,7 +2287,7 @@ function clearCreateFieldErrors() {
 
 createEventForm.addEventListener(
   "submit",
-  function(event) {
+  async function(event) {
 
     event.preventDefault();
 
@@ -2495,26 +2509,125 @@ createEventForm.addEventListener(
 
     }
 
+  /* ==================================================
+   PHASE 2 — SEND MAGIC LINK
+   ================================================== */
 
-    /* TEMPORARY */
+const pendingEvent = {
+  eventName,
+  hostName,
+  hostEmail,
+  eventDate,
+  startTime,
+  endTime,
+  photoLimit,
+  revealMode,
+  revealDate:
+    revealMode === "custom"
+      ? revealDate
+      : null,
+  revealTime:
+    revealMode === "custom"
+      ? revealTime
+      : null
+};
 
-    console.log("Create Event data:", {
-      eventName,
-      hostName,
-      hostEmail,
-      eventDate,
-      startTime,
-      endTime,
-      photoLimit,
-      revealMode,
-      revealDate,
-      revealTime
-    });
 
+/* Save event data temporarily */
 
-alert(
-  "Form is valid. Firebase will be connected in the next step."
+localStorage.setItem(
+  "disposableMomment_pendingEvent",
+  JSON.stringify(pendingEvent)
 );
+
+
+/* Firebase Magic Link settings */
+
+const actionCodeSettings = {
+
+  url:
+    `${window.location.origin}${window.location.pathname}`,
+
+  handleCodeInApp: true
+
+};
+
+
+/* Disable submit button */
+
+const submitButton =
+  document.getElementById("createEventSubmit");
+
+submitButton.disabled = true;
+
+submitButton.textContent =
+  "Sending magic link...";
+
+
+try {
+
+  await sendSignInLinkToEmail(
+    auth,
+    hostEmail,
+    actionCodeSettings
+  );
+
+
+  /* Remember email used for authentication */
+
+  localStorage.setItem(
+    "disposableMomment_emailForSignIn",
+    hostEmail
+  );
+
+
+  /* Show success state */
+
+  console.log(
+    "Magic link sent successfully."
+  );
+
+
+  alert(
+    `Magic link sent to ${hostEmail}`
+  );
+
+
+}
+catch (error) {
+
+  console.error(
+    "Magic link error:",
+    error
+  );
+
+
+  alert(
+    "We couldn't send the magic link. Please try again."
+  );
+
+}
+finally {
+
+  submitButton.disabled = false;
+
+  submitButton.innerHTML = `
+    Create Event
+
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M5 12h14"/>
+      <path d="M13 6l6 6-6 6"/>
+    </svg>
+  `;
+
+}
 
   }
 );
