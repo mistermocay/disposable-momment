@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Disposable Momment — One QR. One Album. Every Guest a Photographer.</title>
-<meta name="description" content="Disposable Momment turns every guest into a photographer. Share one QR code, capture the moments together, and reveal the memories when the time is right. No app required.">
+<title>Create Your Event — Disposable Momment</title>
+<meta name="description" content="Set up your event and start collecting memories. No password, no app for your guests.">
 
-<!-- Fonts: Space Grotesk for display, Inter for body, JetBrains Mono for frame counters/labels -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -15,524 +14,240 @@
 </head>
 <body>
 
-<!-- Signature element: a film-sprocket rail running the height of the page (desktop only, decorative) -->
-<div class="sprocket-rail" aria-hidden="true"></div>
-
 <!-- =========================================
-     NAVBAR
+     MINIMAL NAVBAR — consistent branding, focused flow
 ========================================= -->
-<header class="navbar" id="navbar">
+<header class="navbar">
   <div class="container navbar__inner">
-    <a href="#" class="navbar__logo">Disposable Momment<span class="navbar__logo-dot">.</span></a>
-
-    <nav class="navbar__menu" id="navbarMenu">
-      <a href="#how-it-works">How It Works</a>
-      <a href="#features">Features</a>
-      <a href="#use-cases">Events</a>
-      <a href="#faq">FAQ</a>
-    </nav>
-
-    <div class="navbar__actions">
-      <a href="/login" class="btn btn--ghost">Sign In</a>
-      <a href="/create-event/" class="btn btn--primary">Create Event</a>
-    </div>
-
-    <button class="navbar__toggle" id="navbarToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="navbarMobile">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-
-  <!-- Mobile menu -->
-  <div class="navbar__mobile" id="navbarMobile">
-    <a href="#how-it-works">How It Works</a>
-    <a href="#features">Features</a>
-    <a href="#use-cases">Events</a>
-    <a href="#faq">FAQ</a>
-    <div class="navbar__mobile-actions">
-      <a href="/login" class="btn btn--ghost btn--block">Sign In</a>
-      <a href="/create-event/" class="btn btn--primary btn--block">Create Event</a>
-    </div>
+    <a href="/" class="navbar__logo">Disposable Momment<span class="navbar__logo-dot">.</span></a>
+    <a href="/" class="navbar__back">← Back to home</a>
   </div>
 </header>
 
-<main>
+<main class="page">
+  <div class="container page__inner">
 
-  <!-- =========================================
-       1. HERO SECTION
-  ========================================= -->
-  <section class="hero">
-    <div class="container hero__inner">
+    <!-- Global error banner, reused across views -->
+    <div class="banner banner--error" id="globalError" role="alert" hidden>
+      <span class="banner__icon">!</span>
+      <p id="globalErrorText"></p>
+    </div>
 
-      <div class="hero__copy" data-animate="fade-up">
-        <p class="eyebrow eyebrow--mono">FRAME 001 / EVERY EVENT</p>
-        <h1 class="hero__headline">
-          Everyone's a photographer.<br>
-          One event. <span class="text-accent">One album.</span>
-        </h1>
-        <p class="hero__subhead">
-          Turn every guest into a photographer. Share one QR code, capture the moments together, and reveal the memories when the time is right.
+    <!-- =========================================
+         VIEW 1 — CREATE EVENT FORM
+    ========================================= -->
+    <section class="view is-active" id="view-form" data-view>
+      <p class="eyebrow eyebrow--mono">FRAME 001 / NEW EVENT</p>
+      <h1 class="page__title">Create Your Event</h1>
+      <p class="page__subtitle">Set up your event and start collecting memories.</p>
+
+      <form id="eventForm" class="event-form" novalidate>
+
+        <div class="field-group">
+          <label for="eventName">Event Name</label>
+          <input type="text" id="eventName" name="eventName" placeholder="Sarah &amp; Fahral Wedding" autocomplete="off">
+          <p class="field-error" id="err-eventName" aria-live="polite"></p>
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label for="hostName">Host Name</label>
+            <input type="text" id="hostName" name="hostName" placeholder="Fahral" autocomplete="name">
+            <p class="field-error" id="err-hostName" aria-live="polite"></p>
+          </div>
+
+          <div class="field-group">
+            <label for="hostEmail">Host Email</label>
+            <input type="email" id="hostEmail" name="hostEmail" placeholder="you@example.com" autocomplete="email" inputmode="email">
+            <p class="field-error" id="err-hostEmail" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="eventDate">Event Date</label>
+          <input type="date" id="eventDate" name="eventDate">
+          <p class="field-error" id="err-eventDate" aria-live="polite"></p>
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label for="startTime">Event Start Time</label>
+            <input type="time" id="startTime" name="startTime">
+            <p class="field-error" id="err-startTime" aria-live="polite"></p>
+          </div>
+
+          <div class="field-group">
+            <label for="endTime">Event End Time</label>
+            <input type="time" id="endTime" name="endTime">
+            <p class="field-error" id="err-endTime" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <div class="field-group field-group--narrow">
+          <label for="photoLimit">Photo Limit Per Guest</label>
+          <input type="number" id="photoLimit" name="photoLimit" value="15" min="1" step="1">
+          <p class="field-error" id="err-photoLimit" aria-live="polite"></p>
+        </div>
+
+        <fieldset class="field-group">
+          <legend>Photo Reveal</legend>
+
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="revealMode" value="immediately">
+              <span class="radio-option__dot"></span>
+              <span class="radio-option__label">
+                <strong>Immediately</strong>
+                <small>Guests see photos as they're taken.</small>
+              </span>
+            </label>
+
+            <label class="radio-option">
+              <input type="radio" name="revealMode" value="after-event" checked>
+              <span class="radio-option__dot"></span>
+              <span class="radio-option__label">
+                <strong>After Event</strong>
+                <small>Album unlocks once the event ends.</small>
+              </span>
+            </label>
+
+            <label class="radio-option">
+              <input type="radio" name="revealMode" value="custom">
+              <span class="radio-option__dot"></span>
+              <span class="radio-option__label">
+                <strong>Custom Time</strong>
+                <small>Pick your own reveal date and time.</small>
+              </span>
+            </label>
+          </div>
+          <p class="field-error" id="err-revealMode" aria-live="polite"></p>
+        </fieldset>
+
+        <div class="field-row field-custom-reveal" id="customRevealFields" hidden>
+          <div class="field-group">
+            <label for="revealDate">Reveal Date</label>
+            <input type="date" id="revealDate" name="revealDate">
+            <p class="field-error" id="err-revealDate" aria-live="polite"></p>
+          </div>
+
+          <div class="field-group">
+            <label for="revealTime">Reveal Time</label>
+            <input type="time" id="revealTime" name="revealTime">
+            <p class="field-error" id="err-revealTime" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--lg btn--block" id="submitBtn">
+          <span class="btn__label">Create Event</span>
+          <span class="btn__spinner" hidden></span>
+        </button>
+
+        <p class="event-form__note">We'll email you a secure link — no password to remember.</p>
+      </form>
+    </section>
+
+    <!-- =========================================
+         VIEW 2 — CHECK YOUR EMAIL
+    ========================================= -->
+    <section class="view" id="view-check-email" data-view>
+      <div class="status-block">
+        <div class="status-block__icon status-block__icon--mail" aria-hidden="true"></div>
+        <p class="eyebrow eyebrow--mono">FRAME 002 / VERIFY</p>
+        <h1 class="page__title">Check your email</h1>
+        <p class="page__subtitle">Your magic link is on its way.</p>
+
+        <p class="status-block__text">
+          Open the email we sent to<br>
+          <strong id="sentToEmail" class="status-block__email"></strong>
         </p>
-        <div class="hero__cta-group">
-          <a href="/create-event/" class="btn btn--primary btn--lg">Create Your Event →</a>
-          <a href="#how-it-works" class="btn btn--ghost btn--lg">See How It Works</a>
-        </div>
-        <p class="hero__note">No app to download. No account for guests. Just scan and shoot.</p>
-      </div>
-
-      <div class="hero__visual" data-animate="fade-up" data-delay="150">
-        <!-- Scattered photo card collage mockup -->
-        <div class="photo-stack" aria-hidden="true">
-          <div class="photo-card photo-card--1 float-slow">
-            <div class="photo-card__img photo-card__img--1"></div>
-            <span class="photo-card__label">wedding.jpg</span>
-          </div>
-          <div class="photo-card photo-card--2 float-med">
-            <div class="photo-card__img photo-card__img--2"></div>
-            <span class="photo-card__label">candid.jpg</span>
-          </div>
-          <div class="photo-card photo-card--3 float-fast">
-            <div class="photo-card__img photo-card__img--3"></div>
-            <span class="photo-card__label">group.jpg</span>
-          </div>
-          <div class="photo-card photo-card--4 float-slow">
-            <div class="photo-card__img photo-card__img--4"></div>
-            <span class="photo-card__label">party.jpg</span>
-          </div>
-
-          <div class="counter-chip">
-            <span class="counter-chip__dot"></span>
-            128 photos and counting
-          </div>
-
-          <!-- film strip accent -->
-          <div class="filmstrip" aria-hidden="true">
-            <span></span><span></span><span></span><span></span><span></span><span></span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- =========================================
-       2. SIMPLE STATEMENT / MADE FOR MOMENTS
-  ========================================= -->
-  <section class="statement" data-animate="fade-up">
-    <div class="container">
-      <p class="statement__text">Made for moments worth remembering.</p>
-      <div class="statement__tags">
-        <span>Weddings</span>
-        <span class="dot">·</span>
-        <span>Birthdays</span>
-        <span class="dot">·</span>
-        <span>Parties</span>
-        <span class="dot">·</span>
-        <span>Graduations</span>
-        <span class="dot">·</span>
-        <span>Gatherings</span>
-        <span class="dot">·</span>
-        <span>Corporate Events</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- =========================================
-       3. HOW IT WORKS
-  ========================================= -->
-  <section class="how" id="how-it-works">
-    <div class="container">
-      <div class="section-head" data-animate="fade-up">
-        <p class="eyebrow eyebrow--mono">HOW IT WORKS</p>
-        <h2 class="section-title">One QR. Everyone captures.</h2>
-      </div>
-
-      <div class="how__grid">
-
-        <div class="how-card" data-animate="fade-up">
-          <span class="how-card__frame">FRAME 01</span>
-          <div class="how-card__icon" data-icon="calendar-plus"></div>
-          <h3>Create Your Event</h3>
-          <p>Create an event in seconds and customize when your photo album opens.</p>
-        </div>
-
-        <div class="how-card" data-animate="fade-up" data-delay="80">
-          <span class="how-card__frame">FRAME 02</span>
-          <div class="how-card__icon" data-icon="qr-code"></div>
-          <h3>Share One QR Code</h3>
-          <p>Put the QR code on tables, invitations, screens, or anywhere your guests can see it.</p>
-        </div>
-
-        <div class="how-card" data-animate="fade-up" data-delay="160">
-          <span class="how-card__frame">FRAME 03</span>
-          <div class="how-card__icon" data-icon="camera"></div>
-          <h3>Let Guests Capture</h3>
-          <p>Guests scan, enter their name, and start taking photos directly from their phone. No app. No account. No hassle.</p>
-        </div>
-
-        <div class="how-card" data-animate="fade-up" data-delay="240">
-          <span class="how-card__frame">FRAME 04</span>
-          <div class="how-card__icon" data-icon="sparkles"></div>
-          <h3>Reveal the Memories</h3>
-          <p>Photos stay hidden until your chosen reveal time. Then everyone can experience the album together.</p>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- =========================================
-       4. FEATURES
-  ========================================= -->
-  <section class="features" id="features">
-    <div class="container">
-      <div class="section-head" data-animate="fade-up">
-        <p class="eyebrow eyebrow--mono">FEATURES</p>
-        <h2 class="section-title">Everything you need for a shared photo experience.</h2>
-      </div>
-
-      <div class="features__grid">
-
-        <div class="feature-card" data-animate="fade-up">
-          <div class="feature-card__icon" data-icon="smartphone"></div>
-          <h3>No App Required</h3>
-          <p>Guests simply scan and start shooting from their browser.</p>
-        </div>
-
-        <div class="feature-card" data-animate="fade-up" data-delay="60">
-          <div class="feature-card__icon" data-icon="images"></div>
-          <h3>One Shared Album</h3>
-          <p>Every guest contributes to the same event album.</p>
-        </div>
-
-        <div class="feature-card" data-animate="fade-up" data-delay="120">
-          <div class="feature-card__icon" data-icon="sliders-horizontal"></div>
-          <h3>Custom Photo Limits</h3>
-          <p>Control how many photos each guest can take.</p>
-        </div>
-
-        <div class="feature-card" data-animate="fade-up" data-delay="180">
-          <div class="feature-card__icon" data-icon="clock"></div>
-          <h3>Scheduled Reveal</h3>
-          <p>Keep photos hidden until the moment you choose.</p>
-        </div>
-
-        <div class="feature-card" data-animate="fade-up">
-          <div class="feature-card__icon" data-icon="qr-code"></div>
-          <h3>QR Code Ready</h3>
-          <p>Generate a unique QR code for every event.</p>
-        </div>
-
-        <div class="feature-card" data-animate="fade-up" data-delay="60">
-          <div class="feature-card__icon" data-icon="camera"></div>
-          <h3>Mobile Camera</h3>
-          <p>Designed specifically for smartphone cameras.</p>
-        </div>
-
-        <div class="feature-card" data-animate="fade-up" data-delay="120">
-          <div class="feature-card__icon" data-icon="zap"></div>
-          <h3>Photo Compression</h3>
-          <p>Automatically optimize photos before uploading to reduce storage usage.</p>
-        </div>
-
-        <div class="feature-card" data-animate="fade-up" data-delay="180">
-          <div class="feature-card__icon" data-icon="layout-grid"></div>
-          <h3>Easy Gallery</h3>
-          <p>Browse all event memories in one beautiful gallery.</p>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- =========================================
-       5. PRODUCT SHOWCASE (guest flow mockups)
-  ========================================= -->
-  <section class="showcase">
-    <div class="container">
-      <div class="section-head" data-animate="fade-up">
-        <p class="eyebrow eyebrow--mono">GUEST VIEW</p>
-        <h2 class="section-title">What your guests actually see.</h2>
-        <p class="section-lead">Four screens. Zero downloads. From scan to captured memory in seconds.</p>
-      </div>
-
-      <div class="showcase__grid">
-
-        <!-- Screen 1: Welcome -->
-        <div class="phone-mock" data-animate="fade-up">
-          <div class="phone-mock__screen">
-            <p class="phone-mock__frame-label">01</p>
-            <div class="phone-mock__body phone-mock__body--center">
-              <p class="phone-mock__event-name">Sarah &amp; Fahral</p>
-              <p class="phone-mock__event-sub">Welcome to our wedding</p>
-              <button class="phone-mock__btn">Enter Event</button>
-            </div>
-          </div>
-          <p class="phone-mock__caption">Event Welcome</p>
-        </div>
-
-        <!-- Screen 2: Guest Name -->
-        <div class="phone-mock" data-animate="fade-up" data-delay="80">
-          <div class="phone-mock__screen">
-            <p class="phone-mock__frame-label">02</p>
-            <div class="phone-mock__body phone-mock__body--center">
-              <p class="phone-mock__prompt">What's your name?</p>
-              <div class="phone-mock__input">Fahral</div>
-              <button class="phone-mock__btn">Continue</button>
-            </div>
-          </div>
-          <p class="phone-mock__caption">Guest Name</p>
-        </div>
-
-        <!-- Screen 3: Camera -->
-        <div class="phone-mock" data-animate="fade-up" data-delay="160">
-          <div class="phone-mock__screen">
-            <p class="phone-mock__frame-label">03</p>
-            <div class="phone-mock__body phone-mock__body--camera">
-              <span class="phone-mock__counter">12 / 15 photos</span>
-              <div class="phone-mock__viewfinder"></div>
-              <button class="phone-mock__shutter" aria-label="Capture photo"></button>
-            </div>
-          </div>
-          <p class="phone-mock__caption">Camera</p>
-        </div>
-
-        <!-- Screen 4: Captured -->
-        <div class="phone-mock" data-animate="fade-up" data-delay="240">
-          <div class="phone-mock__screen">
-            <p class="phone-mock__frame-label">04</p>
-            <div class="phone-mock__body phone-mock__body--center">
-              <div class="phone-mock__check">✓</div>
-              <p class="phone-mock__event-name" style="font-size:1.1rem;">Captured!</p>
-              <p class="phone-mock__event-sub">Your memory has been added to the roll.</p>
-            </div>
-          </div>
-          <p class="phone-mock__caption">Photo Captured</p>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- =========================================
-       6. REVEAL SECTION (signature moment)
-  ========================================= -->
-  <section class="reveal">
-    <div class="container reveal__inner">
-
-      <div class="reveal__copy" data-animate="fade-up">
-        <p class="eyebrow eyebrow--mono eyebrow--on-dark">SCHEDULED REVEAL</p>
-        <h2 class="reveal__title">Some memories are better when you wait.</h2>
-        <p class="reveal__text">
-          Keep everyone's photos hidden during the event and reveal the complete album the moment the celebration is over — all at once, together.
+        <p class="status-block__text status-block__text--muted">
+          Click the link to continue creating your event.
         </p>
+
+        <button type="button" class="btn btn--ghost" id="resendBtn">Resend link</button>
+        <p class="status-block__resend-note" id="resendNote"></p>
+
+        <button type="button" class="link-btn" id="useAnotherEmailBtn">Use a different email</button>
       </div>
+    </section>
 
-      <div class="reveal__visual" data-animate="fade-up" data-delay="150">
-        <div class="develop-card">
-          <p class="develop-card__label">PHOTO ROLL</p>
-          <div class="develop-card__bar">
-            <div class="develop-card__bar-fill" id="developBar"></div>
+    <!-- =========================================
+         VIEW 3 — CONFIRM EMAIL (opened on a different device)
+    ========================================= -->
+    <section class="view" id="view-confirm-email" data-view>
+      <div class="status-block">
+        <p class="eyebrow eyebrow--mono">FRAME 002 / VERIFY</p>
+        <h1 class="page__title">Confirm your email</h1>
+        <p class="page__subtitle">
+          This link was opened on a different device or browser. Enter the email you used to request it.
+        </p>
+
+        <form id="confirmEmailForm" class="event-form event-form--narrow" novalidate>
+          <div class="field-group">
+            <label for="confirmEmail">Email</label>
+            <input type="email" id="confirmEmail" name="confirmEmail" placeholder="you@example.com" autocomplete="email" inputmode="email">
+            <p class="field-error" id="err-confirmEmail" aria-live="polite"></p>
           </div>
-          <p class="develop-card__status" id="developStatus">Developing…</p>
-          <p class="develop-card__timer" id="developTimer">01 : 24 : 36</p>
-          <p class="develop-card__caption">Your memories will be revealed after the party.</p>
+
+          <button type="submit" class="btn btn--primary btn--lg btn--block">
+            <span class="btn__label">Continue</span>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- =========================================
+         VIEW 4 — VERIFYING / CREATING EVENT
+    ========================================= -->
+    <section class="view" id="view-verifying" data-view>
+      <div class="status-block">
+        <div class="loading-spinner" aria-hidden="true"></div>
+        <p class="status-block__text" id="verifyingText">Verifying your link…</p>
+      </div>
+    </section>
+
+    <!-- =========================================
+         VIEW 5 — EVENT CREATED
+    ========================================= -->
+    <section class="view" id="view-success" data-view>
+      <div class="status-block status-block--wide">
+        <div class="status-block__icon status-block__icon--check" aria-hidden="true">✓</div>
+        <p class="eyebrow eyebrow--mono">FRAME 003 / READY</p>
+        <h1 class="page__title">Your event is ready!</h1>
+        <p class="page__subtitle">Your event has been created successfully.</p>
+
+        <div class="success-card">
+          <p class="success-card__label">Event Name</p>
+          <p class="success-card__event-name" id="successEventName"></p>
+
+          <p class="success-card__label success-card__label--spaced">Guest Link</p>
+          <div class="success-card__link-row">
+            <code class="success-card__link" id="successGuestLink"></code>
+            <button type="button" class="btn btn--ghost btn--sm" id="copyLinkBtn">Copy</button>
+          </div>
+
+          <div class="qr-placeholder" id="qrPlaceholder">
+            <span>QR code will appear here</span>
+            <!-- TODO: replace with a real generated QR code once the QR feature is built -->
+          </div>
+        </div>
+
+        <div class="success-actions">
+          <a href="#" class="btn btn--primary btn--lg" id="openGuestPageBtn">Open Guest Page</a>
+          <a href="#" class="btn btn--ghost btn--lg" id="goToManagementBtn">Go to Event Management</a>
         </div>
       </div>
-
-    </div>
-  </section>
-
-  <!-- =========================================
-       7. USE CASES
-  ========================================= -->
-  <section class="use-cases" id="use-cases">
-    <div class="container">
-      <div class="section-head" data-animate="fade-up">
-        <p class="eyebrow eyebrow--mono">USE CASES</p>
-        <h2 class="section-title">Made for every kind of celebration.</h2>
-      </div>
-
-      <div class="use-cases__grid">
-        <div class="use-case-card" data-animate="fade-up">
-          <div class="use-case-card__visual use-case-card__visual--1"></div>
-          <span class="use-case-card__emoji">💍</span>
-          <h3>Weddings</h3>
-        </div>
-        <div class="use-case-card" data-animate="fade-up" data-delay="60">
-          <div class="use-case-card__visual use-case-card__visual--2"></div>
-          <span class="use-case-card__emoji">🎂</span>
-          <h3>Birthdays</h3>
-        </div>
-        <div class="use-case-card" data-animate="fade-up" data-delay="120">
-          <div class="use-case-card__visual use-case-card__visual--3"></div>
-          <span class="use-case-card__emoji">🎓</span>
-          <h3>Graduations</h3>
-        </div>
-        <div class="use-case-card" data-animate="fade-up" data-delay="180">
-          <div class="use-case-card__visual use-case-card__visual--4"></div>
-          <span class="use-case-card__emoji">🎉</span>
-          <h3>Parties</h3>
-        </div>
-        <div class="use-case-card" data-animate="fade-up" data-delay="240">
-          <div class="use-case-card__visual use-case-card__visual--5"></div>
-          <span class="use-case-card__emoji">👨‍👩‍👧</span>
-          <h3>Family Gatherings</h3>
-        </div>
-        <div class="use-case-card" data-animate="fade-up" data-delay="300">
-          <div class="use-case-card__visual use-case-card__visual--6"></div>
-          <span class="use-case-card__emoji">🏢</span>
-          <h3>Corporate Events</h3>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- =========================================
-       8. CTA SECTION
-  ========================================= -->
-  <section class="cta-band" data-animate="fade-up">
-    <div class="container cta-band__inner">
-      <h2 class="cta-band__title">Ready to create your event album?</h2>
-      <p class="cta-band__subtext">Give your guests a camera. Let them create the memories.</p>
-      <a href="/create-event/" class="btn btn--primary btn--lg">Create Your Event →</a>
-      <p class="cta-band__note">No app. No complicated setup.</p>
-    </div>
-  </section>
-
-  <!-- =========================================
-       9. FAQ
-  ========================================= -->
-  <section class="faq" id="faq">
-    <div class="container">
-      <div class="section-head" data-animate="fade-up">
-        <p class="eyebrow eyebrow--mono">FAQ</p>
-        <h2 class="section-title">Good to know.</h2>
-      </div>
-
-      <div class="faq__list" data-animate="fade-up">
-
-        <div class="faq-item">
-          <button class="faq-item__question" aria-expanded="false">
-            <span>Do guests need to install an app?</span>
-            <span class="faq-item__icon">+</span>
-          </button>
-          <div class="faq-item__answer">
-            <p>No. Guests can access the event directly from their mobile browser.</p>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-item__question" aria-expanded="false">
-            <span>Do guests need an account?</span>
-            <span class="faq-item__icon">+</span>
-          </button>
-          <div class="faq-item__answer">
-            <p>The intended experience is designed to be as frictionless as possible, with no traditional account required for guests.</p>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-item__question" aria-expanded="false">
-            <span>How do guests join an event?</span>
-            <span class="faq-item__icon">+</span>
-          </button>
-          <div class="faq-item__answer">
-            <p>They scan the event's unique QR code or open its event link.</p>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-item__question" aria-expanded="false">
-            <span>Can I control when photos are revealed?</span>
-            <span class="faq-item__icon">+</span>
-          </button>
-          <div class="faq-item__answer">
-            <p>Yes. The platform is designed around a scheduled reveal experience.</p>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-item__question" aria-expanded="false">
-            <span>Can guests use their phone camera?</span>
-            <span class="faq-item__icon">+</span>
-          </button>
-          <div class="faq-item__answer">
-            <p>Yes. The guest experience is optimized for smartphone cameras.</p>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-item__question" aria-expanded="false">
-            <span>Can I download the photos?</span>
-            <span class="faq-item__icon">+</span>
-          </button>
-          <div class="faq-item__answer">
-            <p>The event gallery is designed to support downloading photos. This will be implemented in the application phase.</p>
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-item__question" aria-expanded="false">
-            <span>Is it free?</span>
-            <span class="faq-item__icon">+</span>
-          </button>
-          <div class="faq-item__answer">
-            <p>The goal of this project is to build a free-to-use version of the platform.</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- =========================================
-       10. FINAL CTA
-  ========================================= -->
-  <section class="final-cta" data-animate="fade-up">
-    <div class="container">
-      <h2 class="final-cta__title">Your event.<br>Everyone's memories.</h2>
-      <a href="/create-event/" class="btn btn--primary btn--lg">Create Your Event</a>
-    </div>
-  </section>
-
-</main>
-
-<!-- =========================================
-     FOOTER
-========================================= -->
-<footer class="footer">
-  <div class="container footer__inner">
-
-    <div class="footer__brand">
-      <a href="#" class="navbar__logo">Disposable Momment<span class="navbar__logo-dot">.</span></a>
-      <p class="footer__desc">A simple way to collect everyone's moments in one place.</p>
-    </div>
-
-    <div class="footer__col">
-      <h4>Product</h4>
-      <a href="#how-it-works">How It Works</a>
-      <a href="#features">Features</a>
-      <a href="#faq">FAQ</a>
-    </div>
-
-    <div class="footer__col">
-      <h4>Company</h4>
-      <a href="#">About</a>
-      <a href="#">Contact</a>
-    </div>
-
-    <div class="footer__col">
-      <h4>Legal</h4>
-      <a href="#">Privacy</a>
-      <a href="#">Terms</a>
-    </div>
+    </section>
 
   </div>
+</main>
+
+<footer class="footer footer--compact">
   <div class="container">
     <p class="footer__copyright">© 2026 Disposable Momment. All rights reserved.</p>
   </div>
 </footer>
 
-<script src="script.js"></script>
+<script type="module" src="script.js"></script>
 </body>
 </html>
