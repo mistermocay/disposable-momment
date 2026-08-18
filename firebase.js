@@ -8,9 +8,7 @@ import { initializeApp } from
 
 import {
   getAuth,
-  sendSignInLinkToEmail,
-  isSignInWithEmailLink,
-  signInWithEmailLink
+  signInAnonymously
 } from
   "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
@@ -18,6 +16,9 @@ import {
   getFirestore,
   collection,
   addDoc,
+  doc,
+  getDoc,
+  setDoc,
   serverTimestamp
 } from
   "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
@@ -79,12 +80,20 @@ const db =
 // ==================================================
 
 export {
+
+  app,
+
   auth,
+
   db,
+
   collection,
   addDoc,
   doc,
   getDoc,
   setDoc,
-  serverTimestamp
+  serverTimestamp,
+
+  signInAnonymously
+
 };
