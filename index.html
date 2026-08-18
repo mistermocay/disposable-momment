@@ -1993,6 +1993,9 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 import {
   auth,
   db,
+  collection,
+  addDoc,
+  serverTimestamp,
   sendSignInLinkToEmail,
   isSignInWithEmailLink,
   signInWithEmailLink
@@ -2745,70 +2748,173 @@ async function handleMagicLink() {
       );
 
 
-    console.log(
-      "Magic link authentication successful.",
-      result.user
-    );
+/* ==================================================
+   PHASE 3 — CREATE EVENT IN FIRESTORE
+   ================================================== */
+
+console.log(
+  "Magic link authentication successful.",
+  result.user
+);
 
 
-    /*
-     * Save authenticated email for later use.
-     */
+/* Get authenticated Firebase user */
 
-    localStorage.setItem(
-      "disposableMomment_hostEmail",
-      email
-    );
+const user = result.user;
 
 
-    /*
-     * Remove temporary email because
-     * authentication has completed.
-     */
+/* Get pending event data */
 
-    localStorage.removeItem(
-      "disposableMomment_emailForSignIn"
-    );
+const pendingEventRaw =
+  localStorage.getItem(
+    "disposableMomment_pendingEvent"
+  );
 
 
-    /*
-     * Remove Firebase authentication parameters
-     * from the browser URL.
-     */
+/* Safety check */
 
-    window.history.replaceState(
-      {},
-      document.title,
-      window.location.pathname
-    );
+if (!pendingEventRaw) {
+
+  console.error(
+    "No pending event data found."
+  );
+
+  alert(
+    "Your authentication was successful, but your event data could not be found. Please create the event again."
+  );
+
+  return;
+
+}
 
 
-    /*
-     * PHASE 3 WILL CONTINUE HERE.
-     */
+/* Parse pending event */
 
-    alert(
-      "Magic link authentication successful!"
-    );
+const pendingEvent =
+  JSON.parse(pendingEventRaw);
+
+
+/* Create Firestore event */
+
+const eventData = {
+
+  eventName:
+    pendingEvent.eventName,
+
+  hostName:
+    pendingEvent.hostName,
+
+  hostEmail:
+    pendingEvent.hostEmail,
+
+  hostUid:
+    user.uid,
+
+  eventDate:
+    pendingEvent.eventDate,
+
+  startTime:
+    pendingEvent.startTime,
+
+  endTime:
+    pendingEvent.endTime,
+
+  photoLimit:
+    pendingEvent.photoLimit,
+
+  revealMode:
+    pendingEvent.revealMode,
+
+  revealDate:
+    pendingEvent.revealDate || null,
+
+  revealTime:
+    pendingEvent.revealTime || null,
+
+  status:
+    "active",
+
+  createdAt:
+    serverTimestamp()
+
+};
+
+
+/* Write event to Firestore */
+
+const eventRef =
+  await addDoc(
+    collection(db, "events"),
+    eventData
+  );
+
+
+/* Event successfully created */
+
+console.log(
+  "Event created successfully.",
+  eventRef.id
+);
+
+
+/* Save event ID locally */
+
+localStorage.setItem(
+  "disposableMomment_eventId",
+  eventRef.id
+);
+
+
+/* Save authenticated host email */
+
+localStorage.setItem(
+  "disposableMomment_hostEmail",
+  user.email || email
+);
+
+
+/* Clean temporary data */
+
+localStorage.removeItem(
+  "disposableMomment_pendingEvent"
+);
+
+localStorage.removeItem(
+  "disposableMomment_emailForSignIn"
+);
+
+
+/* Clean Firebase parameters from URL */
+
+window.history.replaceState(
+  {},
+  document.title,
+  window.location.pathname
+);
+
+
+/* Temporary success message */
+
+alert(
+  `Event created successfully!\n\nEvent ID: ${eventRef.id}`
+);
 
   }
+
   catch (error) {
 
     console.error(
-      "Magic link verification failed:",
+      "Event creation failed:",
       error
     );
 
-
     alert(
-      "This magic link is invalid or has expired."
+      "We couldn't create your event. Please try again."
     );
 
   }
 
 }
-
-
 /*
  * Run the magic link handler when the page loads.
  */
