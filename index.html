@@ -3519,18 +3519,45 @@ showEventSuccess(
 
   }
 
-  catch (error) {
+catch (error) {
 
-    console.error(
-      "Event creation failed:",
-      error
+  console.error(
+    "Magic link / event creation error:",
+    error
+  );
+
+
+  if (
+    error.code === "auth/invalid-action-code" ||
+    error.code === "auth/expired-action-code"
+  ) {
+
+    alert(
+      "This magic link has already been used or has expired. Please create a new event request."
     );
+
+  }
+
+  else if (
+    error.code === "permission-denied" ||
+    error.code === "PERMISSION_DENIED"
+  ) {
+
+    alert(
+      "You are not authorized to create this event."
+    );
+
+  }
+
+  else {
 
     alert(
       "We couldn't create your event. Please try again."
     );
 
   }
+
+}
 
 }
 /*
