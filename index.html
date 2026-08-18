@@ -1052,10 +1052,60 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 }
 
 
+/* ACCESS SECTIONS */
+
+.access-section {
+  margin-top: 24px;
+  padding: 22px 18px 18px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--bg);
+}
+
+.host-access-section {
+  background: #fff;
+  border-color: var(--line-strong);
+}
+
+.access-section-header {
+  text-align: left;
+  margin-bottom: 16px;
+}
+
+.access-kicker {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: .09em;
+  color: var(--accent-deep);
+  margin-bottom: 4px;
+}
+
+.access-section-header strong {
+  display: block;
+  font-size: 14px;
+}
+
+.management-qr-wrapper {
+  margin: 0 auto 18px;
+}
+
+.management-qr-code {
+  border-color: var(--line-strong);
+}
+
+.management-warning {
+  margin: 10px 2px 0;
+  color: var(--accent-deep);
+  font-size: 11.5px;
+  line-height: 1.55;
+}
+
 /* MANAGE BUTTON */
 
 #manageEventButton {
   width: 100%;
+  margin-top: 22px;
 }
 
 
@@ -1905,37 +1955,6 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
           </div>
 
 
-          <!-- HOST EMAIL -->
-          <div
-            class="form-field"
-            data-field="hostEmail"
-          >
-
-            <label
-              class="form-label"
-              for="hostEmail"
-            >
-              Your Email
-            </label>
-
-            <input
-              id="hostEmail"
-              name="hostEmail"
-              class="form-input"
-              type="email"
-              placeholder="you@example.com"
-              autocomplete="email"
-            >
-
-            <div class="form-hint">
-              We'll use this later to send your secure event access link.
-            </div>
-
-            <div class="form-error"></div>
-
-          </div>
-
-
           <!-- DATE -->
           <div
             class="form-field"
@@ -2265,66 +2284,96 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
   </div>
 
 
-  <!-- QR CODE -->
+  <!-- GUEST ACCESS -->
 
-  <div class="event-qr-wrapper">
+  <div class="access-section guest-access-section">
 
-    <div
-      id="eventQRCode"
-      class="event-qr-code"
-    ></div>
+    <div class="access-section-header">
+      <span class="access-kicker">GUEST ACCESS</span>
+      <strong>Share this with your guests</strong>
+    </div>
 
-    <p>
-      Scan to join the event
+    <div class="event-qr-wrapper">
+      <div
+        id="eventQRCode"
+        class="event-qr-code"
+      ></div>
+      <p>Scan to join the event</p>
+    </div>
+
+    <div class="guest-link-section">
+      <label>Guest Link</label>
+      <div class="guest-link-box">
+        <input
+          type="text"
+          id="guestEventLink"
+          readonly
+        >
+        <button
+          type="button"
+          id="copyGuestLink"
+          class="copy-link-btn"
+        >Copy</button>
+      </div>
+      <div
+        id="copyGuestLinkMessage"
+        class="copy-link-message"
+      ></div>
+    </div>
+
+  </div>
+
+
+  <!-- HOST MANAGEMENT ACCESS -->
+
+  <div class="access-section host-access-section">
+
+    <div class="access-section-header">
+      <span class="access-kicker">HOST MANAGEMENT</span>
+      <strong>Keep this QR private</strong>
+    </div>
+
+    <div class="management-qr-wrapper">
+      <div
+        id="managementQRCode"
+        class="event-qr-code management-qr-code"
+      ></div>
+      <p>Scan this QR to access host management</p>
+    </div>
+
+    <div class="guest-link-section">
+      <label>Management Link</label>
+      <div class="guest-link-box">
+        <input
+          type="text"
+          id="managementEventLink"
+          readonly
+        >
+        <button
+          type="button"
+          id="copyManagementLink"
+          class="copy-link-btn"
+        >Copy</button>
+      </div>
+      <div
+        id="copyManagementLinkMessage"
+        class="copy-link-message"
+      ></div>
+    </div>
+
+    <p class="management-warning">
+      Anyone with this QR or link can access your event management. Do not share it publicly.
     </p>
 
   </div>
 
-
-  <!-- GUEST LINK -->
-
-  <div class="guest-link-section">
-
-    <label>
-      Guest Link
-    </label>
-
-    <div class="guest-link-box">
-
-      <input
-        type="text"
-        id="guestEventLink"
-        readonly
-      >
-
-      <button
-        type="button"
-        id="copyGuestLink"
-        class="copy-link-btn"
-      >
-        Copy
-      </button>
-
-    </div>
-
-    <div
-      id="copyGuestLinkMessage"
-      class="copy-link-message"
-    ></div>
-
-  </div>
-
-
-  <!-- MANAGEMENT -->
 
   <button
     type="button"
     id="manageEventButton"
     class="btn btn-primary create-submit"
   >
-
-    Manage Event
-
+    Open Host Management
     <svg
       viewBox="0 0 24 24"
       fill="none"
@@ -2336,12 +2385,11 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
       <path d="M5 12h14"/>
       <path d="M13 6l6 6-6 6"/>
     </svg>
-
   </button>
 
 
   <p class="event-success-note">
-    Share the QR code with your guests.
+    Your event is ready. Save the host management QR before closing this window.
   </p>
 
 </div>
@@ -2417,11 +2465,16 @@ import {
   db,
   collection,
   addDoc,
-  serverTimestamp,
-  sendSignInLinkToEmail,
-  isSignInWithEmailLink,
-  signInWithEmailLink
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp
 } from "./firebase.js";
+
+/* Firebase Anonymous Auth uses the same Firebase SDK version as firebase.js. */
+import {
+  signInAnonymously
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 
 console.log("Firebase loaded successfully:", {
@@ -2591,6 +2644,18 @@ const copyGuestLink =
 const copyGuestLinkMessage =
   document.getElementById("copyGuestLinkMessage");
 
+const managementQRCode =
+  document.getElementById("managementQRCode");
+
+const managementEventLink =
+  document.getElementById("managementEventLink");
+
+const copyManagementLink =
+  document.getElementById("copyManagementLink");
+
+const copyManagementLinkMessage =
+  document.getElementById("copyManagementLinkMessage");
+
 const manageEventButton =
   document.getElementById("manageEventButton");
 
@@ -2615,115 +2680,63 @@ function closeCreateEvent() {
    EVENT SUCCESS SCREEN
    ================================================== */
 
-function showEventSuccess(eventData, eventId) {
-
-  /*
-   * Hide create form
-   */
+function showEventSuccess(eventData, eventId, managementToken) {
 
   createEventForm.style.display = "none";
-
-
-  /*
-   * Show success view
-   */
-
   eventSuccessView.classList.add("is-visible");
 
-
-  /*
-   * Event information
-   */
-
-  successEventName.textContent =
-    eventData.eventName;
-
+  successEventName.textContent = eventData.eventName;
 
   const formattedDate =
-    new Date(
-      `${eventData.eventDate}T00:00:00`
-    ).toLocaleDateString(
+    new Date(`${eventData.eventDate}T00:00:00`).toLocaleDateString(
       "en-US",
-      {
-        month: "long",
-        day: "numeric",
-        year: "numeric"
-      }
+      { month: "long", day: "numeric", year: "numeric" }
     );
 
+  successEventDate.textContent = formattedDate;
 
-  successEventDate.textContent =
-    formattedDate;
-
-
-  /*
-   * Guest URL
-   */
-
+  /* Guest URL */
   const guestUrl =
     `${window.location.origin}${window.location.pathname}?event=${encodeURIComponent(eventId)}`;
 
-
-  guestEventLink.value =
-    guestUrl;
-
-
-  /*
-   * Generate QR
-   */
+  guestEventLink.value = guestUrl;
 
   eventQRCode.innerHTML = "";
+  new QRCode(eventQRCode, {
+    text: guestUrl,
+    width: 166,
+    height: 166,
+    colorDark: "#111111",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.H
+  });
 
-  new QRCode(
-    eventQRCode,
-    {
-      text: guestUrl,
+  /* Host management URL — token is intentionally not the Event ID. */
+  const managementUrl =
+    `${window.location.origin}${window.location.pathname}?manage=${encodeURIComponent(managementToken)}`;
 
-      width: 166,
-      height: 166,
+  managementEventLink.value = managementUrl;
 
-      colorDark: "#111111",
-      colorLight: "#ffffff",
+  managementQRCode.innerHTML = "";
+  new QRCode(managementQRCode, {
+    text: managementUrl,
+    width: 166,
+    height: 166,
+    colorDark: "#111111",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.H
+  });
 
-      correctLevel:
-        QRCode.CorrectLevel.H
-    }
-  );
+  localStorage.setItem("disposableMomment_eventId", eventId);
+  localStorage.setItem("disposableMomment_guestUrl", guestUrl);
+  localStorage.setItem("disposableMomment_managementUrl", managementUrl);
 
+  copyGuestLinkMessage.textContent = "";
+  copyManagementLinkMessage.textContent = "";
 
-  /*
-   * Store guest URL
-   */
-
-  localStorage.setItem(
-    "disposableMomment_guestUrl",
-    guestUrl
-  );
-
-
-  /*
-   * Reset copy message
-   */
-
-  copyGuestLinkMessage.textContent =
-    "";
-
-
-  /*
-   * Management button
-   *
-   * PHASE 8/9 will connect this.
-   */
-
-  manageEventButton.onclick =
-    function() {
-
-      alert(
-        "Event Management will be available in the next phase."
-      );
-
-    };
-
+  manageEventButton.onclick = function() {
+    window.location.href = managementUrl;
+  };
 }
 
 /* ==================================================
@@ -2908,347 +2921,221 @@ createEventForm.addEventListener(
   async function(event) {
 
     event.preventDefault();
-
     clearCreateFieldErrors();
 
     const eventName =
-      document.getElementById("eventName")
-        .value.trim();
+      document.getElementById("eventName").value.trim();
 
     const hostName =
-      document.getElementById("hostName")
-        .value.trim();
-
-    const hostEmail =
-      document.getElementById("hostEmail")
-        .value.trim();
+      document.getElementById("hostName").value.trim();
 
     const eventDate =
-      document.getElementById("eventDate")
-        .value;
+      document.getElementById("eventDate").value;
 
     const startTime =
-      document.getElementById("startTime")
-        .value;
+      document.getElementById("startTime").value;
 
     const endTime =
-      document.getElementById("endTime")
-        .value;
+      document.getElementById("endTime").value;
 
     const photoLimit =
-      Number(
-        document.getElementById("photoLimit")
-          .value
-      );
+      Number(document.getElementById("photoLimit").value);
 
     const revealMode =
-      document.querySelector(
-        'input[name="revealMode"]:checked'
-      )?.value;
+      document.querySelector('input[name="revealMode"]:checked')?.value;
 
     const revealDate =
-      document.getElementById("revealDate")
-        .value;
+      document.getElementById("revealDate").value;
 
     const revealTime =
-      document.getElementById("revealTime")
-        .value;
-
+      document.getElementById("revealTime").value;
 
     let valid = true;
 
-
-    /* Event name */
-
     if (!eventName) {
-
-      setCreateFieldError(
-        "eventName",
-        "Please enter your event name."
-      );
-
+      setCreateFieldError("eventName", "Please enter your event name.");
       valid = false;
-
     }
-
-
-    /* Host */
 
     if (!hostName) {
-
-      setCreateFieldError(
-        "hostName",
-        "Please enter your name."
-      );
-
+      setCreateFieldError("hostName", "Please enter your name.");
       valid = false;
-
     }
-
-
-    /* Email */
-
-    const emailRegex =
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!hostEmail) {
-
-      setCreateFieldError(
-        "hostEmail",
-        "Please enter your email."
-      );
-
-      valid = false;
-
-    }
-    else if (!emailRegex.test(hostEmail)) {
-
-      setCreateFieldError(
-        "hostEmail",
-        "Please enter a valid email address."
-      );
-
-      valid = false;
-
-    }
-
-
-    /* Date */
 
     if (!eventDate) {
-
-      setCreateFieldError(
-        "eventDate",
-        "Please choose your event date."
-      );
-
+      setCreateFieldError("eventDate", "Please choose your event date.");
       valid = false;
-
     }
 
-
-    /* Time */
-
     if (!startTime) {
-
-      setCreateFieldError(
-        "startTime",
-        "Please choose a start time."
-      );
-
+      setCreateFieldError("startTime", "Please choose a start time.");
       valid = false;
-
     }
 
     if (!endTime) {
-
-      setCreateFieldError(
-        "endTime",
-        "Please choose an end time."
-      );
-
+      setCreateFieldError("endTime", "Please choose an end time.");
       valid = false;
-
     }
 
-
-    if (
-      startTime &&
-      endTime &&
-      endTime <= startTime
-    ) {
-
-      setCreateFieldError(
-        "endTime",
-        "End time must be after start time."
-      );
-
+    if (startTime && endTime && endTime <= startTime) {
+      setCreateFieldError("endTime", "End time must be after start time.");
       valid = false;
-
     }
 
-
-    /* Photo limit */
-
-    if (
-      !photoLimit ||
-      photoLimit < 1
-    ) {
-
-      setCreateFieldError(
-        "photoLimit",
-        "Photo limit must be at least 1."
-      );
-
+    if (!photoLimit || photoLimit < 1) {
+      setCreateFieldError("photoLimit", "Photo limit must be at least 1.");
       valid = false;
-
     }
-
-
-    /* Custom reveal */
 
     if (revealMode === "custom") {
-
       if (!revealDate) {
-
-        setCreateFieldError(
-          "revealDate",
-          "Please choose a reveal date."
-        );
-
+        setCreateFieldError("revealDate", "Please choose a reveal date.");
         valid = false;
-
       }
-
       if (!revealTime) {
-
-        setCreateFieldError(
-          "revealTime",
-          "Please choose a reveal time."
-        );
-
+        setCreateFieldError("revealTime", "Please choose a reveal time.");
         valid = false;
-
       }
-
     }
-
 
     if (!valid) {
-
       const firstError =
-        document.querySelector(
-          "#createEventForm .has-error input"
-        );
-
+        document.querySelector("#createEventForm .has-error input");
       firstError?.focus();
-
       return;
-
     }
 
-  /* ==================================================
-   PHASE 2 — SEND MAGIC LINK
-   ================================================== */
+    const submitButton =
+      document.getElementById("createEventSubmit");
 
-const pendingEvent = {
-  eventName,
-  hostName,
-  hostEmail,
-  eventDate,
-  startTime,
-  endTime,
-  photoLimit,
-  revealMode,
-  revealDate:
-    revealMode === "custom"
-      ? revealDate
-      : null,
-  revealTime:
-    revealMode === "custom"
-      ? revealTime
-      : null
-};
+    submitButton.disabled = true;
+    submitButton.textContent = "Creating event...";
 
+    try {
+      /*
+       * Authenticate this browser anonymously.
+       * This replaces the old email magic-link flow.
+       */
+      let user = auth.currentUser;
 
-/* Save event data temporarily */
+      if (!user) {
+        const credential = await signInAnonymously(auth);
+        user = credential.user;
+      }
 
-localStorage.setItem(
-  "disposableMomment_pendingEvent",
-  JSON.stringify(pendingEvent)
-);
+      console.log("Anonymous host authenticated:", user.uid);
 
+      /* Generate a high-entropy management secret. */
+      const managementToken = generateManagementToken();
 
-/* Firebase Magic Link settings */
+      const eventData = {
+        eventName,
+        hostName,
+        hostEmail: "",
+        hostUid: user.uid,
+        eventDate,
+        startTime,
+        endTime,
+        photoLimit,
+        revealMode,
+        revealDate: revealMode === "custom" ? revealDate : null,
+        revealTime: revealMode === "custom" ? revealTime : null,
+        status: "active",
+        createdAt: serverTimestamp()
+      };
 
-const actionCodeSettings = {
+      /* Create the event. */
+      const eventRef = await addDoc(
+        collection(db, "events"),
+        eventData
+      );
 
-  url:
-    `${window.location.origin}${window.location.pathname}`,
+      /*
+       * Store the management secret separately from the event document.
+       * The secret itself is the document ID, so it does not need to be
+       * exposed through the normal guest event document.
+       */
+      await setDoc(
+        doc(db, "managementAccess", managementToken),
+        {
+          eventId: eventRef.id,
+          hostUid: user.uid,
+          active: true,
+          createdAt: serverTimestamp()
+        }
+      );
 
-  handleCodeInApp: true
+      console.log("Event created successfully:", eventRef.id);
+      console.log("Management access created successfully.");
 
-};
+      localStorage.setItem(
+        "disposableMomment_eventId",
+        eventRef.id
+      );
 
+      localStorage.setItem(
+        "disposableMomment_managementToken",
+        managementToken
+      );
 
-/* Disable submit button */
+      showEventSuccess(
+        eventData,
+        eventRef.id,
+        managementToken
+      );
 
-const submitButton =
-  document.getElementById("createEventSubmit");
+    } catch (error) {
+      console.error("Event creation error:", error);
 
-submitButton.disabled = true;
+      if (error.code === "auth/operation-not-allowed") {
+        alert(
+          "Anonymous Authentication is not enabled in Firebase. Please enable Anonymous sign-in in Firebase Authentication."
+        );
+      }
+      else if (
+        error.code === "permission-denied" ||
+        error.code === "PERMISSION_DENIED"
+      ) {
+        alert(
+          "Firebase denied this request. Check your Firestore Security Rules for events and managementAccess."
+        );
+      }
+      else {
+        alert(
+          "We couldn't create your event. Please try again."
+        );
+      }
 
-submitButton.textContent =
-  "Sending magic link...";
-
-
-try {
-
-  await sendSignInLinkToEmail(
-    auth,
-    hostEmail,
-    actionCodeSettings
-  );
-
-
-  /* Remember email used for authentication */
-
-  localStorage.setItem(
-    "disposableMomment_emailForSignIn",
-    hostEmail
-  );
-
-
-  /* Show success state */
-
-  console.log(
-    "Magic link sent successfully."
-  );
-
-
-  alert(
-    `Magic link sent to ${hostEmail}`
-  );
-
-
-}
-catch (error) {
-
-  console.error(
-    "Magic link error:",
-    error
-  );
-
-
-  alert(
-    "We couldn't send the magic link. Please try again."
-  );
-
-}
-finally {
-
-  submitButton.disabled = false;
-
-  submitButton.innerHTML = `
-    Create Event
-
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    >
-      <path d="M5 12h14"/>
-      <path d="M13 6l6 6-6 6"/>
-    </svg>
-  `;
-
-}
-
+    } finally {
+      submitButton.disabled = false;
+      submitButton.innerHTML = `
+        Create Event
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M5 12h14"/>
+          <path d="M13 6l6 6-6 6"/>
+        </svg>
+      `;
+    }
   }
 );
+
+/* Generate a URL-safe 256-bit management secret. */
+function generateManagementToken() {
+  const bytes = new Uint8Array(32);
+  crypto.getRandomValues(bytes);
+
+  return Array.from(bytes, byte =>
+    byte.toString(16).padStart(2, "0")
+  ).join("");
+}
+
 /* ==================================================
    CLOSE MODAL — CLICK OUTSIDE
    ================================================== */
@@ -3283,288 +3170,108 @@ document.addEventListener(
   }
 );
 /* ==================================================
-   PHASE 2 — HANDLE MAGIC LINK
+   HOST MANAGEMENT ACCESS VALIDATION
    ================================================== */
 
-async function handleMagicLink() {
+async function handleManagementAccess() {
 
-  /*
-   * Check whether the current URL is a Firebase
-   * email sign-in link.
-   */
+  const params = new URLSearchParams(window.location.search);
+  const managementToken = params.get("manage");
 
-  if (
-    !isSignInWithEmailLink(
-      auth,
-      window.location.href
-    )
-  ) {
-    return;
-  }
-
-
-  console.log(
-    "Firebase magic link detected."
-  );
-
-
-  /*
-   * Get the email address that was saved when
-   * the magic link was originally sent.
-   */
-
-  let email =
-    localStorage.getItem(
-      "disposableMomment_emailForSignIn"
-    );
-
-
-  /*
-   * If the email is not available in this browser,
-   * ask the user to enter it.
-   */
-
-  if (!email) {
-
-    email = window.prompt(
-      "Please enter the email address you used to create the event."
-    );
-
-  }
-
-
-  if (!email) {
-
-    console.error(
-      "No email address available for magic link sign-in."
-    );
-
-    return;
-
-  }
-
+  if (!managementToken) return;
 
   try {
+    /* Ensure this browser has an authenticated Firebase session. */
+    if (!auth.currentUser) {
+      await signInAnonymously(auth);
+    }
 
-    console.log(
-      "Signing in with magic link..."
-    );
+    const accessRef =
+      doc(db, "managementAccess", managementToken);
 
+    const accessSnap = await getDoc(accessRef);
+
+    if (!accessSnap.exists()) {
+      throw new Error("Management access token not found.");
+    }
+
+    const accessData = accessSnap.data();
+
+    if (accessData.active !== true || !accessData.eventId) {
+      throw new Error("Management access token is inactive or invalid.");
+    }
+
+    const currentUser = auth.currentUser;
+    const sessionId =
+      `${accessData.eventId}_${currentUser.uid}`;
 
     /*
-     * Complete Firebase passwordless authentication.
+     * Create a short-lived logical management session. The Firestore Rules
+     * will use this document to authorize the current anonymous UID for the
+     * event without exposing the secret token to the event document.
      */
+    await setDoc(
+      doc(db, "managementSessions", sessionId),
+      {
+        eventId: accessData.eventId,
+        uid: currentUser.uid,
+        managementToken,
+        active: true,
+        createdAt: serverTimestamp()
+      }
+    );
 
-    const result =
-      await signInWithEmailLink(
-        auth,
-        email,
-        window.location.href
+    localStorage.setItem(
+      "disposableMomment_managementSession",
+      sessionId
+    );
+
+    console.log("Host management access verified:", {
+      eventId: accessData.eventId,
+      sessionId
+    });
+
+    alert(
+      "Host management access verified. The management dashboard will be connected in the next phase."
+    );
+
+  } catch (error) {
+    console.error("Management access error:", error);
+    alert("This host management link could not be verified.");
+  }
+}
+
+/* ==================================================
+   COPY MANAGEMENT LINK
+   ================================================== */
+
+copyManagementLink.addEventListener(
+  "click",
+  async function() {
+    try {
+      await navigator.clipboard.writeText(
+        managementEventLink.value
       );
 
+      copyManagementLink.textContent = "Copied!";
+      copyManagementLinkMessage.textContent =
+        "Management link copied. Keep it private.";
 
-/* ==================================================
-   PHASE 3 — CREATE EVENT IN FIRESTORE
-   ================================================== */
+      setTimeout(function() {
+        copyManagementLink.textContent = "Copy";
+        copyManagementLinkMessage.textContent = "";
+      }, 2000);
 
-console.log(
-  "Magic link authentication successful.",
-  result.user
-);
-
-
-/* Get authenticated Firebase user */
-
-const user = result.user;
-
-
-/* Get pending event data */
-
-const pendingEventRaw =
-  localStorage.getItem(
-    "disposableMomment_pendingEvent"
-  );
-
-
-/* Safety check */
-
-if (!pendingEventRaw) {
-
-  console.error(
-    "No pending event data found."
-  );
-
-  alert(
-    "Your authentication was successful, but your event data could not be found. Please create the event again."
-  );
-
-  return;
-
-}
-
-
-/* Parse pending event */
-
-const pendingEvent =
-  JSON.parse(pendingEventRaw);
-
-
-/* Create Firestore event */
-
-const eventData = {
-
-  eventName:
-    pendingEvent.eventName,
-
-  hostName:
-    pendingEvent.hostName,
-
-  hostEmail:
-    pendingEvent.hostEmail,
-
-  hostUid:
-    user.uid,
-
-  eventDate:
-    pendingEvent.eventDate,
-
-  startTime:
-    pendingEvent.startTime,
-
-  endTime:
-    pendingEvent.endTime,
-
-  photoLimit:
-    pendingEvent.photoLimit,
-
-  revealMode:
-    pendingEvent.revealMode,
-
-  revealDate:
-    pendingEvent.revealDate || null,
-
-  revealTime:
-    pendingEvent.revealTime || null,
-
-  status:
-    "active",
-
-  createdAt:
-    serverTimestamp()
-
-};
-
-
-/* Write event to Firestore */
-
-const eventRef =
-  await addDoc(
-    collection(db, "events"),
-    eventData
-  );
-
-
-/* Event successfully created */
-
-console.log(
-  "Event created successfully.",
-  eventRef.id
-);
-
-
-/* Save event ID locally */
-
-localStorage.setItem(
-  "disposableMomment_eventId",
-  eventRef.id
-);
-
-
-/* Save authenticated host email */
-
-localStorage.setItem(
-  "disposableMomment_hostEmail",
-  user.email || email
-);
-
-
-/* Clean temporary data */
-
-localStorage.removeItem(
-  "disposableMomment_pendingEvent"
-);
-
-localStorage.removeItem(
-  "disposableMomment_emailForSignIn"
-);
-
-
-/* Clean Firebase parameters from URL */
-
-window.history.replaceState(
-  {},
-  document.title,
-  window.location.pathname
-);
-
-
-/* ==================================================
-   SHOW EVENT SUCCESS SCREEN
-   ================================================== */
-
-showEventSuccess(
-  pendingEvent,
-  eventRef.id
-);
-
+    } catch (error) {
+      console.error("Management copy failed:", error);
+      managementEventLink.select();
+      document.execCommand("copy");
+      copyManagementLink.textContent = "Copied!";
+    }
   }
+);
 
-catch (error) {
-
-  console.error(
-    "Magic link / event creation error:",
-    error
-  );
-
-
-  if (
-    error.code === "auth/invalid-action-code" ||
-    error.code === "auth/expired-action-code"
-  ) {
-
-    alert(
-      "This magic link has already been used or has expired. Please create a new event request."
-    );
-
-  }
-
-  else if (
-    error.code === "permission-denied" ||
-    error.code === "PERMISSION_DENIED"
-  ) {
-
-    alert(
-      "You are not authorized to create this event."
-    );
-
-  }
-
-  else {
-
-    alert(
-      "We couldn't create your event. Please try again."
-    );
-
-  }
-
-}
-
-}
-/*
- * Run the magic link handler when the page loads.
- */
-
-handleMagicLink();
+handleManagementAccess();
 </script>
 
 </body>
