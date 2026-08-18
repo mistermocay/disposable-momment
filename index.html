@@ -801,6 +801,298 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
   gap: 24px;
 }
 
+/* ==================================================
+   EVENT CREATED SUCCESS VIEW
+   ================================================== */
+
+.event-success-view {
+  display: none;
+  text-align: center;
+  padding: 10px 0 4px;
+}
+
+.event-success-view.is-visible {
+  display: block;
+}
+
+
+/* SUCCESS ICON */
+
+.event-success-icon {
+  width: 64px;
+  height: 64px;
+
+  margin: 0 auto 20px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--ink);
+  color: #fff;
+
+  font-size: 30px;
+  font-weight: 700;
+
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, .15);
+}
+
+
+/* HEADER */
+
+.event-success-view .eyebrow {
+  display: inline-flex;
+  margin-bottom: 16px;
+}
+
+.event-success-view h1 {
+  margin: 0;
+
+  font-size: clamp(34px, 5vw, 48px);
+
+  line-height: 1.05;
+}
+
+.event-success-subtitle {
+  max-width: 480px;
+
+  margin: 16px auto 26px;
+
+  color: var(--ink-soft);
+
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+
+/* EVENT SUMMARY */
+
+.event-success-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 12px;
+
+  margin-bottom: 24px;
+}
+
+.success-event-name,
+.success-event-date {
+  padding: 15px;
+
+  border: 1px solid var(--line);
+
+  border-radius: 14px;
+
+  background: var(--bg);
+}
+
+.success-event-name span,
+.success-event-date span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: var(--ink-soft);
+
+  font-size: 11px;
+
+  text-transform: uppercase;
+
+  letter-spacing: .08em;
+}
+
+.success-event-name strong,
+.success-event-date strong {
+  display: block;
+
+  font-size: 14px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* QR */
+
+.event-qr-wrapper {
+  margin: 0 auto 24px;
+}
+
+.event-qr-code {
+  width: 190px;
+  height: 190px;
+
+  margin: 0 auto;
+
+  padding: 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #fff;
+
+  border: 1px solid var(--line);
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, .08);
+}
+
+.event-qr-code img,
+.event-qr-code canvas {
+  display: block;
+
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.event-qr-wrapper p {
+  margin: 10px 0 0;
+
+  color: var(--ink-soft);
+
+  font-size: 12px;
+}
+
+
+/* GUEST LINK */
+
+.guest-link-section {
+  margin-bottom: 18px;
+
+  text-align: left;
+}
+
+.guest-link-section > label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
+
+.guest-link-box {
+  display: flex;
+
+  gap: 8px;
+
+  padding: 6px;
+
+  border: 1px solid var(--line);
+
+  border-radius: 14px;
+
+  background: var(--bg);
+}
+
+.guest-link-box input {
+  min-width: 0;
+  flex: 1;
+
+  padding: 9px 10px;
+
+  border: 0;
+  outline: none;
+
+  background: transparent;
+
+  color: var(--ink-soft);
+
+  font-size: 12px;
+}
+
+.copy-link-btn {
+  flex-shrink: 0;
+
+  padding: 9px 16px;
+
+  border: 0;
+
+  border-radius: 10px;
+
+  background: var(--ink);
+
+  color: #fff;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform .2s ease,
+    opacity .2s ease;
+}
+
+.copy-link-btn:hover {
+  transform: translateY(-1px);
+}
+
+.copy-link-btn:active {
+  transform: translateY(0);
+}
+
+.copy-link-message {
+  min-height: 18px;
+
+  margin-top: 6px;
+
+  color: var(--ink-soft);
+
+  font-size: 11px;
+}
+
+
+/* MANAGE BUTTON */
+
+#manageEventButton {
+  width: 100%;
+}
+
+
+/* FOOTNOTE */
+
+.event-success-note {
+  margin: 14px 0 0;
+
+  color: var(--ink-soft);
+
+  font-size: 12px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+  .event-success-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .event-qr-code {
+    width: 170px;
+    height: 170px;
+  }
+
+  .guest-link-box {
+    gap: 4px;
+  }
+
+  .copy-link-btn {
+    padding: 9px 12px;
+  }
+
+}
+
 .form-field {
   display: flex;
   flex-direction: column;
@@ -1923,7 +2215,136 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
           </button>
 
         </form>
+<!-- ==================================================
+     EVENT CREATED SUCCESS VIEW
+     ================================================== -->
 
+<div
+  id="eventSuccessView"
+  class="event-success-view"
+>
+
+  <div class="event-success-icon">
+    ✓
+  </div>
+
+  <span class="eyebrow">
+    <span class="dot"></span>
+    Event ready
+  </span>
+
+  <h1>
+    Your event<br>
+    is ready.
+  </h1>
+
+  <p class="event-success-subtitle">
+    Your guests can now join the event using the link
+    or QR code below.
+  </p>
+
+
+  <!-- EVENT SUMMARY -->
+
+  <div class="event-success-summary">
+
+    <div class="success-event-name">
+      <span>Event</span>
+      <strong id="successEventName">
+        Your Event
+      </strong>
+    </div>
+
+    <div class="success-event-date">
+      <span>Date</span>
+      <strong id="successEventDate">
+        —
+      </strong>
+    </div>
+
+  </div>
+
+
+  <!-- QR CODE -->
+
+  <div class="event-qr-wrapper">
+
+    <div
+      id="eventQRCode"
+      class="event-qr-code"
+    ></div>
+
+    <p>
+      Scan to join the event
+    </p>
+
+  </div>
+
+
+  <!-- GUEST LINK -->
+
+  <div class="guest-link-section">
+
+    <label>
+      Guest Link
+    </label>
+
+    <div class="guest-link-box">
+
+      <input
+        type="text"
+        id="guestEventLink"
+        readonly
+      >
+
+      <button
+        type="button"
+        id="copyGuestLink"
+        class="copy-link-btn"
+      >
+        Copy
+      </button>
+
+    </div>
+
+    <div
+      id="copyGuestLinkMessage"
+      class="copy-link-message"
+    ></div>
+
+  </div>
+
+
+  <!-- MANAGEMENT -->
+
+  <button
+    type="button"
+    id="manageEventButton"
+    class="btn btn-primary create-submit"
+  >
+
+    Manage Event
+
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M5 12h14"/>
+      <path d="M13 6l6 6-6 6"/>
+    </svg>
+
+  </button>
+
+
+  <p class="event-success-note">
+    Share the QR code with your guests.
+  </p>
+
+</div>
 
         <div class="create-event-note">
           No app required for your guests.
@@ -1988,6 +2409,7 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
   </div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script type="module">
 
 import {
@@ -2148,6 +2570,30 @@ console.log("Firebase loaded successfully:", {
 
 const createEventView = document.getElementById("createEventView");
 
+const eventSuccessView =
+  document.getElementById("eventSuccessView");
+
+const successEventName =
+  document.getElementById("successEventName");
+
+const successEventDate =
+  document.getElementById("successEventDate");
+
+const eventQRCode =
+  document.getElementById("eventQRCode");
+
+const guestEventLink =
+  document.getElementById("guestEventLink");
+
+const copyGuestLink =
+  document.getElementById("copyGuestLink");
+
+const copyGuestLinkMessage =
+  document.getElementById("copyGuestLinkMessage");
+
+const manageEventButton =
+  document.getElementById("manageEventButton");
+
 function openCreateEvent() {
 
   createEventView.classList.add("is-active");
@@ -2165,7 +2611,176 @@ function closeCreateEvent() {
 
 }
 
+/* ==================================================
+   EVENT SUCCESS SCREEN
+   ================================================== */
 
+function showEventSuccess(eventData, eventId) {
+
+  /*
+   * Hide create form
+   */
+
+  createEventForm.style.display = "none";
+
+
+  /*
+   * Show success view
+   */
+
+  eventSuccessView.classList.add("is-visible");
+
+
+  /*
+   * Event information
+   */
+
+  successEventName.textContent =
+    eventData.eventName;
+
+
+  const formattedDate =
+    new Date(
+      `${eventData.eventDate}T00:00:00`
+    ).toLocaleDateString(
+      "en-US",
+      {
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+      }
+    );
+
+
+  successEventDate.textContent =
+    formattedDate;
+
+
+  /*
+   * Guest URL
+   */
+
+  const guestUrl =
+    `${window.location.origin}${window.location.pathname}?event=${encodeURIComponent(eventId)}`;
+
+
+  guestEventLink.value =
+    guestUrl;
+
+
+  /*
+   * Generate QR
+   */
+
+  eventQRCode.innerHTML = "";
+
+  new QRCode(
+    eventQRCode,
+    {
+      text: guestUrl,
+
+      width: 166,
+      height: 166,
+
+      colorDark: "#111111",
+      colorLight: "#ffffff",
+
+      correctLevel:
+        QRCode.CorrectLevel.H
+    }
+  );
+
+
+  /*
+   * Store guest URL
+   */
+
+  localStorage.setItem(
+    "disposableMomment_guestUrl",
+    guestUrl
+  );
+
+
+  /*
+   * Reset copy message
+   */
+
+  copyGuestLinkMessage.textContent =
+    "";
+
+
+  /*
+   * Management button
+   *
+   * PHASE 8/9 will connect this.
+   */
+
+  manageEventButton.onclick =
+    function() {
+
+      alert(
+        "Event Management will be available in the next phase."
+      );
+
+    };
+
+}
+
+/* ==================================================
+   COPY GUEST LINK
+   ================================================== */
+
+copyGuestLink.addEventListener(
+  "click",
+  async function() {
+
+    try {
+
+      await navigator.clipboard.writeText(
+        guestEventLink.value
+      );
+
+      copyGuestLink.textContent =
+        "Copied!";
+
+      copyGuestLinkMessage.textContent =
+        "Guest link copied to clipboard.";
+
+
+      setTimeout(
+        function() {
+
+          copyGuestLink.textContent =
+            "Copy";
+
+          copyGuestLinkMessage.textContent =
+            "";
+
+        },
+        2000
+      );
+
+    }
+    catch (error) {
+
+      console.error(
+        "Copy failed:",
+        error
+      );
+
+      guestEventLink.select();
+
+      document.execCommand(
+        "copy"
+      );
+
+      copyGuestLink.textContent =
+        "Copied!";
+
+    }
+
+  }
+);
 /* Create Event buttons */
 
 document.querySelectorAll(
@@ -2893,10 +3508,13 @@ window.history.replaceState(
 );
 
 
-/* Temporary success message */
+/* ==================================================
+   SHOW EVENT SUCCESS SCREEN
+   ================================================== */
 
-alert(
-  `Event created successfully!\n\nEvent ID: ${eventRef.id}`
+showEventSuccess(
+  pendingEvent,
+  eventRef.id
 );
 
   }
