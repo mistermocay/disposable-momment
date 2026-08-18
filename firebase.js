@@ -79,23 +79,12 @@ const db =
 // ==================================================
 
 export {
-
-  app,
-
   auth,
-
   db,
-
   collection,
-
   addDoc,
-
-  serverTimestamp,
-
-  sendSignInLinkToEmail,
-
-  isSignInWithEmailLink,
-
-  signInWithEmailLink
-
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp
 };
