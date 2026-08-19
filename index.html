@@ -5997,68 +5997,6 @@ copyDashboardManagementLink?.addEventListener(
    GUEST PHOTO UPLOAD
    ================================================== */
 
-let selectedGuestPhoto = null;
-
-
-/*
- * PHOTO SELECTION
- */
-
-function handleGuestPhotoSelected(file) {
-
-  if (!file) {
-    return;
-  }
-
-  if (!file.type.startsWith("image/")) {
-
-    guestUploadStatus.textContent =
-      "Please select a valid image.";
-
-    return;
-  }
-
-  selectedGuestPhoto = file;
-
-  guestPhotoName.textContent =
-    file.name;
-
-  /*
-   * Preview
-   */
-
-  const previewUrl =
-    URL.createObjectURL(file);
-
-  guestPreviewImage.src =
-    previewUrl;
-
-  guestPhotoPreview.style.display =
-    "block";
-
-}
-
-
-/*
- * CHOOSE PHOTO
- */
-
-guestPhotoInput?.addEventListener(
-  "change",
-  function() {
-
-    const file =
-      this.files?.[0];
-
-    handleGuestPhotoSelected(file);
-
-  }
-);
-
-/* ==================================================
-   GUEST PHOTO UPLOAD
-   ================================================== */
-
 document.addEventListener("click", async function(event) {
 
   const button = event.target.closest("#guestUploadButton");
