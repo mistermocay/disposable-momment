@@ -634,6 +634,75 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 }
 
 /* ==================================================
+   EDIT EVENT MODAL
+   ================================================== */
+#editEventView {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(17, 17, 17, 0.58);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .3s ease, visibility .3s ease;
+}
+#editEventView.is-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.edit-event-page {
+  width: 100%;
+  max-width: 700px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  transform: translateY(20px) scale(.98);
+  opacity: 0;
+  transition: transform .35s var(--ease), opacity .3s ease;
+}
+#editEventView.is-active .edit-event-page {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+.edit-event-container { width: 100%; max-width: 640px; margin: 0 auto; }
+.edit-event-card {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.25);
+}
+.edit-event-header { text-align: center; margin-bottom: 22px; }
+.edit-event-header h1 { font-size: clamp(28px, 5vw, 42px); line-height: 1.08; }
+.edit-event-header p { max-width: 500px; margin: 12px auto 0; color: var(--ink-soft); font-size: 14.5px; }
+.edit-event-close {
+  position: absolute; top: 18px; right: 18px; width: 38px; height: 38px;
+  border: 1px solid var(--line); border-radius: 50%; background: var(--bg);
+  color: var(--ink-soft); display: flex; align-items: center; justify-content: center;
+  font-size: 24px; line-height: 1; cursor: pointer;
+  transition: background .25s ease, color .25s ease, transform .25s ease;
+}
+.edit-event-close:hover { background: var(--ink); color: #fff; transform: rotate(90deg); }
+.edit-event-actions { display: flex; gap: 10px; margin-top: 22px; }
+.edit-event-actions .btn { flex: 1; min-height: 52px; }
+.edit-event-note { text-align: center; color: var(--ink-faint); font-size: 12.5px; margin-top: 14px; }
+@media (max-width: 600px) {
+  #editEventView { padding: 12px; }
+  .edit-event-page { max-height: calc(100vh - 24px); }
+  .edit-event-card { padding: 24px 18px 22px; border-radius: 24px; }
+  .edit-event-header { padding-right: 20px; }
+  .edit-event-header h1 { font-size: 30px; }
+  .edit-event-actions { flex-direction: column; }
+}
+
+/* ==================================================
    CREATE EVENT MODAL
    ================================================== */
 
@@ -4237,6 +4306,125 @@ body.guest-uploading {
 
 </section>
 <!-- ==================================================
+     EDIT EVENT MODAL
+     ================================================== -->
+<section id="editEventView" aria-hidden="true">
+  <div class="edit-event-page">
+    <div class="edit-event-container">
+      <div class="edit-event-card">
+
+        <button
+          type="button"
+          class="edit-event-close"
+          id="editEventClose"
+          aria-label="Close edit event"
+        >
+          ×
+        </button>
+
+        <div class="edit-event-header">
+          <span class="eyebrow">
+            <span class="dot"></span>
+            Event Settings
+          </span>
+          <h1>Edit your event.</h1>
+          <p>Update the event details without changing the event date or guest links.</p>
+        </div>
+
+        <form id="editEventForm" class="create-form">
+
+          <div class="form-field" data-edit-field="eventName">
+            <label class="form-label" for="editEventName">Event Name</label>
+            <input id="editEventName" class="form-input" type="text" autocomplete="off">
+            <div class="form-error"></div>
+          </div>
+
+          <div class="form-field" data-edit-field="hostName">
+            <label class="form-label" for="editHostName">Host</label>
+            <input id="editHostName" class="form-input" type="text" autocomplete="name">
+            <div class="form-error"></div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field" data-edit-field="startTime">
+              <label class="form-label" for="editStartTime">Start Time</label>
+              <input id="editStartTime" class="form-input" type="time">
+              <div class="form-error"></div>
+            </div>
+
+            <div class="form-field" data-edit-field="endTime">
+              <label class="form-label" for="editEndTime">End Time</label>
+              <input id="editEndTime" class="form-input" type="time">
+              <div class="form-error"></div>
+            </div>
+          </div>
+
+          <div class="form-field" data-edit-field="photoLimit">
+            <label class="form-label" for="editPhotoLimit">Photos Per Guest</label>
+            <input id="editPhotoLimit" class="form-input" type="number" min="1" max="999">
+            <div class="form-hint">Set the maximum number of photos each guest can upload.</div>
+            <div class="form-error"></div>
+          </div>
+
+          <div class="form-field" data-edit-field="revealMode">
+            <div class="form-label">When should the album be revealed?</div>
+            <div class="reveal-options">
+
+              <div class="reveal-option">
+                <input type="radio" id="editRevealImmediately" name="editRevealMode" value="immediately">
+                <label for="editRevealImmediately">
+                  <span class="reveal-radio"></span>
+                  <div><strong>Immediately</strong><span>Photos become visible right away.</span></div>
+                </label>
+              </div>
+
+              <div class="reveal-option">
+                <input type="radio" id="editRevealAfterEvent" name="editRevealMode" value="after-event">
+                <label for="editRevealAfterEvent">
+                  <span class="reveal-radio"></span>
+                  <div><strong>After the event</strong><span>Keep the album hidden until the event ends.</span></div>
+                </label>
+              </div>
+
+              <div class="reveal-option">
+                <input type="radio" id="editRevealCustom" name="editRevealMode" value="custom">
+                <label for="editRevealCustom">
+                  <span class="reveal-radio"></span>
+                  <div><strong>Custom time</strong><span>Choose exactly when the memories are revealed.</span></div>
+                </label>
+              </div>
+
+            </div>
+
+            <div class="custom-reveal" id="editCustomReveal">
+              <div class="form-field" data-edit-field="revealDate">
+                <label class="form-label" for="editRevealDate">Reveal Date</label>
+                <input id="editRevealDate" class="form-input" type="date">
+                <div class="form-error"></div>
+              </div>
+
+              <div class="form-field" data-edit-field="revealTime">
+                <label class="form-label" for="editRevealTime">Reveal Time</label>
+                <input id="editRevealTime" class="form-input" type="time">
+                <div class="form-error"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="edit-event-actions">
+            <button type="button" id="editEventCancel" class="btn btn-ghost">Cancel</button>
+            <button type="submit" id="editEventSave" class="btn btn-primary">Save Changes</button>
+          </div>
+
+          <p class="edit-event-note">Event Date stays unchanged. Guest and management links also remain the same.</p>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================
      HOST MANAGEMENT DASHBOARD
      ================================================== -->
 <section id="managementDashboard">
@@ -4282,6 +4470,14 @@ body.guest-uploading {
         </div>
 
         <div class="management-dashboard-actions">
+
+          <button
+            type="button"
+            id="managementEditButton"
+            class="btn btn-primary"
+          >
+            Edit Event
+          </button>
 
           <button
             type="button"
@@ -4901,6 +5097,7 @@ import {
   query,
   where,
   setDoc,
+  updateDoc,
   serverTimestamp
 } from "./firebase.js";
 
@@ -6056,6 +6253,40 @@ const managementSessionId =
 const managementBackButton =
   document.getElementById("managementBackButton");
 
+const managementEditButton =
+  document.getElementById("managementEditButton");
+
+const editEventView =
+  document.getElementById("editEventView");
+const editEventForm =
+  document.getElementById("editEventForm");
+const editEventClose =
+  document.getElementById("editEventClose");
+const editEventCancel =
+  document.getElementById("editEventCancel");
+const editEventSave =
+  document.getElementById("editEventSave");
+const editEventName =
+  document.getElementById("editEventName");
+const editHostName =
+  document.getElementById("editHostName");
+const editStartTime =
+  document.getElementById("editStartTime");
+const editEndTime =
+  document.getElementById("editEndTime");
+const editPhotoLimit =
+  document.getElementById("editPhotoLimit");
+const editRevealDate =
+  document.getElementById("editRevealDate");
+const editRevealTime =
+  document.getElementById("editRevealTime");
+const editCustomReveal =
+  document.getElementById("editCustomReveal");
+
+let managementEventData = null;
+let managementEventIdValue = "";
+let managementTokenValue = "";
+
 const dashboardGuestQRCode =
   document.getElementById("dashboardGuestQRCode");
 
@@ -6394,6 +6625,203 @@ lightboxPhotos =
 
 }
 /* ==================================================
+   EDIT EVENT
+   ================================================== */
+function setEditFieldError(fieldId, message) {
+  const field = document.querySelector(`[data-edit-field="${fieldId}"]`);
+  if (!field) return;
+  field.classList.add("has-error");
+  const error = field.querySelector(".form-error");
+  if (error) error.textContent = message;
+}
+
+function clearEditFieldErrors() {
+  document.querySelectorAll("#editEventForm .form-field").forEach((field) => {
+    field.classList.remove("has-error");
+    const error = field.querySelector(".form-error");
+    if (error) error.textContent = "";
+  });
+}
+
+function getEditRevealMode() {
+  return document.querySelector('input[name="editRevealMode"]:checked')?.value || "after-event";
+}
+
+function syncEditRevealVisibility() {
+  editCustomReveal?.classList.toggle("is-visible", getEditRevealMode() === "custom");
+}
+
+function openEditEvent(eventData) {
+  if (!eventData) return;
+
+  managementEventData = eventData;
+
+  editEventName.value = eventData.eventName || "";
+  editHostName.value = eventData.hostName || "";
+  editStartTime.value = eventData.startTime || "";
+  editEndTime.value = eventData.endTime || "";
+  editPhotoLimit.value = eventData.photoLimit || 1;
+  editRevealDate.value = eventData.revealDate || "";
+  editRevealTime.value = eventData.revealTime || "";
+
+  const mode = eventData.revealMode === "immediate"
+    ? "immediately"
+    : (eventData.revealMode || "after-event");
+
+  const radio = document.querySelector(`input[name="editRevealMode"][value="${mode}"]`);
+  if (radio) radio.checked = true;
+
+  clearEditFieldErrors();
+  syncEditRevealVisibility();
+  editEventView.classList.add("is-active");
+  editEventView.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
+
+function closeEditEvent() {
+  editEventView.classList.remove("is-active");
+  editEventView.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+}
+
+document.querySelectorAll('input[name="editRevealMode"]').forEach((radio) => {
+  radio.addEventListener("change", syncEditRevealVisibility);
+});
+
+managementEditButton?.addEventListener("click", function() {
+  openEditEvent(managementEventData);
+});
+
+editEventClose?.addEventListener("click", closeEditEvent);
+editEventCancel?.addEventListener("click", closeEditEvent);
+
+editEventView?.addEventListener("click", function(event) {
+  if (event.target === editEventView) closeEditEvent();
+});
+
+document.addEventListener("keydown", function(event) {
+  if (event.key === "Escape" && editEventView?.classList.contains("is-active")) {
+    closeEditEvent();
+  }
+});
+
+editEventForm?.addEventListener("submit", async function(event) {
+  event.preventDefault();
+  clearEditFieldErrors();
+
+  const eventName = editEventName.value.trim();
+  const hostName = editHostName.value.trim();
+  const startTime = editStartTime.value;
+  const endTime = editEndTime.value;
+  const photoLimit = Number(editPhotoLimit.value);
+  const revealMode = getEditRevealMode();
+  const revealDate = editRevealDate.value;
+  const revealTime = editRevealTime.value;
+
+  let valid = true;
+
+  if (!eventName) { setEditFieldError("eventName", "Please enter the event name."); valid = false; }
+  if (!hostName) { setEditFieldError("hostName", "Please enter the host name."); valid = false; }
+  if (!startTime) { setEditFieldError("startTime", "Please choose a start time."); valid = false; }
+  if (!endTime) { setEditFieldError("endTime", "Please choose an end time."); valid = false; }
+  if (startTime && endTime && endTime <= startTime) {
+    setEditFieldError("endTime", "End time must be after start time.");
+    valid = false;
+  }
+  if (!photoLimit || photoLimit < 1 || photoLimit > 999) {
+    setEditFieldError("photoLimit", "Photo limit must be between 1 and 999.");
+    valid = false;
+  }
+  if (revealMode === "custom") {
+    if (!revealDate) { setEditFieldError("revealDate", "Please choose a reveal date."); valid = false; }
+    if (!revealTime) { setEditFieldError("revealTime", "Please choose a reveal time."); valid = false; }
+  }
+
+  if (!valid) {
+    document.querySelector("#editEventForm .has-error input")?.focus();
+    return;
+  }
+
+  if (!managementEventIdValue || !managementTokenValue) {
+    alert("Management session is missing. Please reopen your management link.");
+    return;
+  }
+
+  editEventSave.disabled = true;
+  editEventCancel.disabled = true;
+  editEventSave.textContent = "Saving...";
+
+  try {
+    /* Verify the private management token again before updating. */
+    const accessSnap = await getDoc(doc(db, "managementAccess", managementTokenValue));
+    if (!accessSnap.exists()) throw new Error("Management access token not found.");
+
+    const accessData = accessSnap.data();
+    if (accessData.active !== true || accessData.eventId !== managementEventIdValue) {
+      throw new Error("Management access is invalid or inactive.");
+    }
+
+    const eventRef = doc(db, "events", managementEventIdValue);
+
+    await updateDoc(eventRef, {
+      eventName,
+      hostName,
+      startTime,
+      endTime,
+      photoLimit,
+      revealMode,
+      revealDate: revealMode === "custom" ? revealDate : null,
+      revealTime: revealMode === "custom" ? revealTime : null,
+      updatedAt: serverTimestamp()
+    });
+
+    const updatedEventData = {
+      ...managementEventData,
+      eventName,
+      hostName,
+      startTime,
+      endTime,
+      photoLimit,
+      revealMode,
+      revealDate: revealMode === "custom" ? revealDate : null,
+      revealTime: revealMode === "custom" ? revealTime : null
+    };
+
+    managementEventData = updatedEventData;
+
+    /* Refresh dashboard immediately without regenerating links. */
+    managementDashboardTitle.textContent = eventName || "Event Management";
+    managementDashboardSubtitle.textContent =
+      `Hosted by ${hostName || "Unknown Host"}. Manage your shared photo event from this dashboard.`;
+    managementPhotoLimit.textContent = photoLimit;
+    managementRevealMode.textContent = formatRevealMode(revealMode);
+    managementEventName.textContent = eventName || "—";
+    managementHostName.textContent = hostName || "—";
+    managementEventTime.textContent = `${startTime || "—"} — ${endTime || "—"}`;
+    managementRevealDate.textContent = revealDate
+      ? formatManagementDate(revealDate)
+      : "—";
+    managementRevealTime.textContent = revealTime || "—";
+
+    closeEditEvent();
+    alert("Event updated successfully.");
+
+  } catch (error) {
+    console.error("Event update error:", error);
+
+    if (error.code === "permission-denied" || error.code === "PERMISSION_DENIED") {
+      alert("Firebase denied the update. Your Firestore Security Rules may need to allow management sessions to update this event.");
+    } else {
+      alert(error.message || "We couldn't update the event. Please try again.");
+    }
+  } finally {
+    editEventSave.disabled = false;
+    editEventCancel.disabled = false;
+    editEventSave.textContent = "Save Changes";
+  }
+});
+
+/* ==================================================
    OPEN DASHBOARD
    ================================================== */
 
@@ -6455,6 +6883,10 @@ async function openManagementDashboard(
 
     const eventData =
       eventSnap.data();
+
+    managementEventIdValue = eventId;
+    managementTokenValue = managementToken;
+    managementEventData = eventData;
 
 
     /*
