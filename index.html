@@ -5993,6 +5993,240 @@ copyDashboardManagementLink?.addEventListener(
   }
 );
 
+/* ==================================================
+   GUEST PHOTO UPLOAD
+   ================================================== */
+
+let selectedGuestPhoto = null;
+
+
+/*
+ * PHOTO SELECTION
+ */
+
+function handleGuestPhotoSelected(file) {
+
+  if (!file) {
+    return;
+  }
+
+  if (!file.type.startsWith("image/")) {
+
+    guestUploadStatus.textContent =
+      "Please select a valid image.";
+
+    return;
+  }
+
+  selectedGuestPhoto = file;
+
+  guestPhotoName.textContent =
+    file.name;
+
+  /*
+   * Preview
+   */
+
+  const previewUrl =
+    URL.createObjectURL(file);
+
+  guestPreviewImage.src =
+    previewUrl;
+
+  guestPhotoPreview.style.display =
+    "block";
+
+}
+
+
+/*
+ * CHOOSE PHOTO
+ */
+
+guestPhotoInput?.addEventListener(
+  "change",
+  function() {
+
+    const file =
+      this.files?.[0];
+
+    handleGuestPhotoSelected(file);
+
+  }
+);
+
+/* ==================================================
+   GUEST PHOTO UPLOAD
+   ================================================== */
+
+document.addEventListener("click", async function(event) {
+
+  const button = event.target.closest("#guestUploadButton");
+
+  if (!button) {
+    return;
+  }
+
+  console.log("UPLOAD BUTTON CLICKED");
+
+  if (!selectedGuestPhoto) {
+
+    guestUploadStatus.textContent =
+      "Please choose a photo first.";
+
+    return;
+  }
+
+  const eventId =
+    guestEventView?.dataset.eventId;
+
+  if (!eventId) {
+
+    guestUploadStatus.textContent =
+      "Event information is missing.";
+
+    console.error(
+      "Missing event ID."
+    );
+
+    return;
+  }
+
+  const guestName =
+    guestNameInput?.value.trim() || "Anonymous";
+
+
+  /* -----------------------------------------------
+     DISABLE BUTTON
+     ----------------------------------------------- */
+
+  button.disabled = true;
+
+  button.textContent =
+    "Uploading...";
+
+  guestUploadStatus.textContent =
+    "Uploading your photo...";
+
+
+  try {
+
+    /* -----------------------------------------------
+       ANONYMOUS AUTH
+       ----------------------------------------------- */
+
+    if (!auth.currentUser) {
+
+      console.log(
+        "Signing in anonymously..."
+      );
+
+      await signInAnonymously(auth);
+
+    }
+
+
+    /* -----------------------------------------------
+       VGY UPLOAD
+       ----------------------------------------------- */
+
+    guestUploadStatus.textContent =
+      "Uploading photo to image host...";
+
+    console.log(
+      "Starting VGY upload:",
+      selectedGuestPhoto.name
+    );
+
+
+    const imageUrl =
+      await uploadImageToVGY(
+        selectedGuestPhoto
+      );
+
+
+    console.log(
+      "VGY image URL:",
+      imageUrl
+    );
+
+
+    /* -----------------------------------------------
+       SAVE PHOTO METADATA
+       ----------------------------------------------- */
+
+    guestUploadStatus.textContent =
+      "Saving your memory...";
+
+
+    await savePhotoToFirestore({
+
+      eventId:
+        eventId,
+
+      imageUrl:
+        imageUrl,
+
+      guestName:
+        guestName,
+
+      guestUid:
+        auth.currentUser?.uid || ""
+
+    });
+
+
+    /* -----------------------------------------------
+       SUCCESS
+       ----------------------------------------------- */
+
+    guestUploadStatus.textContent =
+      "Photo uploaded successfully!";
+
+    button.textContent =
+      "Photo Uploaded ✓";
+
+
+    selectedGuestPhoto =
+      null;
+
+
+    if (guestPhotoInput) {
+      guestPhotoInput.value = "";
+    }
+
+    if (guestCameraInput) {
+      guestCameraInput.value = "";
+    }
+
+
+    console.log(
+      "Guest photo upload completed."
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Guest photo upload error:",
+      error
+    );
+
+
+    guestUploadStatus.textContent =
+      error.message ||
+      "Upload failed. Please try again.";
+
+
+    button.disabled =
+      false;
+
+    button.textContent =
+      "Upload Photo";
+
+  }
+
+});
 handleManagementAccess();
 handleGuestEventAccess();
 </script>
