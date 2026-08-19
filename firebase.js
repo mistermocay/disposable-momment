@@ -18,6 +18,9 @@ import {
   addDoc,
   doc,
   getDoc,
+  getDocs,
+  query,
+  where,
   setDoc,
   serverTimestamp
 } from
@@ -89,8 +92,14 @@ export {
 
   collection,
   addDoc,
+
   doc,
   getDoc,
+  getDocs,
+
+  query,
+  where,
+
   setDoc,
   serverTimestamp,
 
