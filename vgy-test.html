@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
   <meta charset="UTF-8">
 
   <meta
@@ -14,47 +13,104 @@
 
   <style>
 
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: 60px auto;
-      padding: 20px;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
     }
 
     h1 {
-      margin-bottom: 10px;
+      margin-top: 0;
     }
 
-    input {
-      margin: 20px 0;
+    .field {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    input[type="password"],
+    input[type="file"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
     }
 
     button {
-      padding: 12px 20px;
+      width: 100%;
+      padding: 14px;
+      border: 0;
+      border-radius: 8px;
+      background: #111;
+      color: white;
+      font-weight: bold;
       cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: .5;
+      cursor: not-allowed;
     }
 
     #status {
       margin-top: 20px;
       padding: 15px;
-      background: #f5f5f5;
+      background: #f1f1f1;
       border-radius: 8px;
       white-space: pre-wrap;
     }
 
-    #preview {
-      margin-top: 30px;
-      max-width: 100%;
+    #result {
+      margin-top: 25px;
     }
 
-    #preview img {
+    #result img {
+      display: block;
       max-width: 100%;
-      border-radius: 10px;
-    }
-
-    #resultUrl {
-      word-break: break-all;
+      max-height: 500px;
       margin-top: 15px;
+      border-radius: 12px;
+    }
+
+    .url-box {
+      margin-top: 15px;
+      padding: 12px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      word-break: break-all;
+    }
+
+    .warning {
+      margin-top: 20px;
+      padding: 12px;
+      background: #fff3cd;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    pre {
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
 
   </style>
@@ -64,85 +120,164 @@
 
 <body>
 
-  <h1>VGY.me Upload Test</h1>
+  <div class="container">
 
-  <p>
-    Test upload image dari browser ke VGY.me.
-  </p>
+    <h1>VGY.me Upload Test</h1>
 
-
-  <input
-    id="imageInput"
-    type="file"
-    accept="image/jpeg,image/png,image/webp"
-  >
+    <p>
+      Temporary testing page for Disposable Momment.
+    </p>
 
 
-  <br>
+    <!-- USER KEY -->
+
+    <div class="field">
+
+      <label for="userKey">
+        VGY User Key
+      </label>
+
+      <input
+        id="userKey"
+        type="password"
+        placeholder="21XiP41Fe1hRtk7mZtaEJzw1f1OU2pwHGvRyQiffBqa6FZe3yVUQRchxM6ifQDj9"
+        autocomplete="off"
+      >
+
+    </div>
 
 
-  <button
-    id="uploadButton"
-  >
-    Upload Image
-  </button>
+    <!-- IMAGE -->
+
+    <div class="field">
+
+      <label for="imageInput">
+        Select Image
+      </label>
+
+      <input
+        id="imageInput"
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+      >
+
+    </div>
 
 
-  <div id="status">
-    Waiting for image...
+    <!-- UPLOAD -->
+
+    <button
+      id="uploadButton"
+    >
+      Upload to VGY.me
+    </button>
+
+
+    <!-- STATUS -->
+
+    <div id="status">
+      Waiting for test...
+    </div>
+
+
+    <!-- RESULT -->
+
+    <div id="result"></div>
+
+
+    <div class="warning">
+
+      <strong>Important:</strong>
+
+      This page is only for testing.
+      Do not put your VGY User Key directly
+      into the main Disposable Momment website yet.
+
+    </div>
+
   </div>
-
-
-  <div id="resultUrl"></div>
-
-
-  <div id="preview"></div>
 
 
   <script>
 
+    const userKeyInput =
+      document.getElementById("userKey");
+
+
     const imageInput =
       document.getElementById("imageInput");
+
 
     const uploadButton =
       document.getElementById("uploadButton");
 
+
     const status =
       document.getElementById("status");
 
-    const resultUrl =
-      document.getElementById("resultUrl");
 
-    const preview =
-      document.getElementById("preview");
+    const result =
+      document.getElementById("result");
 
 
     uploadButton.addEventListener(
       "click",
-      async function() {
+      async function () {
+
+        const userKey =
+          userKeyInput.value.trim();
+
 
         const file =
           imageInput.files[0];
 
 
-        if (!file) {
+        // ==========================================
+        // VALIDATION
+        // ==========================================
+
+        if (!userKey) {
 
           status.textContent =
-            "Please select an image first.";
+            "Please enter your VGY User Key.";
 
           return;
 
         }
 
 
-        status.textContent =
+        if (!file) {
+
+          status.textContent =
+            "Please select an image.";
+
+          return;
+
+        }
+
+
+        // ==========================================
+        // RESET UI
+        // ==========================================
+
+        uploadButton.disabled = true;
+
+        uploadButton.textContent =
           "Uploading...";
 
-        resultUrl.innerHTML = "";
-        preview.innerHTML = "";
+
+        status.textContent =
+          "Preparing upload...";
+
+
+        result.innerHTML = "";
 
 
         try {
+
+          // ========================================
+          // CREATE FORM DATA
+          // ========================================
 
           const formData =
             new FormData();
@@ -153,6 +288,40 @@
             file
           );
 
+
+          /*
+           * TEST:
+           *
+           * We are trying "userkey"
+           * as the authentication field.
+           */
+
+          formData.append(
+            "userkey",
+            userKey
+          );
+
+
+          status.textContent =
+            "Sending request to VGY.me...";
+
+
+          console.log(
+            "Uploading file:",
+            file.name
+          );
+
+
+          console.log(
+            "File size:",
+            file.size,
+            "bytes"
+          );
+
+
+          // ========================================
+          // SEND REQUEST
+          // ========================================
 
           const response =
             await fetch(
@@ -165,87 +334,135 @@
 
 
           console.log(
-            "VGY response status:",
+            "HTTP status:",
             response.status
           );
 
 
-          const text =
+          // ========================================
+          // READ RESPONSE
+          // ========================================
+
+          const rawText =
             await response.text();
 
 
           console.log(
-            "VGY raw response:",
-            text
+            "Raw VGY response:",
+            rawText
           );
 
 
-          if (!response.ok) {
+          // ========================================
+          // TRY JSON
+          // ========================================
 
-            throw new Error(
-              `Upload failed with HTTP ${response.status}`
-            );
+          let data = null;
 
-          }
-
-
-          let data;
 
           try {
 
             data =
-              JSON.parse(text);
+              JSON.parse(rawText);
 
-          } catch {
+          } catch (jsonError) {
 
-            throw new Error(
-              "VGY.me returned a non-JSON response."
+            console.warn(
+              "Response was not valid JSON."
             );
 
           }
 
 
-          console.log(
-            "VGY parsed response:",
-            data
-          );
+          // ========================================
+          // DISPLAY RAW RESPONSE
+          // ========================================
+
+          result.innerHTML = `
+
+            <h3>VGY Response</h3>
+
+            <div class="url-box">
+
+              <strong>HTTP Status:</strong>
+
+              ${response.status}
+
+            </div>
+
+            <pre>${escapeHtml(rawText)}</pre>
+
+          `;
 
 
-          /*
-           * Try common response fields.
-           */
+          // ========================================
+          // CHECK HTTP STATUS
+          // ========================================
+
+          if (!response.ok) {
+
+            status.textContent =
+              "UPLOAD FAILED\n\n" +
+              "HTTP Status: " +
+              response.status +
+              "\n\n" +
+              rawText;
+
+            return;
+
+          }
+
+
+          // ========================================
+          // FIND IMAGE URL
+          // ========================================
+
           const imageUrl =
-            data.image ||
-            data.url ||
-            data.imageUrl ||
-            data.hotlinkUrl;
+            data &&
+            (
+              data.url ||
+              data.image ||
+              data.imageUrl ||
+              data.hotlinkUrl
+            );
 
 
           if (!imageUrl) {
 
-            throw new Error(
-              "Upload succeeded but no image URL was found in the response."
-            );
+            status.textContent =
+              "Upload request succeeded, " +
+              "but no image URL was found.";
+
+            return;
 
           }
 
 
+          // ========================================
+          // SUCCESS
+          // ========================================
+
           status.textContent =
-            "Upload successful!";
+            "UPLOAD SUCCESSFUL!";
 
 
-          resultUrl.innerHTML = `
-            <strong>Image URL:</strong><br>
-            ${imageUrl}
-          `;
+          result.innerHTML += `
 
+            <div class="url-box">
 
-          preview.innerHTML = `
-            <h3>Preview</h3>
+              <strong>Image URL:</strong>
+
+              <br><br>
+
+              ${escapeHtml(imageUrl)}
+
+            </div>
+
             <img
-              src="${imageUrl}"
+              src="${escapeHtml(imageUrl)}"
               alt="Uploaded image"
             >
+
           `;
 
 
@@ -258,13 +475,46 @@
 
 
           status.textContent =
-            "UPLOAD FAILED\n\n" +
+            "UPLOAD ERROR\n\n" +
             error.message;
+
+
+          result.innerHTML += `
+
+            <pre>
+${escapeHtml(error.stack || error.toString())}
+            </pre>
+
+          `;
+
+
+        } finally {
+
+          uploadButton.disabled = false;
+
+          uploadButton.textContent =
+            "Upload to VGY.me";
 
         }
 
       }
     );
+
+
+    // ==========================================
+    // HTML ESCAPE
+    // ==========================================
+
+    function escapeHtml(value) {
+
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    }
 
   </script>
 
