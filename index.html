@@ -1908,6 +1908,67 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
   height: 19px;
 }
 
+
+/* ==================================================
+   PHOTO LIGHTBOX — DELETE PHOTO
+   ================================================== */
+
+.photo-lightbox-delete {
+
+  display: inline-flex;
+
+  align-items: center;
+  gap: 6px;
+
+  margin-top: 12px;
+
+  padding: 8px 12px;
+
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 8px;
+
+  background: rgba(255,255,255,.07);
+
+  color: rgba(255,255,255,.7);
+
+  font-family: var(--font-mono);
+  font-size: 10px;
+
+  text-transform: uppercase;
+  letter-spacing: .05em;
+
+  cursor: pointer;
+
+  transition:
+    background .2s ease,
+    color .2s ease,
+    border-color .2s ease;
+}
+
+.photo-lightbox-delete:hover {
+
+  background: rgba(180,40,40,.18);
+
+  border-color: rgba(220,80,80,.4);
+
+  color: #fff;
+}
+
+.photo-lightbox-delete:disabled {
+
+  opacity: .5;
+
+  cursor: wait;
+}
+
+.photo-lightbox-delete svg {
+
+  width: 14px;
+  height: 14px;
+
+  flex: none;
+}
+
 @media (max-width: 700px) {
 
   .photo-lightbox {
@@ -4489,32 +4550,57 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
     </button>
 
 
-    <div class="photo-lightbox-info">
+<div class="photo-lightbox-info">
 
-      <div>
-        <div
-          id="photoLightboxGuest"
-          class="photo-lightbox-guest"
-        >
-          —
-        </div>
+  <div>
 
-        <div
-          id="photoLightboxMeta"
-          class="photo-lightbox-meta"
-        >
-          —
-        </div>
-      </div>
-
-      <div
-        id="photoLightboxCounter"
-        class="photo-lightbox-counter"
-      >
-        1 / 1
-      </div>
-
+    <div
+      id="photoLightboxGuest"
+      class="photo-lightbox-guest"
+    >
+      —
     </div>
+
+    <div
+      id="photoLightboxMeta"
+      class="photo-lightbox-meta"
+    >
+      —
+    </div>
+
+    <button
+      id="photoLightboxDelete"
+      type="button"
+      class="photo-lightbox-delete"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6l-1 14H6L5 6"/>
+        <path d="M10 11v6"/>
+        <path d="M14 11v6"/>
+        <path d="M9 6V4h6v2"/>
+      </svg>
+
+      Remove Photo
+    </button>
+
+  </div>
+
+  <div
+    id="photoLightboxCounter"
+    class="photo-lightbox-counter"
+  >
+    1 / 1
+  </div>
+
+</div>
 
   </div>
 
@@ -5841,7 +5927,7 @@ lightboxPhotos =
   Array.isArray(photos)
     ? photos
     : [];
-    
+
   const count =
     Array.isArray(photos)
       ? photos.length
@@ -7080,6 +7166,10 @@ const photoLightboxPrev =
 const photoLightboxNext =
   document.getElementById("photoLightboxNext");
 
+const photoLightboxDelete =
+  document.getElementById(
+    "photoLightboxDelete"
+  );  
 
 function updateLightbox() {
 
@@ -7114,6 +7204,9 @@ function updateLightbox() {
   photoLightboxCounter.textContent =
     `${lightboxIndex + 1} / ${lightboxPhotos.length}`;
 
+  if (photoLightboxDelete) {
+  photoLightboxDelete.disabled = false;
+}
   const showNavigation =
     lightboxPhotos.length > 1;
 
@@ -7211,6 +7304,197 @@ function showNextPhoto() {
   updateLightbox();
 }
 
+async function removeCurrentPhoto() {
+
+  if (
+    !lightboxPhotos.length ||
+    !lightboxPhotos[lightboxIndex]
+  ) {
+    return;
+  }
+
+  const photo =
+    lightboxPhotos[lightboxIndex];
+
+  const guestName =
+    photo.guestName ||
+    "Anonymous";
+
+  const confirmed =
+    window.confirm(
+      `Remove this photo from the event?\n\n` +
+      `Guest: ${guestName}\n\n` +
+      `The photo will no longer appear in the event album.`
+    );
+
+  if (!confirmed) {
+    return;
+  }
+
+  if (!photo.id) {
+    console.error(
+      "Cannot remove photo: missing photo ID."
+    );
+
+    return;
+  }
+
+  if (!auth.currentUser) {
+
+    alert(
+      "Your management session has expired. Please reopen Host Management."
+    );
+
+    return;
+  }
+
+
+  try {
+
+    photoLightboxDelete.disabled =
+      true;
+
+    photoLightboxDelete.textContent =
+      "Removing...";
+
+
+    console.log(
+      "Removing photo:",
+      photo.id
+    );
+
+
+    const photoRef =
+      doc(
+        db,
+        "photos",
+        photo.id
+      );
+
+
+    /*
+     * Soft delete
+     *
+     * We intentionally keep the document
+     * and only change its status.
+     */
+
+    await setDoc(
+      photoRef,
+      {
+        status: "deleted"
+      },
+      {
+        merge: true
+      }
+    );
+
+
+    console.log(
+      "Photo removed successfully:",
+      photo.id
+    );
+
+
+    /*
+     * Remove from local lightbox array
+     */
+
+    lightboxPhotos =
+      lightboxPhotos.filter(
+        function(item) {
+          return item.id !== photo.id;
+        }
+      );
+
+
+    /*
+     * Close if no photos remain
+     */
+
+    if (!lightboxPhotos.length) {
+
+      closePhotoLightbox();
+
+      renderManagementPhotos(
+        lightboxPhotos
+      );
+
+      return;
+    }
+
+
+    /*
+     * Keep index valid
+     */
+
+    if (
+      lightboxIndex >=
+      lightboxPhotos.length
+    ) {
+
+      lightboxIndex =
+        lightboxPhotos.length - 1;
+
+    }
+
+
+    /*
+     * Refresh lightbox
+     */
+
+    updateLightbox();
+
+
+    /*
+     * Refresh gallery
+     */
+
+    renderManagementPhotos(
+      lightboxPhotos
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Failed to remove photo:",
+      error
+    );
+
+    alert(
+      error.message ||
+      "Failed to remove photo."
+    );
+
+
+  } finally {
+
+    photoLightboxDelete.disabled =
+      false;
+
+    photoLightboxDelete.innerHTML = `
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6l-1 14H6L5 6"/>
+        <path d="M10 11v6"/>
+        <path d="M14 11v6"/>
+        <path d="M9 6V4h6v2"/>
+      </svg>
+
+      Remove Photo
+    `;
+
+  }
+
+}
 
 /* Click photo */
 
@@ -7270,6 +7554,10 @@ photoLightboxNext?.addEventListener(
   showNextPhoto
 );
 
+photoLightboxDelete?.addEventListener(
+  "click",
+  removeCurrentPhoto
+);
 
 /* Click background */
 
