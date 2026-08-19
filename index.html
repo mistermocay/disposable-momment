@@ -5097,7 +5097,6 @@ import {
   query,
   where,
   setDoc,
-  updateDoc,
   serverTimestamp
 } from "./firebase.js";
 
@@ -5105,6 +5104,11 @@ import {
 import {
   signInAnonymously
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+/* updateDoc is imported directly because firebase.js does not export it. */
+import {
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const VGY_USER_KEY = "rmCThOxM42PB5jRwiLjQsgIKcoM3jJvKEIc6PtvmfSZVJwbnsCvvqvwUy5o4zlW6";
 
