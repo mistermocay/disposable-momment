@@ -1513,6 +1513,244 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
   color: var(--ink);
   margin-bottom: 6px;
 }
+/* ==================================================
+   SHARED MEMORIES GALLERY
+   ================================================== */
+
+.management-gallery-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 7px 12px;
+
+  border-radius: 999px;
+
+  background: var(--accent-wash);
+  color: var(--accent-deep);
+
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+
+  white-space: nowrap;
+}
+
+
+.management-photo-gallery {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 16px;
+
+}
+
+
+.management-photo-card {
+
+  position: relative;
+
+  overflow: hidden;
+
+  background: var(--bg);
+
+  border: 1px solid var(--line);
+
+  border-radius: 18px;
+
+  transition:
+    transform .3s ease,
+    box-shadow .3s ease,
+    border-color .3s ease;
+
+}
+
+
+.management-photo-card:hover {
+
+  transform: translateY(-4px);
+
+  box-shadow: var(--shadow-soft);
+
+  border-color: var(--line-strong);
+
+}
+
+
+.management-photo-image-wrapper {
+
+  position: relative;
+
+  width: 100%;
+
+  aspect-ratio: 4 / 5;
+
+  background: #eee;
+
+  overflow: hidden;
+
+}
+
+
+.management-photo-image {
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  display: block;
+
+  transition: transform .5s var(--ease);
+
+}
+
+
+.management-photo-card:hover
+.management-photo-image {
+
+  transform: scale(1.035);
+
+}
+
+
+.management-photo-info {
+
+  padding: 13px 14px 15px;
+
+}
+
+
+.management-photo-guest {
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  color: var(--ink);
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+}
+
+
+.management-photo-meta {
+
+  margin-top: 4px;
+
+  color: var(--ink-faint);
+
+  font-family: var(--font-mono);
+
+  font-size: 10px;
+
+}
+
+
+.management-photo-open {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  margin-top: 10px;
+
+  color: var(--accent-deep);
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+}
+
+
+.management-photo-open:hover {
+
+  text-decoration: underline;
+
+}
+
+
+.management-photo-open svg {
+
+  width: 13px;
+  height: 13px;
+
+}
+
+
+.management-photo-error {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  aspect-ratio: 4 / 5;
+
+  padding: 20px;
+
+  text-align: center;
+
+  color: var(--ink-soft);
+
+  font-size: 12px;
+
+}
+
+
+@media (max-width: 800px) {
+
+  .management-photo-gallery {
+
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+  }
+
+}
+
+
+@media (max-width: 520px) {
+
+  .management-photo-gallery {
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+
+  }
+
+  .management-photo-info {
+
+    padding: 10px;
+
+  }
+
+  .management-photo-guest {
+
+    font-size: 12px;
+
+  }
+
+  .management-photo-meta {
+
+    font-size: 9px;
+
+  }
+
+}
 
 /* ==================================================
    EVENT ACCESS — MANAGEMENT DASHBOARD
@@ -3939,31 +4177,44 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
         </div>
 
       </div>
-      <!-- PHOTO ALBUM — PLACEHOLDER -->
-      <div class="management-dashboard-card">
+<!-- ==================================================
+     SHARED MEMORIES
+     ================================================== -->
 
-        <div class="management-card-header">
+<div class="management-dashboard-card">
 
-          <div>
-            <span class="management-card-kicker">
-              Album
-            </span>
+  <div class="management-card-header">
 
-            <h3>Shared Memories</h3>
-          </div>
+    <div>
+      <span class="management-card-kicker">
+        Album
+      </span>
 
-        </div>
+      <h3>Shared Memories</h3>
+    </div>
 
-        <div class="management-empty">
+    <span
+      id="managementGalleryCount"
+      class="management-gallery-count"
+    >
+      0 Photos
+    </span>
 
-          <strong>No photos loaded yet</strong>
+  </div>
 
-          Photo gallery and guest submissions will be connected
-          in the next phase.
+  <div
+    id="managementPhotoGallery"
+    class="management-photo-gallery"
+  >
 
-        </div>
+    <div class="management-empty">
+      <strong>Loading photos...</strong>
+      Guest memories will appear here.
+    </div>
 
-      </div>
+  </div>
+
+</div>
 
     </div>
 
@@ -4033,6 +4284,9 @@ import {
   addDoc,
   doc,
   getDoc,
+  getDocs,
+  query,
+  where,
   setDoc,
   serverTimestamp
 } from "./firebase.js";
@@ -5030,6 +5284,16 @@ const managementStatus =
 const managementPhotoCount =
   document.getElementById("managementPhotoCount");
 
+const managementPhotoGallery =
+  document.getElementById(
+    "managementPhotoGallery"
+  );
+
+const managementGalleryCount =
+  document.getElementById(
+    "managementGalleryCount"
+  );
+
 const managementPhotoLimit =
   document.getElementById("managementPhotoLimit");
 
@@ -5145,7 +5409,280 @@ function formatRevealMode(mode) {
 
 }
 
+/* ==================================================
+   LOAD EVENT PHOTOS
+   ================================================== */
 
+async function loadManagementPhotos(eventId) {
+
+  if (!eventId) {
+    throw new Error(
+      "Event ID is required to load photos."
+    );
+  }
+
+  console.log(
+    "Loading event photos:",
+    eventId
+  );
+
+  const photosQuery = query(
+    collection(db, "photos"),
+    where("eventId", "==", eventId)
+  );
+
+  const snapshot =
+    await getDocs(photosQuery);
+
+  const photos = [];
+
+  snapshot.forEach(function(docSnap) {
+
+    const data = docSnap.data();
+
+    if (
+      data.status !== "active"
+    ) {
+      return;
+    }
+
+    if (!data.imageUrl) {
+      return;
+    }
+
+    photos.push({
+      id: docSnap.id,
+      ...data
+    });
+
+  });
+
+  /*
+   * Newest photos first
+   */
+  photos.sort(function(a, b) {
+
+    const aTime =
+      a.createdAt?.toMillis?.() || 0;
+
+    const bTime =
+      b.createdAt?.toMillis?.() || 0;
+
+    return bTime - aTime;
+
+  });
+
+  console.log(
+    "Event photos loaded:",
+    photos
+  );
+
+  return photos;
+}
+function escapeHtml(value) {
+
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+}
+function formatPhotoTime(timestamp) {
+
+  if (!timestamp) {
+    return "Uploaded just now";
+  }
+
+  let date;
+
+  if (
+    typeof timestamp.toDate === "function"
+  ) {
+
+    date =
+      timestamp.toDate();
+
+  } else if (
+    timestamp instanceof Date
+  ) {
+
+    date = timestamp;
+
+  } else {
+
+    return "Uploaded recently";
+
+  }
+
+  return `Uploaded ${date.toLocaleString(
+    "en-US",
+    {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    }
+  )}`;
+
+}
+/* ==================================================
+   RENDER EVENT PHOTOS
+   ================================================== */
+
+function renderManagementPhotos(photos) {
+
+  if (!managementPhotoGallery) {
+    return;
+  }
+
+  const count =
+    Array.isArray(photos)
+      ? photos.length
+      : 0;
+
+  /*
+   * Update counters
+   */
+
+  if (managementPhotoCount) {
+    managementPhotoCount.textContent =
+      String(count);
+  }
+
+  if (managementGalleryCount) {
+    managementGalleryCount.textContent =
+      `${count} ${count === 1 ? "Photo" : "Photos"}`;
+  }
+
+
+  /*
+   * Empty state
+   */
+
+  if (!count) {
+
+    managementPhotoGallery.innerHTML = `
+      <div class="management-empty">
+
+        <strong>No photos yet</strong>
+
+        Guest memories will appear here
+        as soon as someone uploads a photo.
+
+      </div>
+    `;
+
+    return;
+  }
+
+
+  /*
+   * Render gallery
+   */
+
+  managementPhotoGallery.innerHTML =
+    photos.map(function(photo) {
+
+      const guestName =
+        escapeHtml(
+          photo.guestName ||
+          "Anonymous"
+        );
+
+      const imageUrl =
+        escapeHtml(
+          photo.imageUrl
+        );
+
+      const uploadedTime =
+        formatPhotoTime(
+          photo.createdAt
+        );
+
+      return `
+
+        <article
+          class="management-photo-card"
+        >
+
+          <a
+            href="${imageUrl}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="management-photo-image-wrapper"
+            aria-label="Open photo"
+          >
+
+            <img
+              src="${imageUrl}"
+              alt="Photo uploaded by ${guestName}"
+              class="management-photo-image"
+              loading="lazy"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            >
+
+            <div
+              class="management-photo-error"
+              style="display:none;"
+            >
+              Image could not be loaded.
+            </div>
+
+          </a>
+
+
+          <div
+            class="management-photo-info"
+          >
+
+            <div
+              class="management-photo-guest"
+            >
+              ${guestName}
+            </div>
+
+            <div
+              class="management-photo-meta"
+            >
+              ${uploadedTime}
+            </div>
+
+            <a
+              href="${imageUrl}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="management-photo-open"
+            >
+
+              Open Image
+
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M14 5h5v5"/>
+                <path d="M19 5l-9 9"/>
+                <path d="M19 13v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/>
+              </svg>
+
+            </a>
+
+          </div>
+
+        </article>
+
+      `;
+
+    }).join("");
+
+}
 /* ==================================================
    OPEN DASHBOARD
    ================================================== */
@@ -5234,7 +5771,7 @@ async function openManagementDashboard(
 
 
     managementPhotoCount.textContent =
-      "0";
+      "Loading...";
 
 
     managementPhotoLimit.textContent =
@@ -5283,6 +5820,73 @@ async function openManagementDashboard(
 
     managementSessionId.textContent =
       sessionId || "—";
+
+    /* ==================================================
+   LOAD SHARED MEMORIES
+   ================================================== */
+
+try {
+
+  managementPhotoGallery.innerHTML = `
+    <div class="management-empty">
+
+      <strong>Loading photos...</strong>
+
+      Fetching guest memories...
+
+    </div>
+  `;
+
+  const photos =
+    await loadManagementPhotos(
+      eventId
+    );
+
+  renderManagementPhotos(
+    photos
+  );
+
+} catch (photoError) {
+
+  console.error(
+    "Failed to load event photos:",
+    photoError
+  );
+
+  if (managementPhotoCount) {
+    managementPhotoCount.textContent =
+      "—";
+  }
+
+  if (managementGalleryCount) {
+    managementGalleryCount.textContent =
+      "Unavailable";
+  }
+
+  if (managementPhotoGallery) {
+
+    managementPhotoGallery.innerHTML = `
+
+      <div class="management-empty">
+
+        <strong>
+          Photos could not be loaded
+        </strong>
+
+        <span>
+          ${escapeHtml(
+            photoError.message ||
+            "Unknown error"
+          )}
+        </span>
+
+      </div>
+
+    `;
+
+  }
+
+}
     /* ==================================================
        EVENT ACCESS LINKS
        ================================================== */
