@@ -4984,6 +4984,46 @@ async function uploadImageToVGY(file) {
 }
 
 /* ==================================================
+   CHECK GUEST PHOTO LIMIT
+   ================================================== */
+
+async function getGuestPhotoCount(eventId, guestUid) {
+
+  if (!eventId) {
+    throw new Error("Event ID is required.");
+  }
+
+  if (!guestUid) {
+    throw new Error("Guest authentication is required.");
+  }
+
+  const photosQuery = query(
+    collection(db, "photos"),
+    where("eventId", "==", eventId)
+  );
+
+  const snapshot =
+    await getDocs(photosQuery);
+
+  let count = 0;
+
+  snapshot.forEach(function(docSnap) {
+
+    const data =
+      docSnap.data();
+
+    if (
+      data.guestUid === guestUid &&
+      data.status === "active"
+    ) {
+      count++;
+    }
+
+  });
+
+  return count;
+}
+/* ==================================================
    SAVE PHOTO TO FIRESTORE
    ================================================== */
 
@@ -7308,7 +7348,7 @@ document.addEventListener("click", async function(event) {
     guestNameInput?.value.trim() || "Anonymous";
 
 
-  /* -----------------------------------------------
+/* -----------------------------------------------
    LOCK ENTIRE GUEST PAGE
    ----------------------------------------------- */
 
@@ -7327,22 +7367,85 @@ showGuestUploadLock(
 
   try {
 
-    /* -----------------------------------------------
-       ANONYMOUS AUTH
-       ----------------------------------------------- */
+/* -----------------------------------------------
+   ANONYMOUS AUTH
+   ----------------------------------------------- */
 
-    if (!auth.currentUser) {
+if (!auth.currentUser) {
 
-      console.log(
-        "Signing in anonymously..."
-      );
+  console.log(
+    "Signing in anonymously..."
+  );
 
-      await signInAnonymously(auth);
-      updateGuestUploadLock(
-  "Securing your upload..."
+  await signInAnonymously(auth);
+
+}
+
+
+/* -----------------------------------------------
+   CHECK PHOTO LIMIT
+   ----------------------------------------------- */
+
+const photoLimit =
+  Number(
+    guestEventView?.dataset.photoLimit
+  ) || 1;
+
+const guestUid =
+  auth.currentUser?.uid;
+
+if (!guestUid) {
+
+  throw new Error(
+    "Guest authentication is not ready."
+  );
+
+}
+
+const currentPhotoCount =
+  await getGuestPhotoCount(
+    eventId,
+    guestUid
+  );
+
+console.log(
+  "Guest photo count:",
+  currentPhotoCount,
+  "/",
+  photoLimit
 );
 
-    }
+
+/* -----------------------------------------------
+   LIMIT REACHED
+   ----------------------------------------------- */
+
+if (
+  currentPhotoCount >= photoLimit
+) {
+
+  guestUploadStatus.textContent =
+    `You've reached your photo limit (${photoLimit} photos).`;
+
+  button.disabled = true;
+
+  button.textContent =
+    "Photo Limit Reached";
+
+  hideGuestUploadLock();
+
+  return;
+
+}
+
+
+/* -----------------------------------------------
+   CONTINUE UPLOAD
+   ----------------------------------------------- */
+
+updateGuestUploadLock(
+  "Securing your upload..."
+);
 
 
     /* -----------------------------------------------
