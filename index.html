@@ -179,6 +179,693 @@ p{ margin:0; }
 .nav-links a:hover::after{ right:0; }
 
 .nav-right{ display:flex; align-items:center; gap:14px; }
+/* ==================================================
+   ADMIN LOGIN
+   ================================================== */
+
+.admin-login-btn {
+  appearance: none;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--ink);
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: var(--radius-pill);
+
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .02em;
+
+  cursor: pointer;
+
+  transition:
+    background .25s ease,
+    border-color .25s ease,
+    transform .25s ease;
+}
+
+.admin-login-btn:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+
+/* Mobile admin button */
+
+.mobile-admin-login {
+  width: 100%;
+  padding: 14px 4px;
+
+  border: 0;
+  border-bottom: 1px solid var(--line);
+
+  background: transparent;
+
+  color: var(--ink);
+
+  font-family: var(--font-body);
+  font-size: 15.5px;
+  font-weight: 600;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+
+/* ==================================================
+   ADMIN LOGIN MODAL
+   ================================================== */
+
+#adminLoginView {
+  position: fixed;
+  inset: 0;
+
+  z-index: 999998;
+
+  display: none;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background:
+    rgba(17,17,17,.55);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+#adminLoginView.is-active {
+  display: flex;
+}
+
+.admin-login-card {
+  width: min(100%, 430px);
+
+  background: var(--card);
+
+  border: 1px solid rgba(17,17,17,.08);
+
+  border-radius: 28px;
+
+  padding: 34px;
+
+  box-shadow:
+    0 30px 80px rgba(17,17,17,.22);
+
+  animation: adminLoginIn .35s var(--ease);
+}
+
+@keyframes adminLoginIn {
+
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+}
+
+.admin-login-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.admin-login-eyebrow {
+  margin-bottom: 10px;
+
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+
+  letter-spacing: .14em;
+  text-transform: uppercase;
+
+  color: var(--accent);
+}
+
+.admin-login-title {
+  margin: 0;
+
+  font-family: var(--font-display);
+
+  font-size: 32px;
+  line-height: 1.05;
+
+  letter-spacing: -.04em;
+}
+
+.admin-login-subtitle {
+  margin-top: 10px;
+
+  color: var(--ink-soft);
+
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.admin-login-close {
+  width: 38px;
+  height: 38px;
+
+  flex: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--line);
+  border-radius: 50%;
+
+  background: transparent;
+
+  color: var(--ink-soft);
+
+  cursor: pointer;
+
+  transition:
+    background .2s ease,
+    color .2s ease;
+}
+
+.admin-login-close:hover {
+  background: var(--ink);
+  color: #fff;
+}
+
+.admin-login-form {
+  margin-top: 28px;
+}
+
+.admin-login-label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.admin-login-input-wrap {
+  position: relative;
+}
+
+.admin-login-input {
+  width: 100%;
+  height: 52px;
+
+  padding: 0 48px 0 16px;
+
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+
+  background: #fff;
+
+  color: var(--ink);
+
+  font-family: var(--font-body);
+  font-size: 15px;
+
+  outline: none;
+
+  transition:
+    border-color .2s ease,
+    box-shadow .2s ease;
+}
+
+.admin-login-input:focus {
+  border-color: var(--accent);
+
+  box-shadow:
+    0 0 0 4px rgba(225,91,39,.10);
+}
+
+.admin-login-toggle {
+  position: absolute;
+
+  top: 50%;
+  right: 14px;
+
+  transform: translateY(-50%);
+
+  border: 0;
+  background: transparent;
+
+  color: var(--ink-faint);
+
+  cursor: pointer;
+}
+
+.admin-login-toggle svg {
+  width: 17px;
+  height: 17px;
+}
+
+.admin-login-error {
+  min-height: 20px;
+
+  margin-top: 8px;
+
+  color: var(--accent-deep);
+
+  font-size: 12px;
+}
+
+.admin-login-submit {
+  width: 100%;
+  height: 52px;
+
+  margin-top: 8px;
+
+  border: 0;
+  border-radius: var(--radius-pill);
+
+  background: var(--ink);
+  color: #fff;
+
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform .2s ease,
+    background .2s ease;
+}
+
+.admin-login-submit:hover {
+  background: var(--accent);
+  transform: translateY(-1px);
+}
+
+
+/* ==================================================
+   ADMIN DASHBOARD
+   ================================================== */
+
+#adminDashboard {
+  position: fixed;
+  inset: 0;
+
+  z-index: 999997;
+
+  display: none;
+
+  overflow-y: auto;
+
+  background: var(--bg);
+
+  padding: 92px 24px 60px;
+}
+
+#adminDashboard.is-visible {
+  display: block;
+}
+
+.admin-dashboard-inner {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+
+.admin-dashboard-header {
+  display: flex;
+
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 24px;
+
+  margin-bottom: 34px;
+}
+
+.admin-dashboard-eyebrow {
+  margin-bottom: 10px;
+
+  font-family: var(--font-mono);
+  font-size: 10px;
+
+  letter-spacing: .15em;
+  text-transform: uppercase;
+
+  color: var(--accent);
+}
+
+.admin-dashboard-title {
+  font-family: var(--font-display);
+
+  font-size: clamp(34px, 5vw, 54px);
+
+  line-height: .98;
+
+  letter-spacing: -.05em;
+}
+
+.admin-dashboard-subtitle {
+  margin-top: 10px;
+
+  color: var(--ink-soft);
+
+  font-size: 14px;
+}
+
+.admin-dashboard-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.admin-dashboard-btn {
+  min-height: 42px;
+
+  padding: 0 16px;
+
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+
+  background: var(--card);
+  color: var(--ink);
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.admin-dashboard-btn.primary {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+.admin-dashboard-btn:hover {
+  transform: translateY(-1px);
+}
+
+
+/* Stats */
+
+.admin-stats {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 14px;
+
+  margin-bottom: 28px;
+}
+
+.admin-stat {
+  padding: 22px;
+
+  border: 1px solid var(--line);
+
+  border-radius: 20px;
+
+  background: var(--card);
+}
+
+.admin-stat-label {
+  font-family: var(--font-mono);
+
+  font-size: 9px;
+
+  letter-spacing: .12em;
+
+  text-transform: uppercase;
+
+  color: var(--ink-faint);
+}
+
+.admin-stat-value {
+  margin-top: 8px;
+
+  font-family: var(--font-display);
+
+  font-size: 30px;
+  font-weight: 600;
+
+  letter-spacing: -.04em;
+}
+
+
+/* Toolbar */
+
+.admin-events-toolbar {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  margin-bottom: 16px;
+}
+
+.admin-events-heading {
+  font-family: var(--font-display);
+
+  font-size: 22px;
+
+  letter-spacing: -.03em;
+}
+
+.admin-events-search {
+  width: min(280px, 100%);
+
+  height: 42px;
+
+  padding: 0 14px;
+
+  border: 1px solid var(--line-strong);
+
+  border-radius: 12px;
+
+  background: var(--card);
+
+  font-family: var(--font-body);
+
+  outline: none;
+}
+
+.admin-events-search:focus {
+  border-color: var(--accent);
+}
+
+
+/* Event list */
+
+.admin-events-list {
+  display: grid;
+
+  gap: 12px;
+}
+
+.admin-event-card {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr) auto;
+
+  gap: 20px;
+
+  padding: 22px;
+
+  border: 1px solid var(--line);
+
+  border-radius: 20px;
+
+  background: var(--card);
+
+  transition:
+    border-color .2s ease,
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+.admin-event-card:hover {
+  border-color: var(--line-strong);
+
+  transform: translateY(-2px);
+
+  box-shadow: var(--shadow-soft);
+}
+
+.admin-event-name {
+  font-family: var(--font-display);
+
+  font-size: 20px;
+  font-weight: 600;
+
+  letter-spacing: -.025em;
+}
+
+.admin-event-host {
+  margin-top: 4px;
+
+  color: var(--ink-soft);
+
+  font-size: 13px;
+}
+
+.admin-event-meta {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin-top: 14px;
+}
+
+.admin-event-chip {
+  padding: 6px 9px;
+
+  border-radius: 8px;
+
+  background: var(--bg-deep);
+
+  color: var(--ink-soft);
+
+  font-family: var(--font-mono);
+
+  font-size: 9px;
+
+  letter-spacing: .03em;
+}
+
+.admin-event-chip.active {
+  background: #eaf6ed;
+  color: #28733b;
+}
+
+.admin-event-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+.admin-event-open {
+  min-height: 38px;
+
+  padding: 0 13px;
+
+  border-radius: 10px;
+
+  border: 1px solid var(--line-strong);
+
+  background: var(--ink);
+
+  color: #fff;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.admin-event-open:hover {
+  background: var(--accent);
+}
+
+.admin-empty {
+  padding: 50px 24px;
+
+  text-align: center;
+
+  border: 1px dashed var(--line-strong);
+
+  border-radius: 20px;
+
+  color: var(--ink-soft);
+}
+
+.admin-empty strong {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: var(--ink);
+}
+
+
+/* Mobile */
+
+@media (max-width: 880px) {
+
+  .admin-login-btn {
+    display: none;
+  }
+
+  #adminDashboard {
+    padding: 82px 16px 40px;
+  }
+
+  .admin-dashboard-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-dashboard-actions {
+    width: 100%;
+  }
+
+  .admin-dashboard-actions button {
+    flex: 1;
+  }
+
+}
+
+@media (max-width: 600px) {
+
+  .admin-login-card {
+    padding: 26px 20px;
+    border-radius: 22px;
+  }
+
+  .admin-login-title {
+    font-size: 28px;
+  }
+
+  .admin-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-events-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-events-search {
+    width: 100%;
+  }
+
+  .admin-event-card {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-event-actions {
+    width: 100%;
+  }
+
+  .admin-event-open {
+    width: 100%;
+  }
+
+}
 
 .hamburger{
   display:none; width:42px; height:42px; border-radius:12px; border:1.5px solid var(--line-strong);
@@ -2932,6 +3619,123 @@ body.guest-uploading {
 
 
 <body>
+<!-- ==================================================
+     ADMIN LOGIN MODAL
+     ================================================== -->
+<div id="adminLoginView" aria-hidden="true">
+
+  <div
+    class="admin-login-card"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="adminLoginTitle"
+  >
+
+    <div class="admin-login-top">
+
+      <div>
+
+        <div class="admin-login-eyebrow">
+          Disposable Momment / Admin
+        </div>
+
+        <h2
+          class="admin-login-title"
+          id="adminLoginTitle"
+        >
+          Admin Login
+        </h2>
+
+        <p class="admin-login-subtitle">
+          Enter your administrator password to access the event dashboard.
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        class="admin-login-close"
+        id="adminLoginClose"
+        aria-label="Close admin login"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        >
+          <path d="M6 6l12 12"/>
+          <path d="M18 6L6 18"/>
+        </svg>
+      </button>
+
+    </div>
+
+
+    <form
+      class="admin-login-form"
+      id="adminLoginForm"
+    >
+
+      <label
+        class="admin-login-label"
+        for="adminPassword"
+      >
+        Password
+      </label>
+
+      <div class="admin-login-input-wrap">
+
+        <input
+          type="password"
+          id="adminPassword"
+          class="admin-login-input"
+          placeholder="Enter admin password"
+          autocomplete="current-password"
+          required
+        >
+
+        <button
+          type="button"
+          class="admin-login-toggle"
+          id="adminPasswordToggle"
+          aria-label="Show password"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+
+      </div>
+
+      <div
+        class="admin-login-error"
+        id="adminLoginError"
+        aria-live="polite"
+      ></div>
+
+      <button
+        type="submit"
+        class="admin-login-submit"
+      >
+        Login to Dashboard →
+      </button>
+
+    </form>
+
+  </div>
+
+</div>
+
 
 <!-- ==================================================
      GUEST PHOTO UPLOAD LOCK
@@ -3087,6 +3891,148 @@ body.guest-uploading {
   </div>
 </div>
 <!-- ==================================================
+     ADMIN DASHBOARD
+     ================================================== -->
+<section
+  id="adminDashboard"
+  aria-hidden="true"
+>
+
+  <div class="admin-dashboard-inner">
+
+    <div class="admin-dashboard-header">
+
+      <div>
+
+        <div class="admin-dashboard-eyebrow">
+          Disposable Momment / Administration
+        </div>
+
+        <h1 class="admin-dashboard-title">
+          Event Dashboard
+        </h1>
+
+        <p class="admin-dashboard-subtitle">
+          Manage and monitor all events created on the platform.
+        </p>
+
+      </div>
+
+      <div class="admin-dashboard-actions">
+
+        <button
+          type="button"
+          class="admin-dashboard-btn"
+          id="adminRefreshEvents"
+        >
+          Refresh
+        </button>
+
+        <button
+          type="button"
+          class="admin-dashboard-btn primary"
+          id="adminLogout"
+        >
+          Logout
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- STATS -->
+
+    <div class="admin-stats">
+
+      <div class="admin-stat">
+
+        <div class="admin-stat-label">
+          Total Events
+        </div>
+
+        <div
+          class="admin-stat-value"
+          id="adminTotalEvents"
+        >
+          —
+        </div>
+
+      </div>
+
+
+      <div class="admin-stat">
+
+        <div class="admin-stat-label">
+          Active Events
+        </div>
+
+        <div
+          class="admin-stat-value"
+          id="adminActiveEvents"
+        >
+          —
+        </div>
+
+      </div>
+
+
+      <div class="admin-stat">
+
+        <div class="admin-stat-label">
+          Total Photos
+        </div>
+
+        <div
+          class="admin-stat-value"
+          id="adminTotalPhotos"
+        >
+          —
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- EVENTS -->
+
+    <div class="admin-events-toolbar">
+
+      <h2 class="admin-events-heading">
+        All Events
+      </h2>
+
+      <input
+        type="search"
+        id="adminEventSearch"
+        class="admin-events-search"
+        placeholder="Search events..."
+        autocomplete="off"
+      >
+
+    </div>
+
+
+    <div
+      class="admin-events-list"
+      id="adminEventsList"
+    >
+
+      <div class="admin-empty">
+
+        <strong>Loading events...</strong>
+
+        Fetching data from Firestore.
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+<!-- ==================================================
      NAVBAR
      ================================================== -->
 <header class="navbar" id="navbar">
@@ -3105,13 +4051,45 @@ body.guest-uploading {
       <a href="#faq">FAQ</a>
     </nav>
 
-    <div class="nav-right">
-      <!-- TODO: Connect to Create Event flow -->
-      <a href="#" class="btn btn-primary btn-sm">
-        Create Event
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </a>
-      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+<div class="nav-right">
+
+  <!-- ADMIN LOGIN -->
+  <button
+    type="button"
+    class="admin-login-btn"
+    id="adminLoginButton"
+  >
+    Admin Login
+  </button>
+
+  <!-- CREATE EVENT -->
+  <a href="#" class="btn btn-primary btn-sm">
+    Create Event
+
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M5 12h14"/>
+      <path d="M13 6l6 6-6 6"/>
+    </svg>
+
+  </a>
+
+  <button
+    class="hamburger"
+    id="hamburger"
+    aria-label="Toggle menu"
+    aria-expanded="false"
+  >
+    <span></span>
+  </button>
+
+</div>
         <span></span>
       </button>
     </div>
@@ -3119,10 +4097,38 @@ body.guest-uploading {
 
   <div class="mobile-menu" id="mobileMenu">
     <div class="mobile-menu-inner">
-      <a href="#how-it-works">How It Works</a>
-      <a href="#features">Features</a>
-      <a href="#use-cases">Events</a>
-      <a href="#faq">FAQ</a>
+
+  <a href="#how-it-works">How It Works</a>
+  <a href="#features">Features</a>
+  <a href="#use-cases">Events</a>
+  <a href="#faq">FAQ</a>
+
+  <button
+    type="button"
+    class="mobile-admin-login"
+    id="mobileAdminLoginButton"
+  >
+    Admin Login
+  </button>
+
+  <a href="#" class="btn btn-primary">
+    Create Event
+
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M5 12h14"/>
+      <path d="M13 6l6 6-6 6"/>
+    </svg>
+
+  </a>
+
+</div>
       <!-- TODO: Connect to Create Event flow -->
       <a href="#" class="btn btn-primary">
         Create Event
@@ -5118,6 +6124,886 @@ console.log("Firebase loaded successfully:", {
 });
 
 /* ==================================================
+   ADMIN AUTHENTICATION
+   ================================================== */
+
+/*
+ * CHANGE THIS PASSWORD.
+ *
+ * IMPORTANT:
+ * This is a frontend-only password.
+ * It is NOT suitable for high-security authentication.
+ */
+const ADMIN_PASSWORD = "DMADMIN2026";
+
+const ADMIN_SESSION_KEY =
+  "disposableMomment_adminSession";
+
+
+const adminLoginView =
+  document.getElementById(
+    "adminLoginView"
+  );
+
+const adminLoginButton =
+  document.getElementById(
+    "adminLoginButton"
+  );
+
+const mobileAdminLoginButton =
+  document.getElementById(
+    "mobileAdminLoginButton"
+  );
+
+const adminLoginClose =
+  document.getElementById(
+    "adminLoginClose"
+  );
+
+const adminLoginForm =
+  document.getElementById(
+    "adminLoginForm"
+  );
+
+const adminPassword =
+  document.getElementById(
+    "adminPassword"
+  );
+
+const adminPasswordToggle =
+  document.getElementById(
+    "adminPasswordToggle"
+  );
+
+const adminLoginError =
+  document.getElementById(
+    "adminLoginError"
+  );
+
+
+const adminDashboard =
+  document.getElementById(
+    "adminDashboard"
+  );
+
+const adminLogout =
+  document.getElementById(
+    "adminLogout"
+  );
+
+const adminRefreshEvents =
+  document.getElementById(
+    "adminRefreshEvents"
+  );
+
+const adminEventsList =
+  document.getElementById(
+    "adminEventsList"
+  );
+
+const adminTotalEvents =
+  document.getElementById(
+    "adminTotalEvents"
+  );
+
+const adminActiveEvents =
+  document.getElementById(
+    "adminActiveEvents"
+  );
+
+const adminTotalPhotos =
+  document.getElementById(
+    "adminTotalPhotos"
+  );
+
+const adminEventSearch =
+  document.getElementById(
+    "adminEventSearch"
+  );
+
+
+let adminEvents = [];
+
+
+/* ==================================================
+   OPEN LOGIN
+   ================================================== */
+
+function openAdminLogin() {
+
+  if (!adminLoginView) return;
+
+  adminLoginView.classList.add(
+    "is-active"
+  );
+
+  adminLoginView.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
+  adminLoginError.textContent = "";
+
+  adminPassword.value = "";
+
+  setTimeout(function() {
+
+    adminPassword.focus();
+
+  }, 50);
+
+}
+
+
+/* ==================================================
+   CLOSE LOGIN
+   ================================================== */
+
+function closeAdminLogin() {
+
+  if (!adminLoginView) return;
+
+  adminLoginView.classList.remove(
+    "is-active"
+  );
+
+  adminLoginView.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+}
+
+
+/* ==================================================
+   LOGIN BUTTONS
+   ================================================== */
+
+adminLoginButton?.addEventListener(
+  "click",
+  openAdminLogin
+);
+
+mobileAdminLoginButton?.addEventListener(
+  "click",
+  function() {
+
+    /*
+     * Close mobile navigation first.
+     */
+    const mobileMenu =
+      document.getElementById(
+        "mobileMenu"
+      );
+
+    const hamburger =
+      document.getElementById(
+        "hamburger"
+      );
+
+    mobileMenu?.classList.remove(
+      "open"
+    );
+
+    hamburger?.classList.remove(
+      "open"
+    );
+
+    hamburger?.setAttribute(
+      "aria-expanded",
+      "false"
+    );
+
+    openAdminLogin();
+
+  }
+);
+
+
+adminLoginClose?.addEventListener(
+  "click",
+  closeAdminLogin
+);
+
+
+/* ==================================================
+   CLICK OUTSIDE LOGIN
+   ================================================== */
+
+adminLoginView?.addEventListener(
+  "click",
+  function(event) {
+
+    if (
+      event.target ===
+      adminLoginView
+    ) {
+      closeAdminLogin();
+    }
+
+  }
+);
+
+
+/* ==================================================
+   PASSWORD VISIBILITY
+   ================================================== */
+
+adminPasswordToggle?.addEventListener(
+  "click",
+  function() {
+
+    const isPassword =
+      adminPassword.type === "password";
+
+    adminPassword.type =
+      isPassword
+        ? "text"
+        : "password";
+
+  }
+);
+
+
+/* ==================================================
+   ADMIN LOGIN
+   ================================================== */
+
+adminLoginForm?.addEventListener(
+  "submit",
+  async function(event) {
+
+    event.preventDefault();
+
+    adminLoginError.textContent = "";
+
+    const password =
+      adminPassword.value;
+
+    if (
+      password !==
+      ADMIN_PASSWORD
+    ) {
+
+      adminLoginError.textContent =
+        "Incorrect administrator password.";
+
+      adminPassword.select();
+
+      return;
+
+    }
+
+
+    /*
+     * Remember admin session.
+     *
+     * This is only a client-side session flag.
+     */
+    sessionStorage.setItem(
+      ADMIN_SESSION_KEY,
+      "authenticated"
+    );
+
+
+    closeAdminLogin();
+
+    await openAdminDashboard();
+
+  }
+);
+
+
+/* ==================================================
+   ADMIN SESSION CHECK
+   ================================================== */
+
+function isAdminAuthenticated() {
+
+  return (
+    sessionStorage.getItem(
+      ADMIN_SESSION_KEY
+    ) === "authenticated"
+  );
+
+}
+
+
+/* ==================================================
+   OPEN ADMIN DASHBOARD
+   ================================================== */
+
+async function openAdminDashboard() {
+
+  if (!isAdminAuthenticated()) {
+
+    openAdminLogin();
+
+    return;
+
+  }
+
+
+  /*
+   * Hide the normal site.
+   */
+  document.querySelector(
+    "header"
+  )?.style.setProperty(
+    "display",
+    "none"
+  );
+
+  document.querySelector(
+    "main"
+  )?.style.setProperty(
+    "display",
+    "none"
+  );
+
+  document.querySelector(
+    "footer"
+  )?.style.setProperty(
+    "display",
+    "none"
+  );
+
+
+  adminDashboard.classList.add(
+    "is-visible"
+  );
+
+  adminDashboard.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
+
+  await loadAdminEvents();
+
+}
+
+
+/* ==================================================
+   CLOSE ADMIN DASHBOARD
+   ================================================== */
+
+function closeAdminDashboard() {
+
+  adminDashboard.classList.remove(
+    "is-visible"
+  );
+
+  adminDashboard.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+
+  document.querySelector(
+    "header"
+  )?.style.removeProperty(
+    "display"
+  );
+
+  document.querySelector(
+    "main"
+  )?.style.removeProperty(
+    "display"
+  );
+
+  document.querySelector(
+    "footer"
+  )?.style.removeProperty(
+    "display"
+  );
+
+}
+
+
+/* ==================================================
+   LOAD ALL EVENTS
+   ================================================== */
+
+async function loadAdminEvents() {
+
+  adminEventsList.innerHTML = `
+    <div class="admin-empty">
+      <strong>Loading events...</strong>
+      Fetching events from Firestore.
+    </div>
+  `;
+
+
+  try {
+
+    /*
+     * Read all events.
+     */
+    const snapshot =
+      await getDocs(
+        collection(
+          db,
+          "events"
+        )
+      );
+
+
+    adminEvents = [];
+
+
+    snapshot.forEach(
+      function(docSnap) {
+
+        adminEvents.push({
+          id: docSnap.id,
+          ...docSnap.data()
+        });
+
+      }
+    );
+
+
+    /*
+     * Newest events first.
+     */
+    adminEvents.sort(
+      function(a, b) {
+
+        const aTime =
+          a.createdAt?.toMillis?.() || 0;
+
+        const bTime =
+          b.createdAt?.toMillis?.() || 0;
+
+        return bTime - aTime;
+
+      }
+    );
+
+
+    /*
+     * Update statistics.
+     */
+    adminTotalEvents.textContent =
+      adminEvents.length;
+
+
+    adminActiveEvents.textContent =
+      adminEvents.filter(
+        event =>
+          event.status === "active"
+      ).length;
+
+
+    /*
+     * Count all photos.
+     *
+     * This is optional and depends on
+     * Firestore read permissions.
+     */
+    try {
+
+      const photosSnapshot =
+        await getDocs(
+          collection(
+            db,
+            "photos"
+          )
+        );
+
+      let photoCount = 0;
+
+      photosSnapshot.forEach(
+        function(photoDoc) {
+
+          const data =
+            photoDoc.data();
+
+          if (
+            data.status === "active"
+          ) {
+            photoCount++;
+          }
+
+        }
+      );
+
+      adminTotalPhotos.textContent =
+        photoCount;
+
+    } catch (photoError) {
+
+      console.warn(
+        "Admin photo count unavailable:",
+        photoError
+      );
+
+      adminTotalPhotos.textContent =
+        "—";
+
+    }
+
+
+    renderAdminEvents(
+      adminEvents
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Admin event loading error:",
+      error
+    );
+
+
+    adminEventsList.innerHTML = `
+      <div class="admin-empty">
+
+        <strong>
+          Unable to load events
+        </strong>
+
+        <span>
+          ${escapeHtml(
+            error.message ||
+            "Firestore denied this request."
+          )}
+        </span>
+
+      </div>
+    `;
+
+  }
+
+}
+
+
+/* ==================================================
+   RENDER EVENTS
+   ================================================== */
+
+function renderAdminEvents(
+  events
+) {
+
+  if (
+    !events ||
+    events.length === 0
+  ) {
+
+    adminEventsList.innerHTML = `
+      <div class="admin-empty">
+
+        <strong>
+          No events found
+        </strong>
+
+        There are currently no events
+        in the Firestore events collection.
+
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  adminEventsList.innerHTML =
+    events.map(
+      function(event) {
+
+        const eventName =
+          escapeHtml(
+            event.eventName ||
+            "Untitled Event"
+          );
+
+        const hostName =
+          escapeHtml(
+            event.hostName ||
+            "Unknown Host"
+          );
+
+        const eventDate =
+          escapeHtml(
+            formatAdminDate(
+              event.eventDate
+            )
+          );
+
+        const status =
+          event.status ||
+          "unknown";
+
+        const photoLimit =
+          event.photoLimit ||
+          "—";
+
+        const guestUrl =
+          `${window.location.origin}${window.location.pathname}?event=${encodeURIComponent(event.id)}`;
+
+
+        return `
+
+          <article
+            class="admin-event-card"
+          >
+
+            <div>
+
+              <div class="admin-event-name">
+                ${eventName}
+              </div>
+
+              <div class="admin-event-host">
+                Hosted by ${hostName}
+              </div>
+
+              <div class="admin-event-meta">
+
+                <span class="admin-event-chip">
+                  ${eventDate}
+                </span>
+
+                <span class="admin-event-chip">
+                  ${escapeHtml(
+                    event.startTime || "—"
+                  )}
+                  —
+                  ${escapeHtml(
+                    event.endTime || "—"
+                  )}
+                </span>
+
+                <span class="admin-event-chip">
+                  Limit ${escapeHtml(
+                    String(photoLimit)
+                  )}
+                </span>
+
+                <span
+                  class="admin-event-chip ${
+                    status === "active"
+                      ? "active"
+                      : ""
+                  }"
+                >
+                  ${escapeHtml(
+                    status
+                  )}
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div class="admin-event-actions">
+
+              <button
+                type="button"
+                class="admin-event-open"
+                data-admin-open-event="${escapeHtml(
+                  event.id
+                )}"
+              >
+                Open Event →
+              </button>
+
+            </div>
+
+          </article>
+
+        `;
+
+      }
+    ).join("");
+
+
+  /*
+   * Event buttons.
+   */
+  adminEventsList
+    .querySelectorAll(
+      "[data-admin-open-event]"
+    )
+    .forEach(
+      function(button) {
+
+        button.addEventListener(
+          "click",
+          function() {
+
+            const eventId =
+              button.dataset
+                .adminOpenEvent;
+
+            const guestUrl =
+              `${window.location.origin}${window.location.pathname}?event=${encodeURIComponent(eventId)}`;
+
+            window.location.href =
+              guestUrl;
+
+          }
+        );
+
+      }
+    );
+
+}
+
+
+/* ==================================================
+   SEARCH EVENTS
+   ================================================== */
+
+adminEventSearch?.addEventListener(
+  "input",
+  function() {
+
+    const keyword =
+      this.value
+        .trim()
+        .toLowerCase();
+
+
+    if (!keyword) {
+
+      renderAdminEvents(
+        adminEvents
+      );
+
+      return;
+
+    }
+
+
+    const filtered =
+      adminEvents.filter(
+        function(event) {
+
+          return [
+
+            event.eventName,
+            event.hostName,
+            event.eventDate,
+            event.status,
+            event.id
+
+          ]
+            .filter(Boolean)
+            .some(
+              value =>
+                String(value)
+                  .toLowerCase()
+                  .includes(
+                    keyword
+                  )
+            );
+
+        }
+      );
+
+
+    renderAdminEvents(
+      filtered
+    );
+
+  }
+);
+
+
+/* ==================================================
+   REFRESH
+   ================================================== */
+
+adminRefreshEvents?.addEventListener(
+  "click",
+  loadAdminEvents
+);
+
+
+/* ==================================================
+   LOGOUT
+   ================================================== */
+
+adminLogout?.addEventListener(
+  "click",
+  function() {
+
+    sessionStorage.removeItem(
+      ADMIN_SESSION_KEY
+    );
+
+    adminEvents = [];
+
+    closeAdminDashboard();
+
+  }
+);
+
+
+/* ==================================================
+   ESC KEY
+   ================================================== */
+
+document.addEventListener(
+  "keydown",
+  function(event) {
+
+    if (
+      event.key !== "Escape"
+    ) {
+      return;
+    }
+
+
+    if (
+      adminLoginView?.classList
+        .contains("is-active")
+    ) {
+
+      closeAdminLogin();
+
+      return;
+
+    }
+
+
+    if (
+      adminDashboard?.classList
+        .contains("is-visible")
+    ) {
+
+      adminLogout?.click();
+
+    }
+
+  }
+);
+
+
+/* ==================================================
+   AUTO OPEN IF SESSION EXISTS
+   ================================================== */
+
+if (
+  isAdminAuthenticated()
+) {
+
+  /*
+   * Don't automatically open the dashboard
+   * on every page refresh.
+   *
+   * Keep the session alive but let the user
+   * explicitly open Admin Login.
+   */
+
+}
+/* ==================================================
    VGY IMAGE UPLOAD
    ================================================== */
 
@@ -6350,6 +8236,32 @@ function formatManagementDate(dateValue) {
 
 }
 
+function formatAdminDate(dateValue) {
+
+  if (!dateValue) {
+    return "No date";
+  }
+
+  try {
+
+    return new Date(
+      `${dateValue}T00:00:00`
+    ).toLocaleDateString(
+      "en-US",
+      {
+        month: "short",
+        day: "numeric",
+        year: "numeric"
+      }
+    );
+
+  } catch (error) {
+
+    return dateValue;
+
+  }
+
+}
 
 function formatRevealMode(mode) {
 
