@@ -781,6 +781,66 @@ p{ margin:0; }
   background: var(--accent);
 }
 
+.admin-event-management {
+  min-height: 38px;
+
+  padding: 0 13px;
+
+  border-radius: 10px;
+
+  border: 1px solid var(--line-strong);
+
+  background: #ffffff;
+
+  color: var(--ink);
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background .2s ease,
+    color .2s ease,
+    border-color .2s ease;
+}
+
+.admin-event-management:hover {
+  background: var(--bg-deep);
+  border-color: var(--ink);
+}
+
+
+.admin-event-delete {
+  min-height: 38px;
+
+  padding: 0 13px;
+
+  border-radius: 10px;
+
+  border: 1px solid #e3caca;
+
+  background: #fff5f5;
+
+  color: #a33a3a;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background .2s ease,
+    color .2s ease,
+    border-color .2s ease;
+}
+
+.admin-event-delete:hover {
+  background: #a33a3a;
+  border-color: #a33a3a;
+  color: #ffffff;
+}
+
 .admin-empty {
   padding: 50px 24px;
 
@@ -864,6 +924,10 @@ p{ margin:0; }
   .admin-event-open {
     width: 100%;
   }
+  .admin-event-management,
+  .admin-event-delete {
+  width: 100%;
+}
 
 }
 
@@ -6113,7 +6177,8 @@ import {
 
 /* updateDoc is imported directly because firebase.js does not export it. */
 import {
-  updateDoc
+  updateDoc,
+  deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const VGY_USER_KEY = "rmCThOxM42PB5jRwiLjQsgIKcoM3jJvKEIc6PtvmfSZVJwbnsCvvqvwUy5o4zlW6";
@@ -6134,7 +6199,7 @@ console.log("Firebase loaded successfully:", {
  * This is a frontend-only password.
  * It is NOT suitable for high-security authentication.
  */
-const ADMIN_PASSWORD = "DMADMIN2026";
+const ADMIN_PASSWORD = "MISTERMOCAY123";
 
 const ADMIN_SESSION_KEY =
   "disposableMomment_adminSession";
@@ -6801,19 +6866,39 @@ function renderAdminEvents(
             </div>
 
 
-            <div class="admin-event-actions">
+      <div class="admin-event-actions">
 
-              <button
-                type="button"
-                class="admin-event-open"
-                data-admin-open-event="${escapeHtml(
-                  event.id
-                )}"
-              >
-                Open Event →
-              </button>
+        <button
+          type="button"
+          class="admin-event-open"
+          data-admin-open-event="${escapeHtml(
+            event.id
+          )}"
+        >
+          Open Event →
+        </button>
 
-            </div>
+        <button
+          type="button"
+          class="admin-event-management"
+          data-admin-open-management="${escapeHtml(
+            event.id
+          )}"
+        >
+          Open Management →
+        </button>
+
+        <button
+          type="button"
+          class="admin-event-delete"
+          data-admin-delete-event="${escapeHtml(
+            event.id
+          )}"
+        >
+          Delete
+        </button>
+
+      </div>
 
           </article>
 
@@ -6852,10 +6937,430 @@ function renderAdminEvents(
 
       }
     );
+/* ==================================================
+   OPEN MANAGEMENT FROM ADMIN
+   ================================================== */
 
+adminEventsList
+  .querySelectorAll(
+    "[data-admin-open-management]"
+  )
+  .forEach(
+    function(button) {
+
+      button.addEventListener(
+        "click",
+        async function() {
+
+          const eventId =
+            button.dataset
+              .adminOpenManagement;
+
+          if (!eventId) {
+            alert(
+              "Event ID is missing."
+            );
+
+            return;
+          }
+
+          button.disabled = true;
+          button.textContent =
+            "Opening...";
+
+          try {
+
+            /*
+             * Find the management access
+             * belonging to this event.
+             */
+            const accessQuery =
+              query(
+                collection(
+                  db,
+                  "managementAccess"
+                ),
+                where(
+                  "eventId",
+                  "==",
+                  eventId
+                )
+              );
+
+            const accessSnapshot =
+              await getDocs(
+                accessQuery
+              );
+
+            let managementToken =
+              null;
+
+            accessSnapshot.forEach(
+              function(docSnap) {
+
+                const data =
+                  docSnap.data();
+
+                if (
+                  data.active === true &&
+                  !managementToken
+                ) {
+
+                  managementToken =
+                    docSnap.id;
+
+                }
+
+              }
+            );
+
+            if (!managementToken) {
+
+              throw new Error(
+                "Management access for this event could not be found."
+              );
+
+            }
+
+            /*
+             * Build management URL.
+             */
+            const managementUrl =
+              `${window.location.origin}${window.location.pathname}?manage=${encodeURIComponent(
+                managementToken
+              )}`;
+
+            /*
+             * Open management dashboard.
+             */
+            window.location.href =
+              managementUrl;
+
+          } catch (error) {
+
+            console.error(
+              "Failed to open management:",
+              error
+            );
+
+            alert(
+              error.message ||
+              "Could not open event management."
+            );
+
+            button.disabled = false;
+            button.textContent =
+              "Open Management →";
+
+          }
+
+        }
+      );
+
+    }
+  );
 }
 
+/* ==================================================
+   DELETE EVENT
+   ================================================== */
 
+adminEventsList
+  .querySelectorAll(
+    "[data-admin-delete-event]"
+  )
+  .forEach(
+    function(button) {
+
+      button.addEventListener(
+        "click",
+        async function() {
+
+          const eventId =
+            button.dataset
+              .adminDeleteEvent;
+
+          if (!eventId) {
+
+            alert(
+              "Event ID is missing."
+            );
+
+            return;
+
+          }
+
+          /*
+           * Find event in local admin data.
+           */
+          const event =
+            adminEvents.find(
+              function(item) {
+                return item.id === eventId;
+              }
+            );
+
+          const eventName =
+            event?.eventName ||
+            "this event";
+
+
+          /*
+           * First confirmation.
+           */
+          const firstConfirm =
+            window.confirm(
+              `Delete "${eventName}"?\n\n` +
+              `This action will permanently delete the event and its related data.`
+            );
+
+          if (!firstConfirm) {
+            return;
+          }
+
+
+          /*
+           * Strong second confirmation.
+           */
+          const secondConfirm =
+            window.confirm(
+              `Are you absolutely sure?\n\n` +
+              `Event: ${eventName}\n\n` +
+              `The event, photos, management access, and management sessions will be deleted permanently.`
+            );
+
+          if (!secondConfirm) {
+            return;
+          }
+
+
+          button.disabled = true;
+          button.textContent =
+            "Deleting...";
+
+
+          try {
+
+            /*
+             * ==========================================
+             * 1. Delete event document
+             * ==========================================
+             */
+
+            await deleteDoc(
+              doc(
+                db,
+                "events",
+                eventId
+              )
+            );
+
+
+            /*
+             * ==========================================
+             * 2. Delete event photos
+             * ==========================================
+             */
+
+            const photosQuery =
+              query(
+                collection(
+                  db,
+                  "photos"
+                ),
+                where(
+                  "eventId",
+                  "==",
+                  eventId
+                )
+              );
+
+            const photosSnapshot =
+              await getDocs(
+                photosQuery
+              );
+
+            for (
+              const photoDoc
+              of photosSnapshot.docs
+            ) {
+
+              await deleteDoc(
+                photoDoc.ref
+              );
+
+            }
+
+
+            /*
+             * ==========================================
+             * 3. Delete management access
+             * ==========================================
+             */
+
+            const accessQuery =
+              query(
+                collection(
+                  db,
+                  "managementAccess"
+                ),
+                where(
+                  "eventId",
+                  "==",
+                  eventId
+                )
+              );
+
+            const accessSnapshot =
+              await getDocs(
+                accessQuery
+              );
+
+            for (
+              const accessDoc
+              of accessSnapshot.docs
+            ) {
+
+              await deleteDoc(
+                accessDoc.ref
+              );
+
+            }
+
+
+            /*
+             * ==========================================
+             * 4. Delete management sessions
+             * ==========================================
+             */
+
+            const sessionsQuery =
+              query(
+                collection(
+                  db,
+                  "managementSessions"
+                ),
+                where(
+                  "eventId",
+                  "==",
+                  eventId
+                )
+              );
+
+            const sessionsSnapshot =
+              await getDocs(
+                sessionsQuery
+              );
+
+            for (
+              const sessionDoc
+              of sessionsSnapshot.docs
+            ) {
+
+              await deleteDoc(
+                sessionDoc.ref
+              );
+
+            }
+
+
+            /*
+             * ==========================================
+             * 5. Remove from local array
+             * ==========================================
+             */
+
+            adminEvents =
+              adminEvents.filter(
+                function(item) {
+                  return item.id !== eventId;
+                }
+              );
+
+
+            /*
+             * ==========================================
+             * 6. Refresh dashboard
+             * ==========================================
+             */
+
+            adminTotalEvents.textContent =
+              adminEvents.length;
+
+            adminActiveEvents.textContent =
+              adminEvents.filter(
+                function(item) {
+                  return item.status === "active";
+                }
+              ).length;
+
+
+            renderAdminEvents(
+              adminEvents
+            );
+
+
+            alert(
+              `"${eventName}" was deleted successfully.`
+            );
+
+
+          } catch (error) {
+
+            console.error(
+              "Event deletion error:",
+              error
+            );
+
+
+            console.error(
+              "Firebase error code:",
+              error.code
+            );
+
+
+            if (
+              error.code ===
+                "permission-denied" ||
+              error.code ===
+                "PERMISSION_DENIED"
+            ) {
+
+              alert(
+                "Firebase denied the deletion. " +
+                "Your Firestore Security Rules do not currently allow the admin client to delete this data."
+              );
+
+            } else {
+
+              alert(
+                error.message ||
+                "The event could not be deleted."
+              );
+
+            }
+
+
+            /*
+             * Reload the dashboard so the UI
+             * reflects the actual Firestore state.
+             */
+            await loadAdminEvents();
+
+
+          } finally {
+
+            button.disabled = false;
+            button.textContent =
+              "Delete";
+
+          }
+
+        }
+      );
+
+    }
+  );
 /* ==================================================
    SEARCH EVENTS
    ================================================== */
