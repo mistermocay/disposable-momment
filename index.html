@@ -12,6 +12,394 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
+
+/* ==================================================
+   ADMIN DELETE EVENT MODAL
+   ================================================== */
+
+.admin-delete-modal {
+
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 99999;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 24px;
+
+  opacity: 0;
+
+  visibility: hidden;
+
+  pointer-events: none;
+
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
+
+}
+
+.admin-delete-modal.is-active {
+
+  opacity: 1;
+
+  visibility: visible;
+
+  pointer-events: auto;
+
+}
+
+
+/* BACKDROP */
+
+.admin-delete-backdrop {
+
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    rgba(15, 23, 42, 0.58);
+
+  backdrop-filter:
+    blur(8px);
+
+  -webkit-backdrop-filter:
+    blur(8px);
+
+}
+
+
+/* DIALOG */
+
+.admin-delete-dialog {
+
+  position: relative;
+
+  width: min(
+    440px,
+    100%
+  );
+
+  background: #ffffff;
+
+  border-radius: 22px;
+
+  padding: 28px;
+
+  box-shadow:
+    0 24px 70px
+    rgba(0, 0, 0, 0.22);
+
+  transform:
+    translateY(12px)
+    scale(0.97);
+
+  transition:
+    transform 0.22s ease;
+
+}
+
+.admin-delete-modal.is-active
+.admin-delete-dialog {
+
+  transform:
+    translateY(0)
+    scale(1);
+
+}
+
+
+/* ICON */
+
+.admin-delete-icon {
+
+  width: 52px;
+
+  height: 52px;
+
+  border-radius: 50%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background: #fef2f2;
+
+  color: #dc2626;
+
+  margin-bottom: 18px;
+
+}
+
+.admin-delete-icon span {
+
+  width: 26px;
+
+  height: 26px;
+
+  border: 2px solid
+    currentColor;
+
+  border-radius: 50%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 15px;
+
+  font-weight: 800;
+
+}
+
+
+/* CONTENT */
+
+.admin-delete-title {
+
+  font-size: 22px;
+
+  font-weight: 700;
+
+  line-height: 1.25;
+
+  color: #111827;
+
+  margin-bottom: 8px;
+
+}
+
+.admin-delete-description {
+
+  font-size: 14px;
+
+  line-height: 1.6;
+
+  color: #6b7280;
+
+}
+
+
+/* EVENT PREVIEW */
+
+.admin-delete-event-preview {
+
+  margin-top: 20px;
+
+  padding: 14px 16px;
+
+  border-radius: 14px;
+
+  background: #f8fafc;
+
+  border: 1px solid
+    #e5e7eb;
+
+}
+
+.admin-delete-preview-label {
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.08em;
+
+  color: #9ca3af;
+
+  margin-bottom: 5px;
+
+}
+
+.admin-delete-preview-name {
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  color: #1f2937;
+
+  word-break: break-word;
+
+}
+
+
+/* ACTIONS */
+
+.admin-delete-actions {
+
+  display: flex;
+
+  gap: 10px;
+
+  margin-top: 26px;
+
+}
+
+.admin-delete-cancel,
+.admin-delete-confirm {
+
+  flex: 1;
+
+  min-height: 44px;
+
+  border: 0;
+
+  border-radius: 11px;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease,
+    background 0.15s ease;
+
+}
+
+.admin-delete-cancel {
+
+  background: #f1f5f9;
+
+  color: #334155;
+
+}
+
+.admin-delete-cancel:hover {
+
+  background: #e2e8f0;
+
+}
+
+.admin-delete-confirm {
+
+  background: #dc2626;
+
+  color: #ffffff;
+
+}
+
+.admin-delete-confirm:hover {
+
+  background: #b91c1c;
+
+}
+
+.admin-delete-cancel:active,
+.admin-delete-confirm:active {
+
+  transform: scale(0.98);
+
+}
+
+
+/* LOCK WHILE DELETING */
+
+.admin-delete-modal.is-loading
+.admin-delete-cancel,
+.admin-delete-modal.is-loading
+.admin-delete-confirm {
+
+  pointer-events: none;
+
+  opacity: 0.65;
+
+}
+
+.admin-delete-modal.is-loading
+.admin-delete-confirm {
+
+  cursor: wait;
+
+}
+
+
+/* MOBILE */
+
+@media (max-width: 480px) {
+
+  .admin-delete-dialog {
+
+    padding: 22px;
+
+    border-radius: 18px;
+
+  }
+
+  .admin-delete-actions {
+
+    flex-direction: column-reverse;
+
+  }
+
+  .admin-delete-cancel,
+  .admin-delete-confirm {
+
+    width: 100%;
+
+  }
+
+}
+/* ==================================================
+   ADMIN DELETE LOADING
+   ================================================== */
+
+.admin-delete-spinner {
+
+  width: 15px;
+  height: 15px;
+
+  display: inline-block;
+
+  border: 2px solid
+    rgba(255,255,255,.35);
+
+  border-top-color:
+    #ffffff;
+
+  border-radius: 50%;
+
+  vertical-align: -2px;
+
+  margin-right: 7px;
+
+  animation:
+    adminDeleteSpin
+    .7s linear infinite;
+
+}
+
+@keyframes adminDeleteSpin {
+
+  to {
+    transform: rotate(360deg);
+  }
+
+}
+
+.admin-delete-success-icon {
+
+  font-size: 16px;
+
+  font-weight: 800;
+
+  margin-right: 6px;
+
+}
 /* ==================================================
    DESIGN TOKENS
    ================================================== */
@@ -3677,7 +4065,193 @@ body.guest-uploading {
   }
 
 }
+/* ==================================================
+   ADMIN DELETE MODAL
+   ================================================== */
 
+.admin-delete-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background: rgba(15, 23, 42, 0.55);
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transition:
+    opacity .2s ease,
+    visibility .2s ease;
+}
+
+.admin-delete-modal.is-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.admin-delete-dialog {
+  width: min(430px, 100%);
+
+  background: #ffffff;
+
+  border-radius: 20px;
+
+  padding: 28px;
+
+  box-shadow:
+    0 25px 70px rgba(0, 0, 0, .25);
+
+  transform: translateY(12px) scale(.97);
+
+  transition:
+    transform .22s ease;
+}
+
+.admin-delete-modal.is-active
+.admin-delete-dialog {
+  transform: translateY(0) scale(1);
+}
+
+.admin-delete-icon {
+  width: 50px;
+  height: 50px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #fef2f2;
+  color: #dc2626;
+
+  font-size: 20px;
+  font-weight: 800;
+
+  margin-bottom: 18px;
+}
+
+.admin-delete-title {
+  font-size: 21px;
+  font-weight: 700;
+
+  color: #111827;
+
+  margin-bottom: 8px;
+}
+
+.admin-delete-description {
+  font-size: 14px;
+  line-height: 1.6;
+
+  color: #6b7280;
+}
+
+.admin-delete-event-box {
+  margin-top: 20px;
+
+  padding: 14px 16px;
+
+  border-radius: 12px;
+
+  background: #f8fafc;
+
+  border: 1px solid #e5e7eb;
+}
+
+.admin-delete-event-label {
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: .08em;
+
+  color: #9ca3af;
+
+  margin-bottom: 5px;
+}
+
+.admin-delete-event-name {
+  font-size: 15px;
+  font-weight: 600;
+
+  color: #1f2937;
+
+  word-break: break-word;
+}
+
+.admin-delete-actions {
+  display: flex;
+
+  gap: 10px;
+
+  margin-top: 25px;
+}
+
+.admin-delete-cancel,
+.admin-delete-confirm {
+  flex: 1;
+
+  min-height: 44px;
+
+  border: 0;
+
+  border-radius: 10px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: .15s ease;
+}
+
+.admin-delete-cancel {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.admin-delete-cancel:hover {
+  background: #e2e8f0;
+}
+
+.admin-delete-confirm {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.admin-delete-confirm:hover {
+  background: #b91c1c;
+}
+
+.admin-delete-cancel:disabled,
+.admin-delete-confirm:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+
+  .admin-delete-dialog {
+    padding: 22px;
+    border-radius: 17px;
+  }
+
+  .admin-delete-actions {
+    flex-direction: column-reverse;
+  }
+
+}
 </style>
 </head>
 
@@ -6154,6 +6728,90 @@ body.guest-uploading {
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
+<!-- ==================================================
+     ADMIN DELETE EVENT MODAL
+     ================================================== -->
+
+<div
+  id="adminDeleteModal"
+  class="admin-delete-modal"
+  aria-hidden="true"
+>
+
+  <div
+    class="admin-delete-backdrop"
+    data-admin-delete-close
+  ></div>
+
+  <div
+    class="admin-delete-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="adminDeleteTitle"
+  >
+
+    <div class="admin-delete-icon">
+      <span>!</span>
+    </div>
+
+    <div class="admin-delete-content">
+
+      <div
+        id="adminDeleteTitle"
+        class="admin-delete-title"
+      >
+        Delete Event?
+      </div>
+
+      <div
+        id="adminDeleteDescription"
+        class="admin-delete-description"
+      >
+        This action cannot be undone.
+        The event and its associated data
+        will be permanently deleted.
+      </div>
+
+      <div class="admin-delete-event-preview">
+
+        <div class="admin-delete-preview-label">
+          EVENT
+        </div>
+
+        <div
+          id="adminDeleteEventName"
+          class="admin-delete-preview-name"
+        >
+          —
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="admin-delete-actions">
+
+      <button
+        type="button"
+        class="admin-delete-cancel"
+        id="adminDeleteCancel"
+      >
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        class="admin-delete-confirm"
+        id="adminDeleteConfirm"
+      >
+        Delete Event
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
 <script type="module">
 
 import {
@@ -6259,6 +6917,32 @@ const adminRefreshEvents =
   document.getElementById(
     "adminRefreshEvents"
   );
+
+const adminDeleteModal =
+  document.getElementById(
+    "adminDeleteModal"
+  );
+
+const adminDeleteEventName =
+  document.getElementById(
+    "adminDeleteEventName"
+  );
+
+const adminDeleteCancel =
+  document.getElementById(
+    "adminDeleteCancel"
+  );
+
+const adminDeleteConfirm =
+  document.getElementById(
+    "adminDeleteConfirm"
+  );
+
+let pendingDeleteEventId =
+  null;
+
+let pendingDeleteEventName =
+  "";
 
 const adminEventsList =
   document.getElementById(
@@ -7072,17 +7756,13 @@ adminEventsList
 
       button.addEventListener(
         "click",
-        async function() {
+        function() {
 
           const eventId =
             button.dataset
               .adminDeleteEvent;
 
           if (!eventId) {
-
-            alert(
-              "Event ID is missing."
-            );
 
             return;
 
@@ -7104,262 +7784,18 @@ adminEventsList
 
 
           /*
-           * First confirmation.
+           * Open custom delete modal.
            */
-          const firstConfirm =
-            window.confirm(
-              `Delete "${eventName}"?\n\n` +
-              `This action will permanently delete the event and its related data.`
-            );
-
-          if (!firstConfirm) {
-            return;
-          }
-
-
-          /*
-           * Strong second confirmation.
-           */
-          const secondConfirm =
-            window.confirm(
-              `Are you absolutely sure?\n\n` +
-              `Event: ${eventName}\n\n` +
-              `The event, photos, management access, and management sessions will be deleted permanently.`
-            );
-
-          if (!secondConfirm) {
-            return;
-          }
-
-
-          button.disabled = true;
-          button.textContent =
-            "Deleting...";
-
-
-          try {
-
-            /*
-             * ==========================================
-             * 1. Delete event document
-             * ==========================================
-             */
-
-            await deleteDoc(
-              doc(
-                db,
-                "events",
-                eventId
-              )
-            );
-
-
-            /*
-             * ==========================================
-             * 2. Delete event photos
-             * ==========================================
-             */
-
-            const photosQuery =
-              query(
-                collection(
-                  db,
-                  "photos"
-                ),
-                where(
-                  "eventId",
-                  "==",
-                  eventId
-                )
-              );
-
-            const photosSnapshot =
-              await getDocs(
-                photosQuery
-              );
-
-            for (
-              const photoDoc
-              of photosSnapshot.docs
-            ) {
-
-              await deleteDoc(
-                photoDoc.ref
-              );
-
-            }
-
-
-            /*
-             * ==========================================
-             * 3. Delete management access
-             * ==========================================
-             */
-
-            const accessQuery =
-              query(
-                collection(
-                  db,
-                  "managementAccess"
-                ),
-                where(
-                  "eventId",
-                  "==",
-                  eventId
-                )
-              );
-
-            const accessSnapshot =
-              await getDocs(
-                accessQuery
-              );
-
-            for (
-              const accessDoc
-              of accessSnapshot.docs
-            ) {
-
-              await deleteDoc(
-                accessDoc.ref
-              );
-
-            }
-
-
-            /*
-             * ==========================================
-             * 4. Delete management sessions
-             * ==========================================
-             */
-
-            const sessionsQuery =
-              query(
-                collection(
-                  db,
-                  "managementSessions"
-                ),
-                where(
-                  "eventId",
-                  "==",
-                  eventId
-                )
-              );
-
-            const sessionsSnapshot =
-              await getDocs(
-                sessionsQuery
-              );
-
-            for (
-              const sessionDoc
-              of sessionsSnapshot.docs
-            ) {
-
-              await deleteDoc(
-                sessionDoc.ref
-              );
-
-            }
-
-
-            /*
-             * ==========================================
-             * 5. Remove from local array
-             * ==========================================
-             */
-
-            adminEvents =
-              adminEvents.filter(
-                function(item) {
-                  return item.id !== eventId;
-                }
-              );
-
-
-            /*
-             * ==========================================
-             * 6. Refresh dashboard
-             * ==========================================
-             */
-
-            adminTotalEvents.textContent =
-              adminEvents.length;
-
-            adminActiveEvents.textContent =
-              adminEvents.filter(
-                function(item) {
-                  return item.status === "active";
-                }
-              ).length;
-
-
-            renderAdminEvents(
-              adminEvents
-            );
-
-
-            alert(
-              `"${eventName}" was deleted successfully.`
-            );
-
-
-          } catch (error) {
-
-            console.error(
-              "Event deletion error:",
-              error
-            );
-
-
-            console.error(
-              "Firebase error code:",
-              error.code
-            );
-
-
-            if (
-              error.code ===
-                "permission-denied" ||
-              error.code ===
-                "PERMISSION_DENIED"
-            ) {
-
-              alert(
-                "Firebase denied the deletion. " +
-                "Your Firestore Security Rules do not currently allow the admin client to delete this data."
-              );
-
-            } else {
-
-              alert(
-                error.message ||
-                "The event could not be deleted."
-              );
-
-            }
-
-
-            /*
-             * Reload the dashboard so the UI
-             * reflects the actual Firestore state.
-             */
-            await loadAdminEvents();
-
-
-          } finally {
-
-            button.disabled = false;
-            button.textContent =
-              "Delete";
-
-          }
+          openAdminDeleteModal(
+            eventId,
+            eventName
+          );
 
         }
       );
 
     }
   );
-}
 /* ==================================================
    SEARCH EVENTS
    ================================================== */
@@ -9044,6 +9480,400 @@ lightboxPhotos =
     }).join("");
 
 }
+
+/* ==================================================
+   ADMIN DELETE MODAL
+   ================================================== */
+
+function openAdminDeleteModal(
+  eventId,
+  eventName
+) {
+
+  pendingDeleteEventId =
+    eventId;
+
+  pendingDeleteEventName =
+    eventName || "Unnamed Event";
+
+  adminDeleteEventName.textContent =
+    pendingDeleteEventName;
+
+  adminDeleteModal.classList.remove(
+    "is-loading"
+  );
+
+  adminDeleteConfirm.disabled =
+    false;
+
+  adminDeleteCancel.disabled =
+    false;
+
+  adminDeleteConfirm.textContent =
+    "Delete Event";
+
+  adminDeleteModal.classList.add(
+    "is-active"
+  );
+
+  adminDeleteModal.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
+  setTimeout(
+    function() {
+
+      adminDeleteCancel.focus();
+
+    },
+    50
+  );
+
+}
+
+
+function closeAdminDeleteModal() {
+
+  if (
+    adminDeleteModal.classList.contains(
+      "is-loading"
+    )
+  ) {
+
+    return;
+
+  }
+
+  adminDeleteModal.classList.remove(
+    "is-active"
+  );
+
+  adminDeleteModal.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  pendingDeleteEventId =
+    null;
+
+  pendingDeleteEventName =
+    "";
+
+}
+adminDeleteCancel?.addEventListener(
+  "click",
+  function() {
+
+    closeAdminDeleteModal();
+
+  }
+);
+
+
+adminDeleteConfirm?.addEventListener(
+  "click",
+  async function() {
+
+    if (!pendingDeleteEventId) {
+      return;
+    }
+
+    const eventId =
+      pendingDeleteEventId;
+
+    const eventName =
+      pendingDeleteEventName ||
+      "this event";
+
+
+    /*
+     * Lock modal while deleting.
+     */
+    adminDeleteModal.classList.add(
+      "is-loading"
+    );
+
+    adminDeleteConfirm.disabled =
+      true;
+
+    adminDeleteCancel.disabled =
+      true;
+
+    adminDeleteConfirm.innerHTML = `
+      <span class="admin-delete-spinner"></span>
+      Deleting...
+    `;
+
+
+    /*
+     * Find original event button.
+     */
+    const eventButton =
+      adminEventsList?.querySelector(
+        `[data-admin-delete-event="${CSS.escape(eventId)}"]`
+      );
+
+    if (eventButton) {
+
+      eventButton.disabled =
+        true;
+
+    }
+
+
+    try {
+
+      /*
+       * ==========================================
+       * 1. DELETE EVENT
+       * ==========================================
+       */
+
+      await deleteDoc(
+        doc(
+          db,
+          "events",
+          eventId
+        )
+      );
+
+
+      /*
+       * ==========================================
+       * 2. DELETE PHOTOS
+       * ==========================================
+       */
+
+      const photosQuery =
+        query(
+          collection(
+            db,
+            "photos"
+          ),
+          where(
+            "eventId",
+            "==",
+            eventId
+          )
+        );
+
+      const photosSnapshot =
+        await getDocs(
+          photosQuery
+        );
+
+
+      for (
+        const photoDoc
+        of photosSnapshot.docs
+      ) {
+
+        await deleteDoc(
+          photoDoc.ref
+        );
+
+      }
+
+
+      /*
+       * ==========================================
+       * 3. DELETE MANAGEMENT ACCESS
+       * ==========================================
+       */
+
+      const accessQuery =
+        query(
+          collection(
+            db,
+            "managementAccess"
+          ),
+          where(
+            "eventId",
+            "==",
+            eventId
+          )
+        );
+
+      const accessSnapshot =
+        await getDocs(
+          accessQuery
+        );
+
+
+      for (
+        const accessDoc
+        of accessSnapshot.docs
+      ) {
+
+        await deleteDoc(
+          accessDoc.ref
+        );
+
+      }
+
+
+      /*
+       * ==========================================
+       * 4. DELETE MANAGEMENT SESSIONS
+       * ==========================================
+       */
+
+      const sessionsQuery =
+        query(
+          collection(
+            db,
+            "managementSessions"
+          ),
+          where(
+            "eventId",
+            "==",
+            eventId
+          )
+        );
+
+      const sessionsSnapshot =
+        await getDocs(
+          sessionsQuery
+        );
+
+
+      for (
+        const sessionDoc
+        of sessionsSnapshot.docs
+      ) {
+
+        await deleteDoc(
+          sessionDoc.ref
+        );
+
+      }
+
+
+      /*
+       * ==========================================
+       * SUCCESS
+       * ==========================================
+       */
+
+      adminDeleteConfirm.innerHTML = `
+        <span class="admin-delete-success-icon">
+          ✓
+        </span>
+        Deleted
+      `;
+
+
+      /*
+       * Remove from local admin list.
+       */
+      adminEvents =
+        adminEvents.filter(
+          function(item) {
+
+            return item.id !==
+              eventId;
+
+          }
+        );
+
+
+      /*
+       * Re-render dashboard.
+       */
+      renderAdminEvents(
+        adminEvents
+      );
+
+
+      /*
+       * Update dashboard statistics.
+       */
+      updateAdminStats(
+        adminEvents
+      );
+
+
+      /*
+       * Close modal after success.
+       */
+      setTimeout(
+        function() {
+
+          adminDeleteModal.classList.remove(
+            "is-active"
+          );
+
+          adminDeleteModal.classList.remove(
+            "is-loading"
+          );
+
+          adminDeleteModal.setAttribute(
+            "aria-hidden",
+            "true"
+          );
+
+          pendingDeleteEventId =
+            null;
+
+          pendingDeleteEventName =
+            "";
+
+          adminDeleteConfirm.disabled =
+            false;
+
+          adminDeleteCancel.disabled =
+            false;
+
+          adminDeleteConfirm.textContent =
+            "Delete Event";
+
+        },
+        700
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        "Admin event deletion failed:",
+        error
+      );
+
+
+      /*
+       * Show error inside modal.
+       */
+      adminDeleteModal.classList.remove(
+        "is-loading"
+      );
+
+      adminDeleteConfirm.disabled =
+        false;
+
+      adminDeleteCancel.disabled =
+        false;
+
+      adminDeleteConfirm.textContent =
+        "Try Again";
+
+
+      const description =
+        document.getElementById(
+          "adminDeleteDescription"
+        );
+
+      if (description) {
+
+        description.textContent =
+          "The event could not be completely deleted. Please try again.";
+
+      }
+
+    }
+
+  }
+);
 /* ==================================================
    EDIT EVENT
    ================================================== */
