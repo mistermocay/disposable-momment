@@ -6159,27 +6159,26 @@ body.guest-uploading {
 import {
   auth,
   db,
+
   collection,
   addDoc,
+
   doc,
   getDoc,
   getDocs,
+
   query,
   where,
+
   setDoc,
-  serverTimestamp
-} from "./firebase.js";
-
-/* Firebase Anonymous Auth uses the same Firebase SDK version as firebase.js. */
-import {
-  signInAnonymously
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-/* Firestore functions imported directly because firebase.js does not export them. */
-import {
   updateDoc,
-  deleteDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  deleteDoc,
+
+  serverTimestamp,
+
+  signInAnonymously
+
+} from "./firebase.js";
 
 const VGY_USER_KEY = "rmCThOxM42PB5jRwiLjQsgIKcoM3jJvKEIc6PtvmfSZVJwbnsCvvqvwUy5o4zlW6";
 
@@ -7360,7 +7359,7 @@ adminEventsList
 
     }
   );
-  }
+}
 /* ==================================================
    SEARCH EVENTS
    ================================================== */
