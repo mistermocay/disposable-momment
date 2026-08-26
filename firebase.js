@@ -22,6 +22,8 @@ import {
   query,
   where,
   setDoc,
+  updateDoc,
+  deleteDoc,
   serverTimestamp
 } from
   "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
@@ -101,6 +103,8 @@ export {
   where,
 
   setDoc,
+  updateDoc,
+  deleteDoc,
   serverTimestamp,
 
   signInAnonymously
