@@ -7697,13 +7697,50 @@ adminEventsList
               }
             );
 
-            if (!managementToken) {
+if (!managementToken) {
 
-              throw new Error(
-                "Management access for this event could not be found."
-              );
+  /*
+   * This event may be an older event that was created
+   * before managementAccess was implemented.
+   *
+   * Create a new management access token automatically.
+   */
 
-            }
+  const newManagementToken =
+    generateManagementToken();
+
+  const currentUser =
+    auth.currentUser;
+
+  if (!currentUser) {
+    throw new Error(
+      "Admin authentication session is missing."
+    );
+  }
+
+  await setDoc(
+    doc(
+      db,
+      "managementAccess",
+      newManagementToken
+    ),
+    {
+      eventId: eventId,
+      hostUid: currentUser.uid,
+      active: true,
+      createdAt: serverTimestamp()
+    }
+  );
+
+  managementToken =
+    newManagementToken;
+
+  console.log(
+    "New management access created for existing event:",
+    eventId
+  );
+
+}
 
             /*
              * Build management URL.
