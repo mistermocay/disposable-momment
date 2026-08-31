@@ -5712,7 +5712,61 @@ body.guest-uploading {
   </div>
 
 </div>
+<!-- SCHEDULED REVEAL SETTINGS -->
 
+<div
+  class="custom-reveal"
+  id="customReveal"
+>
+
+  <div
+    class="form-field"
+    data-field="revealDate"
+  >
+
+    <label
+      class="form-label"
+      for="revealDate"
+    >
+      Reveal Date
+    </label>
+
+    <input
+      id="revealDate"
+      name="revealDate"
+      class="form-input"
+      type="date"
+    >
+
+    <div class="form-error"></div>
+
+  </div>
+
+
+  <div
+    class="form-field"
+    data-field="revealTime"
+  >
+
+    <label
+      class="form-label"
+      for="revealTime"
+    >
+      Reveal Time
+    </label>
+
+    <input
+      id="revealTime"
+      name="revealTime"
+      class="form-input"
+      type="time"
+    >
+
+    <div class="form-error"></div>
+
+  </div>
+
+</div>
           <!-- SUBMIT -->
           <button
             type="submit"
@@ -10358,7 +10412,7 @@ async function openManagementDashboard(
       "Guest reveal state:",
       revealState
     );
-    
+
     managementEventIdValue = eventId;
     managementTokenValue = managementToken;
     managementEventData = eventData;
