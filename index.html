@@ -7112,7 +7112,6 @@ adminPasswordToggle?.addEventListener(
   }
 );
 
-
 /* ==================================================
    ADMIN LOGIN
    ================================================== */
@@ -7126,7 +7125,14 @@ adminLoginForm?.addEventListener(
     adminLoginError.textContent = "";
 
     const password =
-      adminPassword.value;
+      adminPassword.value.trim();
+
+
+    /*
+     * ==========================================
+     * 1. CHECK ADMIN PASSWORD
+     * ==========================================
+     */
 
     if (
       password !==
@@ -7144,23 +7150,129 @@ adminLoginForm?.addEventListener(
 
 
     /*
-     * Remember admin session.
+     * ==========================================
+     * 2. AUTHENTICATE FIREBASE
+     * ==========================================
      *
-     * This is only a client-side session flag.
+     * The admin password above only protects
+     * the frontend dashboard.
+     *
+     * Firestore still requires Firebase Auth.
      */
-    sessionStorage.setItem(
-      ADMIN_SESSION_KEY,
-      "authenticated"
-    );
+
+    try {
+
+      adminLoginError.textContent =
+        "Securing administrator session...";
 
 
-    closeAdminLogin();
+      let user =
+        auth.currentUser;
 
-    await openAdminDashboard();
+
+      /*
+       * If this browser does not have a
+       * Firebase user yet, create one.
+       */
+
+      if (!user) {
+
+        const credential =
+          await signInAnonymously(
+            auth
+          );
+
+        user =
+          credential.user;
+
+      }
+
+
+      /*
+       * Make absolutely sure Firebase
+       * authentication exists.
+       */
+
+      if (!user) {
+
+        throw new Error(
+          "Firebase authentication failed."
+        );
+
+      }
+
+
+      console.log(
+        "Admin Firebase authentication successful:",
+        user.uid
+      );
+
+
+      /*
+       * ==========================================
+       * 3. SAVE ADMIN FRONTEND SESSION
+       * ==========================================
+       */
+
+      sessionStorage.setItem(
+        ADMIN_SESSION_KEY,
+        "authenticated"
+      );
+
+
+      /*
+       * ==========================================
+       * 4. CLOSE LOGIN
+       * ==========================================
+       */
+
+      closeAdminLogin();
+
+
+      /*
+       * ==========================================
+       * 5. OPEN DASHBOARD
+       * ==========================================
+       */
+
+      await openAdminDashboard();
+
+
+    } catch (error) {
+
+      console.error(
+        "Admin authentication error:",
+        error
+      );
+
+      console.error(
+        "Firebase error code:",
+        error?.code
+      );
+
+      console.error(
+        "Firebase error message:",
+        error?.message
+      );
+
+
+      /*
+       * Do NOT create the admin session
+       * if Firebase authentication failed.
+       */
+
+      sessionStorage.removeItem(
+        ADMIN_SESSION_KEY
+      );
+
+
+      adminLoginError.textContent =
+        "Administrator authentication failed. Please try again.";
+
+    }
 
   }
 );
-
 
 /* ==================================================
    ADMIN SESSION CHECK
@@ -7183,6 +7295,12 @@ function isAdminAuthenticated() {
 
 async function openAdminDashboard() {
 
+  /*
+   * ==========================================
+   * CHECK FRONTEND ADMIN SESSION
+   * ==========================================
+   */
+
   if (!isAdminAuthenticated()) {
 
     openAdminLogin();
@@ -7190,6 +7308,76 @@ async function openAdminDashboard() {
     return;
 
   }
+
+
+  /*
+   * ==========================================
+   * CHECK FIREBASE AUTHENTICATION
+   * ==========================================
+   */
+
+  if (!auth.currentUser) {
+
+    try {
+
+      console.warn(
+        "Admin session exists but Firebase user is missing. Re-authenticating..."
+      );
+
+
+      const credential =
+        await signInAnonymously(
+          auth
+        );
+
+
+      if (!credential?.user) {
+
+        throw new Error(
+          "Firebase authentication returned no user."
+        );
+
+      }
+
+
+      console.log(
+        "Admin Firebase re-authenticated:",
+        credential.user.uid
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        "Admin Firebase re-authentication failed:",
+        error
+      );
+
+
+      sessionStorage.removeItem(
+        ADMIN_SESSION_KEY
+      );
+
+
+      openAdminLogin();
+
+      return;
+
+    }
+
+  }
+
+
+  /*
+   * ==========================================
+   * NOW IT IS SAFE TO OPEN ADMIN DASHBOARD
+   * ==========================================
+   */
+
+  console.log(
+    "Admin authenticated:",
+    auth.currentUser.uid
+  );
 
 
   /*
@@ -9608,6 +9796,9 @@ adminDeleteConfirm?.addEventListener(
   async function() {
 
     if (!pendingDeleteEventId) {
+      console.warn(
+        "Delete cancelled: no event ID."
+      );
       return;
     }
 
@@ -9619,9 +9810,57 @@ adminDeleteConfirm?.addEventListener(
       "this event";
 
 
+    console.log(
+      "================================="
+    );
+
+    console.log(
+      "ADMIN DELETE START"
+    );
+
+    console.log(
+      "Event ID:",
+      eventId
+    );
+
+    console.log(
+      "Event Name:",
+      eventName
+    );
+
+    console.log(
+      "Firebase Auth:",
+      auth.currentUser
+    );
+
+
     /*
-     * Lock modal while deleting.
+     * ==========================================
+     * CHECK FIREBASE AUTHENTICATION
+     * ==========================================
      */
+
+    if (!auth.currentUser) {
+
+      console.error(
+        "Delete blocked: Firebase user is not authenticated."
+      );
+
+      alert(
+        "Firebase authentication is not active. Please login again."
+      );
+
+      return;
+
+    }
+
+
+    /*
+     * ==========================================
+     * LOCK UI
+     * ==========================================
+     */
+
     adminDeleteModal.classList.add(
       "is-loading"
     );
@@ -9638,62 +9877,122 @@ adminDeleteConfirm?.addEventListener(
     `;
 
 
-    /*
-     * Find original event button.
-     */
-    const eventButton =
-      adminEventsList?.querySelector(
-        `[data-admin-delete-event="${CSS.escape(eventId)}"]`
-      );
-
-    if (eventButton) {
-
-      eventButton.disabled =
-        true;
-
-    }
-
-
     try {
 
       /*
        * ==========================================
-       * 1. DELETE EVENT
+       * STEP 1 — VERIFY EVENT EXISTS
        * ==========================================
        */
 
-      await deleteDoc(
+      const eventRef =
         doc(
           db,
           "events",
           eventId
-        )
+        );
+
+      const eventSnapshot =
+        await getDoc(
+          eventRef
+        );
+
+
+      console.log(
+        "Event exists before delete:",
+        eventSnapshot.exists()
+      );
+
+
+      if (!eventSnapshot.exists()) {
+
+        throw new Error(
+          "Event no longer exists in Firestore."
+        );
+
+      }
+
+
+      /*
+       * ==========================================
+       * STEP 2 — DELETE EVENT
+       * ==========================================
+       */
+
+      console.log(
+        "Deleting:",
+        `events/${eventId}`
+      );
+
+
+      await deleteDoc(
+        eventRef
+      );
+
+
+      console.log(
+        "Event delete request completed."
       );
 
 
       /*
        * ==========================================
-       * 2. DELETE PHOTOS
+       * STEP 3 — VERIFY EVENT WAS DELETED
        * ==========================================
        */
 
-      const photosQuery =
-        query(
-          collection(
-            db,
-            "photos"
-          ),
-          where(
-            "eventId",
-            "==",
-            eventId
-          )
+      const verifySnapshot =
+        await getDoc(
+          eventRef
         );
+
+
+      console.log(
+        "Event exists after delete:",
+        verifySnapshot.exists()
+      );
+
+
+      if (verifySnapshot.exists()) {
+
+        throw new Error(
+          "Firestore still contains the event after delete."
+        );
+
+      }
+
+
+      /*
+       * ==========================================
+       * STEP 4 — DELETE PHOTOS
+       * ==========================================
+       */
+
+      console.log(
+        "Deleting related photos..."
+      );
+
 
       const photosSnapshot =
         await getDocs(
-          photosQuery
+          query(
+            collection(
+              db,
+              "photos"
+            ),
+            where(
+              "eventId",
+              "==",
+              eventId
+            )
+          )
         );
+
+
+      console.log(
+        "Photos found:",
+        photosSnapshot.size
+      );
 
 
       for (
@@ -9710,27 +10009,35 @@ adminDeleteConfirm?.addEventListener(
 
       /*
        * ==========================================
-       * 3. DELETE MANAGEMENT ACCESS
+       * STEP 5 — DELETE MANAGEMENT ACCESS
        * ==========================================
        */
 
-      const accessQuery =
-        query(
-          collection(
-            db,
-            "managementAccess"
-          ),
-          where(
-            "eventId",
-            "==",
-            eventId
-          )
-        );
+      console.log(
+        "Deleting management access..."
+      );
+
 
       const accessSnapshot =
         await getDocs(
-          accessQuery
+          query(
+            collection(
+              db,
+              "managementAccess"
+            ),
+            where(
+              "eventId",
+              "==",
+              eventId
+            )
+          )
         );
+
+
+      console.log(
+        "Management access found:",
+        accessSnapshot.size
+      );
 
 
       for (
@@ -9747,27 +10054,35 @@ adminDeleteConfirm?.addEventListener(
 
       /*
        * ==========================================
-       * 4. DELETE MANAGEMENT SESSIONS
+       * STEP 6 — DELETE MANAGEMENT SESSIONS
        * ==========================================
        */
 
-      const sessionsQuery =
-        query(
-          collection(
-            db,
-            "managementSessions"
-          ),
-          where(
-            "eventId",
-            "==",
-            eventId
-          )
-        );
+      console.log(
+        "Deleting management sessions..."
+      );
+
 
       const sessionsSnapshot =
         await getDocs(
-          sessionsQuery
+          query(
+            collection(
+              db,
+              "managementSessions"
+            ),
+            where(
+              "eventId",
+              "==",
+              eventId
+            )
+          )
         );
+
+
+      console.log(
+        "Management sessions found:",
+        sessionsSnapshot.size
+      );
 
 
       for (
@@ -9784,9 +10099,47 @@ adminDeleteConfirm?.addEventListener(
 
       /*
        * ==========================================
+       * STEP 7 — UPDATE LOCAL DATA
+       * ==========================================
+       */
+
+      adminEvents =
+        adminEvents.filter(
+          function(item) {
+
+            return item.id !== eventId;
+
+          }
+        );
+
+
+      /*
+       * ==========================================
+       * STEP 8 — REFRESH DASHBOARD
+       * ==========================================
+       */
+
+      renderAdminEvents(
+        adminEvents
+      );
+
+
+      updateAdminStats(
+        adminEvents
+      );
+
+
+      /*
+       * ==========================================
        * SUCCESS
        * ==========================================
        */
+
+      console.log(
+        "ADMIN DELETE SUCCESS:",
+        eventId
+      );
+
 
       adminDeleteConfirm.innerHTML = `
         <span class="admin-delete-success-icon">
@@ -9797,38 +10150,9 @@ adminDeleteConfirm?.addEventListener(
 
 
       /*
-       * Remove from local admin list.
+       * Close modal.
        */
-      adminEvents =
-        adminEvents.filter(
-          function(item) {
 
-            return item.id !==
-              eventId;
-
-          }
-        );
-
-
-      /*
-       * Re-render dashboard.
-       */
-      renderAdminEvents(
-        adminEvents
-      );
-
-
-      /*
-       * Update dashboard statistics.
-       */
-      updateAdminStats(
-        adminEvents
-      );
-
-
-      /*
-       * Close modal after success.
-       */
       setTimeout(
         function() {
 
@@ -9868,14 +10192,38 @@ adminDeleteConfirm?.addEventListener(
     } catch (error) {
 
       console.error(
-        "Admin event deletion failed:",
+        "================================="
+      );
+
+      console.error(
+        "ADMIN EVENT DELETE FAILED"
+      );
+
+      console.error(
+        "Event ID:",
+        eventId
+      );
+
+      console.error(
+        "Firebase error:",
         error
       );
 
+      console.error(
+        "Firebase error code:",
+        error?.code
+      );
 
-      /*
-       * Show error inside modal.
-       */
+      console.error(
+        "Firebase error message:",
+        error?.message
+      );
+
+      console.error(
+        "================================="
+      );
+
+
       adminDeleteModal.classList.remove(
         "is-loading"
       );
@@ -9895,10 +10243,12 @@ adminDeleteConfirm?.addEventListener(
           "adminDeleteDescription"
         );
 
+
       if (description) {
 
         description.textContent =
-          "The event could not be completely deleted. Please try again.";
+          error?.message ||
+          "The event could not be deleted.";
 
       }
 
