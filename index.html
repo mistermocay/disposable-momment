@@ -8622,7 +8622,14 @@ function showEventSuccess(eventData, eventId, managementToken) {
 if (createEventForm) {
   createEventForm.style.display = "none";
 }
+const createEventHeader =
+  document.querySelector(
+    "#createEventView .create-event-header"
+  );
 
+if (createEventHeader) {
+  createEventHeader.style.display = "none";
+}
 if (eventSuccessView) {
   eventSuccessView.style.display = "block";
   eventSuccessView.classList.add("is-visible");
