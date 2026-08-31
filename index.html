@@ -2026,17 +2026,7 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 }
 
 .event-success-view.is-visible {
-  display: block !important;
-}
-
-.event-success-view .access-section {
   display: block;
-  width: 100%;
-  margin-top: 22px;
-}
-
-.event-success-view .event-success-summary {
-  margin-bottom: 24px;
 }
 
 /* SUCCESS ICON */
@@ -8608,186 +8598,309 @@ function closeCreateEvent() {
    EVENT SUCCESS SCREEN
    ================================================== */
 
-function showEventSuccess(eventData, eventId, managementToken) {
+function showEventSuccess(
+  eventData,
+  eventId,
+  managementToken
+) {
 
-  /*
-   * IMPORTANT:
-   * Reset the create form and explicitly switch
-   * the success screen into the visible state.
-   */
-/* ==================================================
-   SWITCH CREATE FORM → SUCCESS VIEW
-   ================================================== */
-
-if (createEventForm) {
-  createEventForm.style.display = "none";
-}
-const createEventHeader =
-  document.querySelector(
-    "#createEventView .create-event-header"
+  console.log(
+    "SHOW EVENT SUCCESS:",
+    {
+      eventData,
+      eventId,
+      managementToken
+    }
   );
 
-if (createEventHeader) {
-  createEventHeader.style.display = "none";
-}
-if (eventSuccessView) {
-  eventSuccessView.style.display = "block";
-  eventSuccessView.classList.add("is-visible");
-}
 
-  successEventName.textContent =
-    eventData.eventName || "Your Event";
+  /* ==================================================
+     GET ELEMENTS DIRECTLY
+     ================================================== */
 
-
-  /*
-   * EVENT DATE
-   */
-
-  const formattedDate =
-    new Date(
-      `${eventData.eventDate}T00:00:00`
-    ).toLocaleDateString(
-      "en-US",
-      {
-        month: "long",
-        day: "numeric",
-        year: "numeric"
-      }
+  const header =
+    document.querySelector(
+      "#createEventView .create-event-header"
     );
 
-  successEventDate.textContent =
-    formattedDate;
+  const form =
+    document.getElementById(
+      "createEventForm"
+    );
+
+  const success =
+    document.getElementById(
+      "eventSuccessView"
+    );
 
 
-  /*
-   * BASE URL
-   */
+  /* ==================================================
+     SAFETY CHECK
+     ================================================== */
+
+  if (!success) {
+
+    console.error(
+      "ERROR: #eventSuccessView not found."
+    );
+
+    return;
+
+  }
+
+
+  /* ==================================================
+     HIDE CREATE EVENT UI
+     ================================================== */
+
+  if (header) {
+
+    header.style.setProperty(
+      "display",
+      "none",
+      "important"
+    );
+
+  }
+
+
+  if (form) {
+
+    form.style.setProperty(
+      "display",
+      "none",
+      "important"
+    );
+
+  }
+
+
+  /* ==================================================
+     SHOW SUCCESS UI
+     ================================================== */
+
+  success.style.setProperty(
+    "display",
+    "block",
+    "important"
+  );
+
+  success.classList.add(
+    "is-visible"
+  );
+
+
+  /* ==================================================
+     EVENT INFORMATION
+     ================================================== */
+
+  const nameElement =
+    document.getElementById(
+      "successEventName"
+    );
+
+  const dateElement =
+    document.getElementById(
+      "successEventDate"
+    );
+
+
+  if (nameElement) {
+
+    nameElement.textContent =
+      eventData.eventName ||
+      "Your Event";
+
+  }
+
+
+  if (dateElement) {
+
+    const formattedDate =
+      new Date(
+        `${eventData.eventDate}T00:00:00`
+      ).toLocaleDateString(
+        "en-US",
+        {
+          month: "long",
+          day: "numeric",
+          year: "numeric"
+        }
+      );
+
+    dateElement.textContent =
+      formattedDate;
+
+  }
+
+
+  /* ==================================================
+     BASE URL
+     ================================================== */
 
   const baseUrl =
     `${window.location.origin}${window.location.pathname}`;
 
 
-  /*
-   * ==================================================
-   * GUEST LINK
-   * ==================================================
-   */
+  /* ==================================================
+     GUEST URL
+     ================================================== */
 
   const guestUrl =
-    `${baseUrl}?event=${encodeURIComponent(eventId)}`;
-
-  guestEventLink.value =
-    guestUrl;
-
-
-  /*
-   * Guest QR
-   */
-
-  eventQRCode.innerHTML = "";
-
-  new QRCode(
-    eventQRCode,
-    {
-      text: guestUrl,
-      width: 166,
-      height: 166,
-      colorDark: "#111111",
-      colorLight: "#ffffff",
-      correctLevel: QRCode.CorrectLevel.H
-    }
-  );
+    `${baseUrl}?event=${encodeURIComponent(
+      eventId
+    )}`;
 
 
-  /*
-   * ==================================================
-   * MANAGEMENT LINK
-   * ==================================================
-   */
+  const guestLink =
+    document.getElementById(
+      "guestEventLink"
+    );
 
-  const managementUrl =
-    `${baseUrl}?manage=${encodeURIComponent(managementToken)}`;
-
-  managementEventLink.value =
-    managementUrl;
+  const guestQR =
+    document.getElementById(
+      "eventQRCode"
+    );
 
 
-  /*
-   * Management QR
-   */
+  if (guestLink) {
 
-  managementQRCode.innerHTML = "";
+    guestLink.value =
+      guestUrl;
 
-  new QRCode(
-    managementQRCode,
-    {
-      text: managementUrl,
-      width: 166,
-      height: 166,
-      colorDark: "#111111",
-      colorLight: "#ffffff",
-      correctLevel: QRCode.CorrectLevel.H
-    }
-  );
-
-
-  /*
-   * ==================================================
-   * LIVE / REVEAL LINK
-   * ==================================================
-   *
-   * This uses the EVENT ID.
-   * It is NOT the private management token.
-   */
-
-  const revealUrl =
-    `${baseUrl}?event=${encodeURIComponent(eventId)}&view=live`;
-
-
-  /*
-   * Save reveal URL if the element exists.
-   */
-
-  const revealLink =
-    document.getElementById("revealEventLink");
-
-  const revealQRCode =
-    document.getElementById("revealQRCode");
-
-  if (revealLink) {
-    revealLink.value =
-      revealUrl;
   }
 
 
-  /*
-   * Reveal QR
-   */
+  if (
+    guestQR &&
+    typeof QRCode !== "undefined"
+  ) {
 
-  if (revealQRCode) {
-
-    revealQRCode.innerHTML = "";
+    guestQR.innerHTML = "";
 
     new QRCode(
-      revealQRCode,
+      guestQR,
+      {
+        text: guestUrl,
+        width: 166,
+        height: 166,
+        colorDark: "#111111",
+        colorLight: "#ffffff",
+        correctLevel:
+          QRCode.CorrectLevel.H
+      }
+    );
+
+  }
+
+
+  /* ==================================================
+     MANAGEMENT URL
+     ================================================== */
+
+  const managementUrl =
+    `${baseUrl}?manage=${encodeURIComponent(
+      managementToken
+    )}`;
+
+
+  const managementLink =
+    document.getElementById(
+      "managementEventLink"
+    );
+
+  const managementQR =
+    document.getElementById(
+      "managementQRCode"
+    );
+
+
+  if (managementLink) {
+
+    managementLink.value =
+      managementUrl;
+
+  }
+
+
+  if (
+    managementQR &&
+    typeof QRCode !== "undefined"
+  ) {
+
+    managementQR.innerHTML = "";
+
+    new QRCode(
+      managementQR,
+      {
+        text: managementUrl,
+        width: 166,
+        height: 166,
+        colorDark: "#111111",
+        colorLight: "#ffffff",
+        correctLevel:
+          QRCode.CorrectLevel.H
+      }
+    );
+
+  }
+
+
+  /* ==================================================
+     LIVE / REVEAL URL
+     ================================================== */
+
+  const revealUrl =
+    `${baseUrl}?event=${encodeURIComponent(
+      eventId
+    )}&view=live`;
+
+
+  const revealLink =
+    document.getElementById(
+      "revealEventLink"
+    );
+
+  const revealQR =
+    document.getElementById(
+      "revealQRCode"
+    );
+
+
+  if (revealLink) {
+
+    revealLink.value =
+      revealUrl;
+
+  }
+
+
+  if (
+    revealQR &&
+    typeof QRCode !== "undefined"
+  ) {
+
+    revealQR.innerHTML = "";
+
+    new QRCode(
+      revealQR,
       {
         text: revealUrl,
         width: 166,
         height: 166,
         colorDark: "#111111",
         colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H
+        correctLevel:
+          QRCode.CorrectLevel.H
       }
     );
 
   }
 
 
-  /*
-   * ==================================================
-   * LOCAL STORAGE
-   * ==================================================
-   */
+  /* ==================================================
+     SAVE LINKS
+     ================================================== */
 
   localStorage.setItem(
     "disposableMomment_eventId",
@@ -8810,49 +8923,101 @@ if (eventSuccessView) {
   );
 
 
-  /*
-   * ==================================================
-   * RESET COPY MESSAGES
-   * ==================================================
-   */
+  /* ==================================================
+     RESET COPY STATUS
+     ================================================== */
 
-  if (copyGuestLinkMessage) {
-    copyGuestLinkMessage.textContent = "";
+  const guestMessage =
+    document.getElementById(
+      "copyGuestLinkMessage"
+    );
+
+  const managementMessage =
+    document.getElementById(
+      "copyManagementLinkMessage"
+    );
+
+  if (guestMessage) {
+
+    guestMessage.textContent = "";
+
   }
 
-  if (copyManagementLinkMessage) {
-    copyManagementLinkMessage.textContent = "";
+  if (managementMessage) {
+
+    managementMessage.textContent = "";
+
   }
 
 
-  /*
-   * ==================================================
-   * OPEN MANAGEMENT
-   * ==================================================
-   */
+  /* ==================================================
+     MANAGEMENT BUTTON
+     ================================================== */
 
-  manageEventButton.onclick =
-    function() {
-
-      window.location.href =
-        managementUrl;
-
-    };
+  const manageButton =
+    document.getElementById(
+      "manageEventButton"
+    );
 
 
-  /*
-   * ==================================================
-   * SCROLL TO SUCCESS SCREEN
-   * ==================================================
-   */
+  if (manageButton) {
+
+    manageButton.onclick =
+      function() {
+
+        window.location.href =
+          managementUrl;
+
+      };
+
+  }
+
+
+  /* ==================================================
+     FINAL DEBUG
+     ================================================== */
+
+  console.log(
+    "SUCCESS SCREEN DISPLAY:",
+    window.getComputedStyle(
+      success
+    ).display
+  );
+
+  console.log(
+    "SUCCESS SCREEN HEIGHT:",
+    success.offsetHeight
+  );
+
+  console.log(
+    "GUEST URL:",
+    guestUrl
+  );
+
+  console.log(
+    "MANAGEMENT URL:",
+    managementUrl
+  );
+
+  console.log(
+    "REVEAL URL:",
+    revealUrl
+  );
+
+
+  /* ==================================================
+     SCROLL TO TOP
+     ================================================== */
 
   setTimeout(
     function() {
 
-      eventSuccessView.scrollTop = 0;
+      success.scrollTop = 0;
 
-      eventSuccessView
-        .querySelector(".event-success-icon")
+      success
+        .querySelector(
+          ".event-success-icon"
+        )
         ?.scrollIntoView({
           behavior: "smooth",
           block: "start"
@@ -8863,7 +9028,6 @@ if (eventSuccessView) {
   );
 
 }
-
 /* ==================================================
    COPY GUEST LINK
    ================================================== */
