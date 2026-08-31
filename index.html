@@ -9944,28 +9944,86 @@ adminDeleteConfirm?.addEventListener(
       }
 
 
-      /*
-       * UPDATE ADMIN LIST
-       */
+ /*
+ * UPDATE DASHBOARD
+ */
 
-      adminEvents =
-        adminEvents.filter(
-          function(item) {
-
-            return item.id !== eventId;
-
-          }
-        );
-
-      renderAdminEvents(
-        adminEvents
-      );
-
-      updateAdminStats(
-        adminEvents
-      );
+adminEvents =
+  adminEvents.filter(
+    function(item) {
+      return item.id !== eventId;
+    }
+  );
 
 
+/*
+ * Re-render event list.
+ */
+renderAdminEvents(
+  adminEvents
+);
+
+
+/*
+ * Update dashboard statistics.
+ */
+adminTotalEvents.textContent =
+  adminEvents.length;
+
+adminActiveEvents.textContent =
+  adminEvents.filter(
+    function(event) {
+      return event.status === "active";
+    }
+  ).length;
+
+
+/*
+ * Refresh total photo count from Firestore.
+ */
+try {
+
+  const photosSnapshot =
+    await getDocs(
+      collection(
+        db,
+        "photos"
+      )
+    );
+
+  let photoCount = 0;
+
+  photosSnapshot.forEach(
+    function(photoDoc) {
+
+      const data =
+        photoDoc.data();
+
+      if (
+        data.status === "active"
+      ) {
+
+        photoCount++;
+
+      }
+
+    }
+  );
+
+  adminTotalPhotos.textContent =
+    photoCount;
+
+} catch (photoError) {
+
+  console.warn(
+    "Admin photo count unavailable:",
+    photoError
+  );
+
+  adminTotalPhotos.textContent =
+    "—";
+
+}
       /*
        * CLOSE MODAL
        */
