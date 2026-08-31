@@ -5961,6 +5961,72 @@ body.guest-uploading {
 
   </div>
 
+  <!-- ==================================================
+     LIVE / REVEAL ACCESS
+     ================================================== -->
+
+<div class="access-section reveal-access-section">
+
+  <div class="access-section-header">
+
+    <span class="access-kicker">
+      LIVE / REVEAL
+    </span>
+
+    <strong>
+      Share this to display the memories
+    </strong>
+
+  </div>
+
+
+  <div class="management-qr-wrapper">
+
+    <div
+      id="revealQRCode"
+      class="event-qr-code"
+    ></div>
+
+    <p>
+      Scan to open the live memories
+    </p>
+
+  </div>
+
+
+  <div class="guest-link-section">
+
+    <label>
+      Live Photo Link
+    </label>
+
+    <div class="guest-link-box">
+
+      <input
+        type="text"
+        id="revealEventLink"
+        readonly
+      >
+
+      <button
+        type="button"
+        id="copyRevealLink"
+        class="copy-link-btn"
+      >
+        Copy
+      </button>
+
+    </div>
+
+    <div
+      id="copyRevealLinkMessage"
+      class="copy-link-message"
+    ></div>
+
+  </div>
+
+</div>
+
 </section>
 <!-- ==================================================
      EDIT EVENT MODAL
@@ -8536,61 +8602,245 @@ function closeCreateEvent() {
 
 function showEventSuccess(eventData, eventId, managementToken) {
 
+  /*
+   * IMPORTANT:
+   * Reset the create form and explicitly switch
+   * the success screen into the visible state.
+   */
+
   createEventForm.style.display = "none";
+  createEventForm.reset();
+
+  eventSuccessView.style.display = "block";
   eventSuccessView.classList.add("is-visible");
 
-  successEventName.textContent = eventData.eventName;
+  successEventName.textContent =
+    eventData.eventName || "Your Event";
+
+
+  /*
+   * EVENT DATE
+   */
 
   const formattedDate =
-    new Date(`${eventData.eventDate}T00:00:00`).toLocaleDateString(
+    new Date(
+      `${eventData.eventDate}T00:00:00`
+    ).toLocaleDateString(
       "en-US",
-      { month: "long", day: "numeric", year: "numeric" }
+      {
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+      }
     );
 
-  successEventDate.textContent = formattedDate;
+  successEventDate.textContent =
+    formattedDate;
 
-  /* Guest URL */
+
+  /*
+   * BASE URL
+   */
+
+  const baseUrl =
+    `${window.location.origin}${window.location.pathname}`;
+
+
+  /*
+   * ==================================================
+   * GUEST LINK
+   * ==================================================
+   */
+
   const guestUrl =
-    `${window.location.origin}${window.location.pathname}?event=${encodeURIComponent(eventId)}`;
+    `${baseUrl}?event=${encodeURIComponent(eventId)}`;
 
-  guestEventLink.value = guestUrl;
+  guestEventLink.value =
+    guestUrl;
+
+
+  /*
+   * Guest QR
+   */
 
   eventQRCode.innerHTML = "";
-  new QRCode(eventQRCode, {
-    text: guestUrl,
-    width: 166,
-    height: 166,
-    colorDark: "#111111",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H
-  });
 
-  /* Host management URL — token is intentionally not the Event ID. */
+  new QRCode(
+    eventQRCode,
+    {
+      text: guestUrl,
+      width: 166,
+      height: 166,
+      colorDark: "#111111",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    }
+  );
+
+
+  /*
+   * ==================================================
+   * MANAGEMENT LINK
+   * ==================================================
+   */
+
   const managementUrl =
-    `${window.location.origin}${window.location.pathname}?manage=${encodeURIComponent(managementToken)}`;
+    `${baseUrl}?manage=${encodeURIComponent(managementToken)}`;
 
-  managementEventLink.value = managementUrl;
+  managementEventLink.value =
+    managementUrl;
+
+
+  /*
+   * Management QR
+   */
 
   managementQRCode.innerHTML = "";
-  new QRCode(managementQRCode, {
-    text: managementUrl,
-    width: 166,
-    height: 166,
-    colorDark: "#111111",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H
-  });
 
-  localStorage.setItem("disposableMomment_eventId", eventId);
-  localStorage.setItem("disposableMomment_guestUrl", guestUrl);
-  localStorage.setItem("disposableMomment_managementUrl", managementUrl);
+  new QRCode(
+    managementQRCode,
+    {
+      text: managementUrl,
+      width: 166,
+      height: 166,
+      colorDark: "#111111",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    }
+  );
 
-  copyGuestLinkMessage.textContent = "";
-  copyManagementLinkMessage.textContent = "";
 
-  manageEventButton.onclick = function() {
-    window.location.href = managementUrl;
-  };
+  /*
+   * ==================================================
+   * LIVE / REVEAL LINK
+   * ==================================================
+   *
+   * This uses the EVENT ID.
+   * It is NOT the private management token.
+   */
+
+  const revealUrl =
+    `${baseUrl}?event=${encodeURIComponent(eventId)}&view=live`;
+
+
+  /*
+   * Save reveal URL if the element exists.
+   */
+
+  const revealLink =
+    document.getElementById("revealEventLink");
+
+  const revealQRCode =
+    document.getElementById("revealQRCode");
+
+  if (revealLink) {
+    revealLink.value =
+      revealUrl;
+  }
+
+
+  /*
+   * Reveal QR
+   */
+
+  if (revealQRCode) {
+
+    revealQRCode.innerHTML = "";
+
+    new QRCode(
+      revealQRCode,
+      {
+        text: revealUrl,
+        width: 166,
+        height: 166,
+        colorDark: "#111111",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      }
+    );
+
+  }
+
+
+  /*
+   * ==================================================
+   * LOCAL STORAGE
+   * ==================================================
+   */
+
+  localStorage.setItem(
+    "disposableMomment_eventId",
+    eventId
+  );
+
+  localStorage.setItem(
+    "disposableMomment_guestUrl",
+    guestUrl
+  );
+
+  localStorage.setItem(
+    "disposableMomment_managementUrl",
+    managementUrl
+  );
+
+  localStorage.setItem(
+    "disposableMomment_revealUrl",
+    revealUrl
+  );
+
+
+  /*
+   * ==================================================
+   * RESET COPY MESSAGES
+   * ==================================================
+   */
+
+  if (copyGuestLinkMessage) {
+    copyGuestLinkMessage.textContent = "";
+  }
+
+  if (copyManagementLinkMessage) {
+    copyManagementLinkMessage.textContent = "";
+  }
+
+
+  /*
+   * ==================================================
+   * OPEN MANAGEMENT
+   * ==================================================
+   */
+
+  manageEventButton.onclick =
+    function() {
+
+      window.location.href =
+        managementUrl;
+
+    };
+
+
+  /*
+   * ==================================================
+   * SCROLL TO SUCCESS SCREEN
+   * ==================================================
+   */
+
+  setTimeout(
+    function() {
+
+      eventSuccessView.scrollTop = 0;
+
+      eventSuccessView
+        .querySelector(".event-success-icon")
+        ?.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+    },
+    50
+  );
+
 }
 
 /* ==================================================
@@ -11341,6 +11591,80 @@ copyManagementLink.addEventListener(
     }
   }
 );
+/* ==================================================
+   COPY REVEAL LINK
+   ================================================== */
+
+const copyRevealLink =
+  document.getElementById("copyRevealLink");
+
+const copyRevealLinkMessage =
+  document.getElementById("copyRevealLinkMessage");
+
+
+if (copyRevealLink) {
+
+  copyRevealLink.addEventListener(
+    "click",
+    async function() {
+
+      const revealLink =
+        document.getElementById(
+          "revealEventLink"
+        );
+
+      if (!revealLink?.value) {
+        return;
+      }
+
+      try {
+
+        await navigator.clipboard.writeText(
+          revealLink.value
+        );
+
+        copyRevealLink.textContent =
+          "Copied!";
+
+        if (copyRevealLinkMessage) {
+
+          copyRevealLinkMessage.textContent =
+            "Live photo link copied to clipboard.";
+
+        }
+
+        setTimeout(
+          function() {
+
+            copyRevealLink.textContent =
+              "Copy";
+
+          },
+          1800
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Copy reveal link error:",
+          error
+        );
+
+        revealLink.select();
+
+        document.execCommand(
+          "copy"
+        );
+
+        copyRevealLink.textContent =
+          "Copied!";
+
+      }
+
+    }
+  );
+
+}
 /* ==================================================
    COPY DASHBOARD GUEST LINK
    ================================================== */
