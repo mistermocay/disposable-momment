@@ -7784,55 +7784,44 @@ if (!managementToken) {
    DELETE EVENT
    ================================================== */
 
-adminEventsList
-  .querySelectorAll(
-    "[data-admin-delete-event]"
-  )
-  .forEach(
-    function(button) {
+adminEventsList?.addEventListener(
+  "click",
+  function(event) {
 
-      button.addEventListener(
-        "click",
-        function() {
+    const button =
+      event.target.closest(
+        "[data-admin-delete-event]"
+      );
 
-          const eventId =
-            button.dataset
-              .adminDeleteEvent;
+    if (!button) {
+      return;
+    }
 
-          if (!eventId) {
+    const eventId =
+      button.dataset.adminDeleteEvent;
 
-            return;
+    if (!eventId) {
+      return;
+    }
 
-          }
-
-          /*
-           * Find event in local admin data.
-           */
-          const event =
-            adminEvents.find(
-              function(item) {
-                return item.id === eventId;
-              }
-            );
-
-          const eventName =
-            event?.eventName ||
-            "this event";
-
-
-          /*
-           * Open custom delete modal.
-           */
-          openAdminDeleteModal(
-            eventId,
-            eventName
-          );
-
+    const eventData =
+      adminEvents.find(
+        function(item) {
+          return item.id === eventId;
         }
       );
 
-    }
-  );
+    const eventName =
+      eventData?.eventName ||
+      "this event";
+
+    openAdminDeleteModal(
+      eventId,
+      eventName
+    );
+
+  }
+);
 /* ==================================================
    SEARCH EVENTS
    ================================================== */
