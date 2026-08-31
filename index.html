@@ -33,6 +33,11 @@ z-index: 999999;
 
   padding: 24px;
 
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  
+
   opacity: 0;
 
   visibility: hidden;
@@ -4064,34 +4069,6 @@ body.guest-uploading {
     border-radius: 20px;
   }
 
-}
-/* ==================================================
-   ADMIN DELETE MODAL
-   ================================================== */
-
-.admin-delete-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 24px;
-
-  background: rgba(15, 23, 42, 0.55);
-
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-
-  transition:
-    opacity .2s ease,
-    visibility .2s ease;
 }
 
 .admin-delete-modal.is-active {
