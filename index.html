@@ -5590,146 +5590,128 @@ body.guest-uploading {
           <div class="form-field">
 
             <div class="form-label">
-              When should the album be revealed?
-            </div>
+  How should photos appear?
+</div>
 
-            <div class="reveal-options">
+<div class="reveal-options">
 
-              <div class="reveal-option">
+  <!-- LIVE -->
+  <div class="reveal-option">
 
-                <input
-                  type="radio"
-                  id="revealImmediately"
-                  name="revealMode"
-                  value="immediately"
-                >
+    <input
+      type="radio"
+      id="revealLive"
+      name="revealMode"
+      value="live"
+      checked
+    >
 
-                <label for="revealImmediately">
+    <label for="revealLive">
 
-                  <span class="reveal-radio"></span>
+      <span class="reveal-radio"></span>
 
-                  <div>
-                    <strong>Immediately</strong>
-                    <span>
-                      Photos become visible right away.
-                    </span>
-                  </div>
+      <div>
 
-                </label>
+        <strong>Live</strong>
 
-              </div>
+        <span>
+          Approved photos appear on the live display during the event.
+        </span>
 
+      </div>
 
-              <div class="reveal-option">
+    </label>
 
-                <input
-                  type="radio"
-                  id="revealAfterEvent"
-                  name="revealMode"
-                  value="after-event"
-                  checked
-                >
-
-                <label for="revealAfterEvent">
-
-                  <span class="reveal-radio"></span>
-
-                  <div>
-                    <strong>After the event</strong>
-                    <span>
-                      Keep the album hidden until the event ends.
-                    </span>
-                  </div>
-
-                </label>
-
-              </div>
+  </div>
 
 
-              <div class="reveal-option">
+  <!-- AFTER EVENT -->
+  <div class="reveal-option">
 
-                <input
-                  type="radio"
-                  id="revealCustom"
-                  name="revealMode"
-                  value="custom"
-                >
+    <input
+      type="radio"
+      id="revealAfterEvent"
+      name="revealMode"
+      value="after-event"
+    >
 
-                <label for="revealCustom">
+    <label for="revealAfterEvent">
 
-                  <span class="reveal-radio"></span>
+      <span class="reveal-radio"></span>
 
-                  <div>
-                    <strong>Custom time</strong>
-                    <span>
-                      Choose exactly when the memories are revealed.
-                    </span>
-                  </div>
+      <div>
 
-                </label>
+        <strong>After the event</strong>
 
-              </div>
+        <span>
+          Keep photos hidden until the event ends.
+        </span>
 
-            </div>
+      </div>
 
+    </label>
 
-            <!-- CUSTOM REVEAL -->
-            <div
-              class="custom-reveal"
-              id="customReveal"
-            >
-
-              <div
-                class="form-field"
-                data-field="revealDate"
-              >
-
-                <label
-                  class="form-label"
-                  for="revealDate"
-                >
-                  Reveal Date
-                </label>
-
-                <input
-                  id="revealDate"
-                  name="revealDate"
-                  class="form-input"
-                  type="date"
-                >
-
-                <div class="form-error"></div>
-
-              </div>
+  </div>
 
 
-              <div
-                class="form-field"
-                data-field="revealTime"
-              >
+  <!-- SCHEDULED -->
+  <div class="reveal-option">
 
-                <label
-                  class="form-label"
-                  for="revealTime"
-                >
-                  Reveal Time
-                </label>
+    <input
+      type="radio"
+      id="revealScheduled"
+      name="revealMode"
+      value="scheduled"
+    >
 
-                <input
-                  id="revealTime"
-                  name="revealTime"
-                  class="form-input"
-                  type="time"
-                >
+    <label for="revealScheduled">
 
-                <div class="form-error"></div>
+      <span class="reveal-radio"></span>
 
-              </div>
+      <div>
 
-            </div>
+        <strong>Scheduled</strong>
 
-          </div>
+        <span>
+          Reveal the memories at a specific date and time.
+        </span>
 
+      </div>
+
+    </label>
+
+  </div>
+
+
+  <!-- MANUAL -->
+  <div class="reveal-option">
+
+    <input
+      type="radio"
+      id="revealManual"
+      name="revealMode"
+      value="manual"
+    >
+
+    <label for="revealManual">
+
+      <span class="reveal-radio"></span>
+
+      <div>
+
+        <strong>Manual</strong>
+
+        <span>
+          Start the reveal whenever you're ready.
+        </span>
+
+      </div>
+
+    </label>
+
+  </div>
+
+</div>
 
           <!-- SUBMIT -->
           <button
@@ -8672,10 +8654,10 @@ revealRadios.forEach((radio) => {
 
   radio.addEventListener("change", () => {
 
-    const customSelected =
-      document.querySelector(
-        'input[name="revealMode"]:checked'
-      )?.value === "custom";
+const customSelected =
+  document.querySelector(
+    'input[name="revealMode"]:checked'
+  )?.value === "scheduled";
 
     customReveal.classList.toggle(
       "is-visible",
@@ -8805,7 +8787,7 @@ createEventForm.addEventListener(
       valid = false;
     }
 
-    if (revealMode === "custom") {
+  if (revealMode === "scheduled") {
       if (!revealDate) {
         setCreateFieldError("revealDate", "Please choose a reveal date.");
         valid = false;
@@ -8855,9 +8837,16 @@ createEventForm.addEventListener(
         startTime,
         endTime,
         photoLimit,
-        revealMode,
-        revealDate: revealMode === "custom" ? revealDate : null,
-        revealTime: revealMode === "custom" ? revealTime : null,
+revealMode,
+revealDate:
+  revealMode === "scheduled"
+    ? revealDate
+    : null,
+
+revealTime:
+  revealMode === "scheduled"
+    ? revealTime
+    : null,
         status: "active",
         createdAt: serverTimestamp()
       };
@@ -10197,7 +10186,7 @@ editEventForm?.addEventListener("submit", async function(event) {
     setEditFieldError("photoLimit", "Photo limit must be between 1 and 999.");
     valid = false;
   }
-  if (revealMode === "custom") {
+if (revealMode === "scheduled") {
     if (!revealDate) { setEditFieldError("revealDate", "Please choose a reveal date."); valid = false; }
     if (!revealTime) { setEditFieldError("revealTime", "Please choose a reveal time."); valid = false; }
   }
@@ -10234,9 +10223,16 @@ editEventForm?.addEventListener("submit", async function(event) {
       startTime,
       endTime,
       photoLimit,
-      revealMode,
-      revealDate: revealMode === "custom" ? revealDate : null,
-      revealTime: revealMode === "custom" ? revealTime : null,
+revealMode,
+revealDate:
+  revealMode === "scheduled"
+    ? revealDate
+    : null,
+
+revealTime:
+  revealMode === "scheduled"
+    ? revealTime
+    : null,
       updatedAt: serverTimestamp()
     });
 
@@ -10247,9 +10243,16 @@ editEventForm?.addEventListener("submit", async function(event) {
       startTime,
       endTime,
       photoLimit,
-      revealMode,
-      revealDate: revealMode === "custom" ? revealDate : null,
-      revealTime: revealMode === "custom" ? revealTime : null
+revealMode,
+revealDate:
+  revealMode === "scheduled"
+    ? revealDate
+    : null,
+
+revealTime:
+  revealMode === "scheduled"
+    ? revealTime
+    : null,
     };
 
     managementEventData = updatedEventData;
@@ -10348,7 +10351,14 @@ async function openManagementDashboard(
 
     const eventData =
       eventSnap.data();
+    const revealState =
+      getRevealState(eventData);
 
+    console.log(
+      "Guest reveal state:",
+      revealState
+    );
+    
     managementEventIdValue = eventId;
     managementTokenValue = managementToken;
     managementEventData = eventData;
@@ -10857,6 +10867,178 @@ await openManagementDashboard(
 
 }
 
+function buildLocalDate(dateString, timeString) {
+
+  if (!dateString || !timeString) {
+    return null;
+  }
+
+  const [year, month, day] =
+    dateString.split("-").map(Number);
+
+  const [hours, minutes] =
+    timeString.split(":").map(Number);
+
+  return new Date(
+    year,
+    month - 1,
+    day,
+    hours,
+    minutes,
+    0,
+    0
+  );
+}
+function getRevealState(eventData) {
+
+  const mode =
+    eventData?.revealMode || "live";
+
+  const now =
+    new Date();
+
+
+  /*
+   * LIVE
+   */
+
+  if (mode === "live") {
+
+    return {
+      revealed: true,
+      mode,
+      reason: "live"
+    };
+
+  }
+
+
+  /*
+   * AFTER EVENT
+   */
+
+  if (mode === "after-event") {
+
+    const eventEnd =
+      buildLocalDate(
+        eventData.eventDate,
+        eventData.endTime
+      );
+
+
+    if (!eventEnd) {
+
+      return {
+        revealed: false,
+        mode,
+        reason: "missing-event-end"
+      };
+
+    }
+
+
+    return {
+
+      revealed:
+        now >= eventEnd,
+
+      mode,
+
+      reason:
+        now >= eventEnd
+          ? "event-ended"
+          : "waiting-for-event-end",
+
+      revealAt:
+        eventEnd
+
+    };
+
+  }
+
+
+  /*
+   * SCHEDULED
+   */
+
+  if (mode === "scheduled") {
+
+    const revealAt =
+      buildLocalDate(
+        eventData.revealDate,
+        eventData.revealTime
+      );
+
+
+    if (!revealAt) {
+
+      return {
+        revealed: false,
+        mode,
+        reason: "missing-schedule"
+      };
+
+    }
+
+
+    return {
+
+      revealed:
+        now >= revealAt,
+
+      mode,
+
+      reason:
+        now >= revealAt
+          ? "scheduled-time-reached"
+          : "waiting-for-schedule",
+
+      revealAt:
+        revealAt
+
+    };
+
+  }
+
+
+  /*
+   * MANUAL
+   */
+
+  if (mode === "manual") {
+
+    return {
+
+      revealed:
+        eventData.revealed === true,
+
+      mode,
+
+      reason:
+        eventData.revealed === true
+          ? "manually-revealed"
+          : "waiting-for-manual-reveal"
+
+    };
+
+  }
+
+
+  /*
+   * UNKNOWN MODE
+   */
+
+  return {
+
+    revealed: false,
+
+    mode,
+
+    reason: "unknown-mode"
+
+  };
+
+}
 /* ==================================================
    GUEST EVENT ACCESS
    ================================================== */
