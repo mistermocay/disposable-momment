@@ -4215,33 +4215,38 @@ body.guest-uploading {
 
 }
 /* ==================================================
-   EVENT SUCCESS SCREEN — FINAL
+   EVENT SUCCESS SCREEN — FINAL FIX
    ================================================== */
 
-#createEventView .create-event-card {
-  position: relative;
-}
-
-/* Success screen */
 #createEventView #eventSuccessView {
   display: none !important;
 
-  position: relative;
+  position: relative !important;
 
-  width: 100%;
-  min-height: 520px;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 520px !important;
 
-  box-sizing: border-box;
+  max-height: none !important;
 
-  padding: 42px 32px 48px;
+  box-sizing: border-box !important;
 
-  background: var(--card);
+  padding: 42px 32px 48px !important;
 
-  text-align: center;
+  background: var(--card) !important;
+
+  text-align: center !important;
+
+  overflow: visible !important;
+
+  flex: none !important;
 }
 
 #createEventView #eventSuccessView.is-visible {
   display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 520px !important;
 }
 
 /* Success icon */
@@ -8873,16 +8878,20 @@ if (form) {
   );
 }
 
+createEventView.classList.add("is-active");
+
+createEventView.setAttribute(
+  "aria-hidden",
+  "false"
+);
+
+success.classList.add("is-visible");
+
 success.style.setProperty(
   "display",
   "block",
   "important"
 );
-
-success.classList.add(
-  "is-visible"
-);
-
   /* ==================================================
      PREPARE EVENT DATA
      ================================================== */
