@@ -11856,8 +11856,15 @@ async function handleGuestEventAccess() {
 
 
     const eventData =
-      eventSnap.data();
+  eventSnap.data();
 
+    const revealState =
+      getRevealState(eventData);
+
+    console.log(
+      "Guest reveal state:",
+      revealState
+    );
 
     console.log(
       "Guest event data:",
