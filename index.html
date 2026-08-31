@@ -7788,20 +7788,29 @@ adminEventsList?.addEventListener(
   "click",
   function(event) {
 
-    const button =
+    const deleteButton =
       event.target.closest(
         "[data-admin-delete-event]"
       );
 
-    if (!button) {
+    if (!deleteButton) {
       return;
     }
 
+    event.preventDefault();
+    event.stopPropagation();
+
     const eventId =
-      button.dataset.adminDeleteEvent;
+      deleteButton.dataset.adminDeleteEvent;
 
     if (!eventId) {
+
+      console.error(
+        "Delete button clicked but event ID is missing."
+      );
+
       return;
+
     }
 
     const eventData =
@@ -7814,6 +7823,12 @@ adminEventsList?.addEventListener(
     const eventName =
       eventData?.eventName ||
       "this event";
+
+    console.log(
+      "Delete Event clicked:",
+      eventId,
+      eventName
+    );
 
     openAdminDeleteModal(
       eventId,
