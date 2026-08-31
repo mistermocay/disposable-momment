@@ -2014,21 +2014,6 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
   gap: 24px;
 }
 
-/* ==================================================
-   EVENT SUCCESS VIEW
-   ================================================== */
-
-.event-success-view {
-  display: none;
-  width: 100%;
-  text-align: center;
-  padding: 10px 0 24px;
-}
-
-.event-success-view.is-visible {
-  display: block;
-}
-
 /* SUCCESS ICON */
 
 .event-success-icon {
@@ -4229,6 +4214,232 @@ body.guest-uploading {
   }
 
 }
+/* ==================================================
+   EVENT SUCCESS SCREEN — FINAL
+   ================================================== */
+
+.create-event-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 520px;
+}
+
+/*
+ * Success screen is an independent layer.
+ * It does NOT depend on normal document height.
+ */
+#createEventView #eventSuccessView {
+  position: absolute;
+  inset: 0;
+
+  z-index: 20;
+
+  width: 100%;
+  height: 100%;
+
+  box-sizing: border-box;
+
+  overflow-y: auto;
+
+  padding: 42px 32px 48px;
+
+  background: var(--card);
+
+  text-align: center;
+
+  display: none;
+}
+
+#createEventView #eventSuccessView.is-visible {
+  display: block !important;
+}
+
+/* Success icon */
+
+#createEventView .event-success-icon {
+  width: 64px;
+  height: 64px;
+
+  margin: 0 auto 20px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--ink);
+  color: #fff;
+
+  font-size: 30px;
+  font-weight: 700;
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.15);
+}
+
+/* Success header */
+
+#createEventView #eventSuccessView .eyebrow {
+  display: inline-flex;
+  align-items: center;
+
+  margin-bottom: 16px;
+}
+
+#createEventView #eventSuccessView h1 {
+  margin: 0;
+
+  font-size: clamp(34px, 5vw, 48px);
+
+  line-height: 1.05;
+}
+
+#createEventView .event-success-subtitle {
+  max-width: 480px;
+
+  margin: 16px auto 26px;
+
+  color: var(--ink-soft);
+
+  font-size: 15px;
+
+  line-height: 1.65;
+}
+
+/* Event summary */
+
+#createEventView .event-success-summary {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 12px;
+
+  margin-bottom: 24px;
+
+  text-align: left;
+}
+
+#createEventView .success-event-name,
+#createEventView .success-event-date {
+  padding: 15px;
+
+  border: 1px solid var(--line);
+
+  border-radius: 14px;
+
+  background: var(--bg);
+}
+
+#createEventView .success-event-name span,
+#createEventView .success-event-date span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: var(--ink-soft);
+
+  font-size: 11px;
+
+  text-transform: uppercase;
+
+  letter-spacing: .08em;
+}
+
+#createEventView .success-event-name strong,
+#createEventView .success-event-date strong {
+  display: block;
+
+  font-size: 14px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+/* Access sections */
+
+#createEventView #eventSuccessView .access-section {
+  display: block !important;
+
+  width: 100%;
+
+  margin-top: 24px;
+
+  text-align: center;
+}
+
+/* QR */
+
+#createEventView .event-qr-wrapper,
+#createEventView .management-qr-wrapper {
+  margin: 18px auto 24px;
+}
+
+#createEventView .event-qr-code,
+#createEventView .management-qr-code {
+  width: 190px;
+  height: 190px;
+
+  margin: 0 auto;
+
+  padding: 12px;
+
+  box-sizing: border-box;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background: #fff;
+
+  border: 1px solid var(--line);
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.08);
+}
+
+#createEventView .event-qr-code img,
+#createEventView .event-qr-code canvas,
+#createEventView .management-qr-code img,
+#createEventView .management-qr-code canvas {
+  display: block;
+
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Link boxes */
+
+#createEventView .guest-link-section,
+#createEventView .management-link-section {
+  width: 100%;
+
+  margin-top: 18px;
+
+  text-align: left;
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+  #createEventView #eventSuccessView {
+    padding: 32px 18px 40px;
+  }
+
+  #createEventView .event-success-summary {
+    grid-template-columns: 1fr;
+  }
+
+}
+
 </style>
 </head>
 
@@ -8579,23 +8790,39 @@ const manageEventButton =
 
 function openCreateEvent() {
 
-  createEventView.classList.add("is-active");
+  createEventView.classList.add(
+    "is-active"
+  );
 
-  document.body.style.overflow = "hidden";
+  createEventView.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
+  document.body.style.overflow =
+    "hidden";
 
 }
 
 
 function closeCreateEvent() {
 
-  createEventView.classList.remove("is-active");
+  createEventView.classList.remove(
+    "is-active"
+  );
 
-  document.body.style.overflow = "";
+  createEventView.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  document.body.style.overflow =
+    "";
 
 }
 
 /* ==================================================
-   EVENT SUCCESS SCREEN
+   EVENT SUCCESS SCREEN — FINAL
    ================================================== */
 
 function showEventSuccess(
@@ -8613,19 +8840,14 @@ function showEventSuccess(
     }
   );
 
-
-  /* ==================================================
-     GET ELEMENTS DIRECTLY
-     ================================================== */
+  const form =
+    document.getElementById(
+      "createEventForm"
+    );
 
   const header =
     document.querySelector(
       "#createEventView .create-event-header"
-    );
-
-  const form =
-    document.getElementById(
-      "createEventForm"
     );
 
   const success =
@@ -8633,65 +8855,31 @@ function showEventSuccess(
       "eventSuccessView"
     );
 
-
-  /* ==================================================
-     SAFETY CHECK
-     ================================================== */
-
   if (!success) {
 
     console.error(
-      "ERROR: #eventSuccessView not found."
+      "ERROR: eventSuccessView not found."
     );
 
     return;
-
   }
 
 
   /* ==================================================
-     HIDE CREATE EVENT UI
+     PREPARE EVENT DATA
      ================================================== */
 
-  if (header) {
+  const eventName =
+    eventData?.eventName ||
+    "Your Event";
 
-    header.style.setProperty(
-      "display",
-      "none",
-      "important"
-    );
-
-  }
-
-
-  if (form) {
-
-    form.style.setProperty(
-      "display",
-      "none",
-      "important"
-    );
-
-  }
+  const eventDate =
+    eventData?.eventDate ||
+    "";
 
 
   /* ==================================================
-     SHOW SUCCESS UI
-     ================================================== */
-
-  success.style.setProperty(
-    "display",
-    "block",
-    "important"
-  );
-
-  success.classList.add(
-    "is-visible"
-  );
-
-
-  /* ==================================================
-     EVENT INFORMATION
+     EVENT NAME
      ================================================== */
 
   const nameElement =
@@ -8699,34 +8887,51 @@ function showEventSuccess(
       "successEventName"
     );
 
+  if (nameElement) {
+
+    nameElement.textContent =
+      eventName;
+
+  }
+
+
+  /* ==================================================
+     EVENT DATE
+     ================================================== */
+
   const dateElement =
     document.getElementById(
       "successEventDate"
     );
 
-
-  if (nameElement) {
-
-    nameElement.textContent =
-      eventData.eventName ||
-      "Your Event";
-
-  }
-
-
   if (dateElement) {
 
-    const formattedDate =
-      new Date(
-        `${eventData.eventDate}T00:00:00`
-      ).toLocaleDateString(
-        "en-US",
-        {
-          month: "long",
-          day: "numeric",
-          year: "numeric"
-        }
-      );
+    let formattedDate = "—";
+
+    if (eventDate) {
+
+      const parsedDate =
+        new Date(
+          `${eventDate}T00:00:00`
+        );
+
+      if (!Number.isNaN(
+        parsedDate.getTime()
+      )) {
+
+        formattedDate =
+          parsedDate.toLocaleDateString(
+            "en-US",
+            {
+              month: "long",
+              day: "numeric",
+              year: "numeric"
+            }
+          );
+
+      }
+
+    }
 
     dateElement.textContent =
       formattedDate;
@@ -8747,21 +8952,13 @@ function showEventSuccess(
      ================================================== */
 
   const guestUrl =
-    `${baseUrl}?event=${encodeURIComponent(
-      eventId
-    )}`;
+    `${baseUrl}?event=${encodeURIComponent(eventId)}`;
 
 
   const guestLink =
     document.getElementById(
       "guestEventLink"
     );
-
-  const guestQR =
-    document.getElementById(
-      "eventQRCode"
-    );
-
 
   if (guestLink) {
 
@@ -8770,6 +8967,15 @@ function showEventSuccess(
 
   }
 
+
+  /* ==================================================
+     GUEST QR
+     ================================================== */
+
+  const guestQR =
+    document.getElementById(
+      "eventQRCode"
+    );
 
   if (
     guestQR &&
@@ -8782,10 +8988,13 @@ function showEventSuccess(
       guestQR,
       {
         text: guestUrl,
+
         width: 166,
         height: 166,
+
         colorDark: "#111111",
         colorLight: "#ffffff",
+
         correctLevel:
           QRCode.CorrectLevel.H
       }
@@ -8799,21 +9008,13 @@ function showEventSuccess(
      ================================================== */
 
   const managementUrl =
-    `${baseUrl}?manage=${encodeURIComponent(
-      managementToken
-    )}`;
+    `${baseUrl}?manage=${encodeURIComponent(managementToken)}`;
 
 
   const managementLink =
     document.getElementById(
       "managementEventLink"
     );
-
-  const managementQR =
-    document.getElementById(
-      "managementQRCode"
-    );
-
 
   if (managementLink) {
 
@@ -8822,6 +9023,15 @@ function showEventSuccess(
 
   }
 
+
+  /* ==================================================
+     MANAGEMENT QR
+     ================================================== */
+
+  const managementQR =
+    document.getElementById(
+      "managementQRCode"
+    );
 
   if (
     managementQR &&
@@ -8834,10 +9044,13 @@ function showEventSuccess(
       managementQR,
       {
         text: managementUrl,
+
         width: 166,
         height: 166,
+
         colorDark: "#111111",
         colorLight: "#ffffff",
+
         correctLevel:
           QRCode.CorrectLevel.H
       }
@@ -8847,25 +9060,17 @@ function showEventSuccess(
 
 
   /* ==================================================
-     LIVE / REVEAL URL
+     REVEAL URL
      ================================================== */
 
   const revealUrl =
-    `${baseUrl}?event=${encodeURIComponent(
-      eventId
-    )}&view=live`;
+    `${baseUrl}?event=${encodeURIComponent(eventId)}&view=live`;
 
 
   const revealLink =
     document.getElementById(
       "revealEventLink"
     );
-
-  const revealQR =
-    document.getElementById(
-      "revealQRCode"
-    );
-
 
   if (revealLink) {
 
@@ -8874,6 +9079,15 @@ function showEventSuccess(
 
   }
 
+
+  /* ==================================================
+     REVEAL QR
+     ================================================== */
+
+  const revealQR =
+    document.getElementById(
+      "revealQRCode"
+    );
 
   if (
     revealQR &&
@@ -8886,10 +9100,13 @@ function showEventSuccess(
       revealQR,
       {
         text: revealUrl,
+
         width: 166,
         height: 166,
+
         colorDark: "#111111",
         colorLight: "#ffffff",
+
         correctLevel:
           QRCode.CorrectLevel.H
       }
@@ -8924,30 +9141,16 @@ function showEventSuccess(
 
 
   /* ==================================================
-     RESET COPY STATUS
+     RESET COPY MESSAGES
      ================================================== */
 
-  const guestMessage =
-    document.getElementById(
-      "copyGuestLinkMessage"
-    );
+  document.getElementById(
+    "copyGuestLinkMessage"
+  )?.replaceChildren();
 
-  const managementMessage =
-    document.getElementById(
-      "copyManagementLinkMessage"
-    );
-
-  if (guestMessage) {
-
-    guestMessage.textContent = "";
-
-  }
-
-  if (managementMessage) {
-
-    managementMessage.textContent = "";
-
-  }
+  document.getElementById(
+    "copyManagementLinkMessage"
+  )?.replaceChildren();
 
 
   /* ==================================================
@@ -8958,7 +9161,6 @@ function showEventSuccess(
     document.getElementById(
       "manageEventButton"
     );
-
 
   if (manageButton) {
 
@@ -8974,57 +9176,89 @@ function showEventSuccess(
 
 
   /* ==================================================
-     FINAL DEBUG
+     HIDE FORM
      ================================================== */
 
-  console.log(
-    "SUCCESS SCREEN DISPLAY:",
-    window.getComputedStyle(
-      success
-    ).display
+  if (form) {
+
+    form.style.setProperty(
+      "display",
+      "none",
+      "important"
+    );
+
+  }
+
+
+  if (header) {
+
+    header.style.setProperty(
+      "display",
+      "none",
+      "important"
+    );
+
+  }
+
+
+  /* ==================================================
+     SHOW SUCCESS
+     ================================================== */
+
+  success.classList.add(
+    "is-visible"
   );
 
-  console.log(
-    "SUCCESS SCREEN HEIGHT:",
-    success.offsetHeight
+  success.style.setProperty(
+    "display",
+    "block",
+    "important"
   );
 
-  console.log(
-    "GUEST URL:",
-    guestUrl
+
+  /*
+   * Make absolutely sure the modal is visible.
+   */
+
+  createEventView.classList.add(
+    "is-active"
   );
 
-  console.log(
-    "MANAGEMENT URL:",
-    managementUrl
-  );
-
-  console.log(
-    "REVEAL URL:",
-    revealUrl
+  createEventView.setAttribute(
+    "aria-hidden",
+    "false"
   );
 
 
   /* ==================================================
-     SCROLL TO TOP
+     RESET SCROLL
      ================================================== */
 
-  setTimeout(
+  success.scrollTop = 0;
+
+  requestAnimationFrame(
     function() {
 
       success.scrollTop = 0;
 
-      success
-        .querySelector(
-          ".event-success-icon"
-        )
-        ?.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
+      console.log(
+        "SUCCESS SCREEN FINAL:",
+        {
+          display:
+            getComputedStyle(success).display,
 
-    },
-    50
+          height:
+            success.getBoundingClientRect().height,
+
+          width:
+            success.getBoundingClientRect().width,
+
+          children:
+            success.children.length
+        }
+      );
+
+    }
   );
 
 }
