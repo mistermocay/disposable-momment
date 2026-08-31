@@ -6988,6 +6988,15 @@ function closeAdminLogin() {
 
   if (!adminLoginView) return;
 
+  if (
+    document.activeElement &&
+    adminLoginView.contains(
+      document.activeElement
+    )
+  ) {
+    document.activeElement.blur();
+  }
+
   adminLoginView.classList.remove(
     "is-active"
   );
