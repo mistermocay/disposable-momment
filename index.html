@@ -9790,19 +9790,9 @@ adminDeleteCancel?.addEventListener(
   }
 );
 
-
-document.addEventListener(
+adminDeleteConfirm?.addEventListener(
   "click",
   async function(event) {
-
-    const confirmButton =
-      event.target.closest(
-        "#adminDeleteConfirm"
-      );
-
-    if (!confirmButton) {
-      return;
-    }
 
     event.preventDefault();
     event.stopPropagation();
@@ -9838,7 +9828,6 @@ document.addEventListener(
       }
     );
 
-
     if (!auth.currentUser) {
 
       console.error(
@@ -9849,68 +9838,35 @@ document.addEventListener(
 
     }
 
-
-    const modal =
-      document.getElementById(
-        "adminDeleteModal"
-      );
-
-    if (!modal) {
-
-      console.error(
-        "Delete modal not found."
-      );
-
-      return;
-
-    }
-
-
-    confirmButton.disabled =
+    adminDeleteConfirm.disabled =
       true;
 
-    const cancelButton =
-      document.getElementById(
-        "adminDeleteCancel"
-      );
+    adminDeleteCancel.disabled =
+      true;
 
-    if (cancelButton) {
-      cancelButton.disabled =
-        true;
-    }
+    adminDeleteModal.classList.add(
+      "is-loading"
+    );
 
-
-    confirmButton.innerHTML = `
+    adminDeleteConfirm.innerHTML = `
       <span class="admin-delete-spinner"></span>
       Deleting...
     `;
 
-
     try {
-
-      /*
-       * ==========================================
-       * DELETE EVENT
-       * ==========================================
-       */
-
-      const eventRef =
-        doc(
-          db,
-          "events",
-          eventId
-        );
 
       console.log(
         "Deleting Firestore document:",
         `events/${eventId}`
       );
 
-
       await deleteDoc(
-        eventRef
+        doc(
+          db,
+          "events",
+          eventId
+        )
       );
-
 
       console.log(
         "Event deleted successfully:",
@@ -9919,9 +9875,7 @@ document.addEventListener(
 
 
       /*
-       * ==========================================
        * DELETE PHOTOS
-       * ==========================================
        */
 
       const photosSnapshot =
@@ -9939,7 +9893,6 @@ document.addEventListener(
           )
         );
 
-
       for (
         const photoDoc
         of photosSnapshot.docs
@@ -9953,9 +9906,7 @@ document.addEventListener(
 
 
       /*
-       * ==========================================
        * DELETE MANAGEMENT ACCESS
-       * ==========================================
        */
 
       const accessSnapshot =
@@ -9973,7 +9924,6 @@ document.addEventListener(
           )
         );
 
-
       for (
         const accessDoc
         of accessSnapshot.docs
@@ -9987,9 +9937,7 @@ document.addEventListener(
 
 
       /*
-       * ==========================================
        * DELETE MANAGEMENT SESSIONS
-       * ==========================================
        */
 
       const sessionsSnapshot =
@@ -10007,7 +9955,6 @@ document.addEventListener(
           )
         );
 
-
       for (
         const sessionDoc
         of sessionsSnapshot.docs
@@ -10021,18 +9968,17 @@ document.addEventListener(
 
 
       /*
-       * ==========================================
-       * UPDATE DASHBOARD
-       * ==========================================
+       * UPDATE ADMIN LIST
        */
 
       adminEvents =
         adminEvents.filter(
           function(item) {
+
             return item.id !== eventId;
+
           }
         );
-
 
       renderAdminEvents(
         adminEvents
@@ -10044,75 +9990,56 @@ document.addEventListener(
 
 
       /*
-       * SUCCESS
+       * CLOSE MODAL
        */
 
-      confirmButton.innerHTML =
-        "Deleted";
-
-
-      setTimeout(
-        function() {
-
-          modal.classList.remove(
-            "is-active"
-          );
-
-          modal.setAttribute(
-            "aria-hidden",
-            "true"
-          );
-
-          confirmButton.disabled =
-            false;
-
-          confirmButton.textContent =
-            "Delete Event";
-
-          if (cancelButton) {
-            cancelButton.disabled =
-              false;
-          }
-
-          pendingDeleteEventId =
-            null;
-
-          pendingDeleteEventName =
-            "";
-
-        },
-        700
+      adminDeleteModal.classList.remove(
+        "is-loading"
       );
 
+      adminDeleteModal.classList.remove(
+        "is-active"
+      );
+
+      adminDeleteModal.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
+      pendingDeleteEventId =
+        null;
+
+      pendingDeleteEventName =
+        "";
+
+      console.log(
+        "ADMIN DELETE COMPLETE"
+      );
 
     } catch (error) {
 
       console.error(
-        "ADMIN EVENT DELETE FAILED:",
+        "ADMIN DELETE ERROR:",
         error
       );
 
-      console.error(
-        "Firebase error code:",
-        error?.code
+      adminDeleteModal.classList.remove(
+        "is-loading"
       );
 
-      console.error(
-        "Firebase error message:",
-        error?.message
-      );
-
-
-      confirmButton.disabled =
+      adminDeleteConfirm.disabled =
         false;
 
-      confirmButton.textContent =
-        "Try Again";
+      adminDeleteCancel.disabled =
+        false;
 
-      if (cancelButton) {
-        cancelButton.disabled =
-          false;
-      }
+      adminDeleteConfirm.textContent =
+        "Delete Event";
+
+      alert(
+        error.message ||
+        "Failed to delete event."
+      );
 
     }
 
