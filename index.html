@@ -7927,21 +7927,12 @@ document.addEventListener(
 
 
 /* ==================================================
-   AUTO OPEN IF SESSION EXISTS
+   ADMIN SESSION CHECK
    ================================================== */
 
-if (
-  isAdminAuthenticated()
-) {
-
-  /*
-   * Don't automatically open the dashboard
-   * on every page refresh.
-   *
-   * Keep the session alive but let the user
-   * explicitly open Admin Login.
-   */
-
+if (isAdminAuthenticated()) {
+  console.log("Admin session is active.");
+}
 }
 /* ==================================================
    VGY IMAGE UPLOAD
@@ -8034,21 +8025,19 @@ async function getGuestPhotoCount(eventId, guestUid) {
 
   let count = 0;
 
-  snapshot.forEach(
-    function(docSnap) {
+  snapshot.forEach(function(docSnap) {
 
-      const data =
-        docSnap.data();
+    const data =
+      docSnap.data();
 
-      if (
-        data.guestUid === guestUid &&
-        data.status === "active"
-      ) {
-        count++;
-      }
-
+    if (
+      data.guestUid === guestUid &&
+      data.status === "active"
+    ) {
+      count++;
     }
-  );
+
+  });
 
   return count;
 }
