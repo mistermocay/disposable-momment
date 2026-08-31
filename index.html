@@ -8034,19 +8034,21 @@ async function getGuestPhotoCount(eventId, guestUid) {
 
   let count = 0;
 
-  snapshot.forEach(function(docSnap) {
+  snapshot.forEach(
+    function(docSnap) {
 
-    const data =
-      docSnap.data();
+      const data =
+        docSnap.data();
 
-    if (
-      data.guestUid === guestUid &&
-      data.status === "active"
-    ) {
-      count++;
+      if (
+        data.guestUid === guestUid &&
+        data.status === "active"
+      ) {
+        count++;
+      }
+
     }
-
-  });
+  );
 
   return count;
 }
