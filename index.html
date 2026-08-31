@@ -9791,15 +9791,34 @@ adminDeleteCancel?.addEventListener(
 );
 
 
-adminDeleteConfirm?.addEventListener(
+document.addEventListener(
   "click",
-  async function() {
+  async function(event) {
+
+    const confirmButton =
+      event.target.closest(
+        "#adminDeleteConfirm"
+      );
+
+    if (!confirmButton) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    console.log(
+      "ADMIN DELETE CONFIRM CLICKED"
+    );
 
     if (!pendingDeleteEventId) {
+
       console.warn(
         "Delete cancelled: no event ID."
       );
+
       return;
+
     }
 
     const eventId =
@@ -9809,36 +9828,16 @@ adminDeleteConfirm?.addEventListener(
       pendingDeleteEventName ||
       "this event";
 
-
     console.log(
-      "================================="
+      "ADMIN DELETE START",
+      {
+        eventId,
+        eventName,
+        firebaseUser:
+          auth.currentUser?.uid || null
+      }
     );
 
-    console.log(
-      "ADMIN DELETE START"
-    );
-
-    console.log(
-      "Event ID:",
-      eventId
-    );
-
-    console.log(
-      "Event Name:",
-      eventName
-    );
-
-    console.log(
-      "Firebase Auth:",
-      auth.currentUser
-    );
-
-
-    /*
-     * ==========================================
-     * CHECK FIREBASE AUTHENTICATION
-     * ==========================================
-     */
 
     if (!auth.currentUser) {
 
@@ -9846,8 +9845,20 @@ adminDeleteConfirm?.addEventListener(
         "Delete blocked: Firebase user is not authenticated."
       );
 
-      alert(
-        "Firebase authentication is not active. Please login again."
+      return;
+
+    }
+
+
+    const modal =
+      document.getElementById(
+        "adminDeleteModal"
+      );
+
+    if (!modal) {
+
+      console.error(
+        "Delete modal not found."
       );
 
       return;
@@ -9855,23 +9866,21 @@ adminDeleteConfirm?.addEventListener(
     }
 
 
-    /*
-     * ==========================================
-     * LOCK UI
-     * ==========================================
-     */
-
-    adminDeleteModal.classList.add(
-      "is-loading"
-    );
-
-    adminDeleteConfirm.disabled =
+    confirmButton.disabled =
       true;
 
-    adminDeleteCancel.disabled =
-      true;
+    const cancelButton =
+      document.getElementById(
+        "adminDeleteCancel"
+      );
 
-    adminDeleteConfirm.innerHTML = `
+    if (cancelButton) {
+      cancelButton.disabled =
+        true;
+    }
+
+
+    confirmButton.innerHTML = `
       <span class="admin-delete-spinner"></span>
       Deleting...
     `;
@@ -9881,7 +9890,7 @@ adminDeleteConfirm?.addEventListener(
 
       /*
        * ==========================================
-       * STEP 1 — VERIFY EVENT EXISTS
+       * DELETE EVENT
        * ==========================================
        */
 
@@ -9892,35 +9901,8 @@ adminDeleteConfirm?.addEventListener(
           eventId
         );
 
-      const eventSnapshot =
-        await getDoc(
-          eventRef
-        );
-
-
       console.log(
-        "Event exists before delete:",
-        eventSnapshot.exists()
-      );
-
-
-      if (!eventSnapshot.exists()) {
-
-        throw new Error(
-          "Event no longer exists in Firestore."
-        );
-
-      }
-
-
-      /*
-       * ==========================================
-       * STEP 2 — DELETE EVENT
-       * ==========================================
-       */
-
-      console.log(
-        "Deleting:",
+        "Deleting Firestore document:",
         `events/${eventId}`
       );
 
@@ -9931,47 +9913,16 @@ adminDeleteConfirm?.addEventListener(
 
 
       console.log(
-        "Event delete request completed."
+        "Event deleted successfully:",
+        eventId
       );
 
 
       /*
        * ==========================================
-       * STEP 3 — VERIFY EVENT WAS DELETED
+       * DELETE PHOTOS
        * ==========================================
        */
-
-      const verifySnapshot =
-        await getDoc(
-          eventRef
-        );
-
-
-      console.log(
-        "Event exists after delete:",
-        verifySnapshot.exists()
-      );
-
-
-      if (verifySnapshot.exists()) {
-
-        throw new Error(
-          "Firestore still contains the event after delete."
-        );
-
-      }
-
-
-      /*
-       * ==========================================
-       * STEP 4 — DELETE PHOTOS
-       * ==========================================
-       */
-
-      console.log(
-        "Deleting related photos..."
-      );
-
 
       const photosSnapshot =
         await getDocs(
@@ -9989,12 +9940,6 @@ adminDeleteConfirm?.addEventListener(
         );
 
 
-      console.log(
-        "Photos found:",
-        photosSnapshot.size
-      );
-
-
       for (
         const photoDoc
         of photosSnapshot.docs
@@ -10009,14 +9954,9 @@ adminDeleteConfirm?.addEventListener(
 
       /*
        * ==========================================
-       * STEP 5 — DELETE MANAGEMENT ACCESS
+       * DELETE MANAGEMENT ACCESS
        * ==========================================
        */
-
-      console.log(
-        "Deleting management access..."
-      );
-
 
       const accessSnapshot =
         await getDocs(
@@ -10034,12 +9974,6 @@ adminDeleteConfirm?.addEventListener(
         );
 
 
-      console.log(
-        "Management access found:",
-        accessSnapshot.size
-      );
-
-
       for (
         const accessDoc
         of accessSnapshot.docs
@@ -10054,14 +9988,9 @@ adminDeleteConfirm?.addEventListener(
 
       /*
        * ==========================================
-       * STEP 6 — DELETE MANAGEMENT SESSIONS
+       * DELETE MANAGEMENT SESSIONS
        * ==========================================
        */
-
-      console.log(
-        "Deleting management sessions..."
-      );
-
 
       const sessionsSnapshot =
         await getDocs(
@@ -10079,12 +10008,6 @@ adminDeleteConfirm?.addEventListener(
         );
 
 
-      console.log(
-        "Management sessions found:",
-        sessionsSnapshot.size
-      );
-
-
       for (
         const sessionDoc
         of sessionsSnapshot.docs
@@ -10099,30 +10022,21 @@ adminDeleteConfirm?.addEventListener(
 
       /*
        * ==========================================
-       * STEP 7 — UPDATE LOCAL DATA
+       * UPDATE DASHBOARD
        * ==========================================
        */
 
       adminEvents =
         adminEvents.filter(
           function(item) {
-
             return item.id !== eventId;
-
           }
         );
 
 
-      /*
-       * ==========================================
-       * STEP 8 — REFRESH DASHBOARD
-       * ==========================================
-       */
-
       renderAdminEvents(
         adminEvents
       );
-
 
       updateAdminStats(
         adminEvents
@@ -10130,59 +10044,41 @@ adminDeleteConfirm?.addEventListener(
 
 
       /*
-       * ==========================================
        * SUCCESS
-       * ==========================================
        */
 
-      console.log(
-        "ADMIN DELETE SUCCESS:",
-        eventId
-      );
+      confirmButton.innerHTML =
+        "Deleted";
 
-
-      adminDeleteConfirm.innerHTML = `
-        <span class="admin-delete-success-icon">
-          ✓
-        </span>
-        Deleted
-      `;
-
-
-      /*
-       * Close modal.
-       */
 
       setTimeout(
         function() {
 
-          adminDeleteModal.classList.remove(
+          modal.classList.remove(
             "is-active"
           );
 
-          adminDeleteModal.classList.remove(
-            "is-loading"
-          );
-
-          adminDeleteModal.setAttribute(
+          modal.setAttribute(
             "aria-hidden",
             "true"
           );
+
+          confirmButton.disabled =
+            false;
+
+          confirmButton.textContent =
+            "Delete Event";
+
+          if (cancelButton) {
+            cancelButton.disabled =
+              false;
+          }
 
           pendingDeleteEventId =
             null;
 
           pendingDeleteEventName =
             "";
-
-          adminDeleteConfirm.disabled =
-            false;
-
-          adminDeleteCancel.disabled =
-            false;
-
-          adminDeleteConfirm.textContent =
-            "Delete Event";
 
         },
         700
@@ -10192,20 +10088,7 @@ adminDeleteConfirm?.addEventListener(
     } catch (error) {
 
       console.error(
-        "================================="
-      );
-
-      console.error(
-        "ADMIN EVENT DELETE FAILED"
-      );
-
-      console.error(
-        "Event ID:",
-        eventId
-      );
-
-      console.error(
-        "Firebase error:",
+        "ADMIN EVENT DELETE FAILED:",
         error
       );
 
@@ -10219,37 +10102,16 @@ adminDeleteConfirm?.addEventListener(
         error?.message
       );
 
-      console.error(
-        "================================="
-      );
 
-
-      adminDeleteModal.classList.remove(
-        "is-loading"
-      );
-
-      adminDeleteConfirm.disabled =
+      confirmButton.disabled =
         false;
 
-      adminDeleteCancel.disabled =
-        false;
-
-      adminDeleteConfirm.textContent =
+      confirmButton.textContent =
         "Try Again";
 
-
-      const description =
-        document.getElementById(
-          "adminDeleteDescription"
-        );
-
-
-      if (description) {
-
-        description.textContent =
-          error?.message ||
-          "The event could not be deleted.";
-
+      if (cancelButton) {
+        cancelButton.disabled =
+          false;
       }
 
     }
