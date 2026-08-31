@@ -2015,19 +2015,29 @@ footer{ background:var(--bg-deep); border-top:1px solid var(--line); padding:64p
 }
 
 /* ==================================================
-   EVENT CREATED SUCCESS VIEW
+   EVENT SUCCESS VIEW
    ================================================== */
 
 .event-success-view {
   display: none;
+  width: 100%;
   text-align: center;
-  padding: 10px 0 4px;
+  padding: 10px 0 24px;
 }
 
 .event-success-view.is-visible {
-  display: block;
+  display: block !important;
 }
 
+.event-success-view .access-section {
+  display: block;
+  width: 100%;
+  margin-top: 22px;
+}
+
+.event-success-view .event-success-summary {
+  margin-bottom: 24px;
+}
 
 /* SUCCESS ICON */
 
@@ -5376,7 +5386,7 @@ body.guest-uploading {
      CREATE EVENT MODAL
      ================================================== -->
 
-<section id="createEventView" aria-hidden="true">
+<section id="createEventView">
 
   <div class="create-event-page">
 
@@ -8605,12 +8615,18 @@ function showEventSuccess(eventData, eventId, managementToken) {
    * Reset the create form and explicitly switch
    * the success screen into the visible state.
    */
+/* ==================================================
+   SWITCH CREATE FORM → SUCCESS VIEW
+   ================================================== */
 
+if (createEventForm) {
   createEventForm.style.display = "none";
-  createEventForm.reset();
+}
 
+if (eventSuccessView) {
   eventSuccessView.style.display = "block";
   eventSuccessView.classList.add("is-visible");
+}
 
   successEventName.textContent =
     eventData.eventName || "Your Event";
