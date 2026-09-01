@@ -12293,13 +12293,154 @@ async function handleLiveViewAccess(eventId) {
   document.body.classList.add("live-view-active");
 
   try {
-    const eventSnap = await getDoc(doc(db, "events", eventId));
-    if (!eventSnap.exists()) throw new Error("This event could not be found.");
-    const eventData = eventSnap.data();
-    liveEventName.textContent = eventData.eventName || "Live Memories";
-    liveEventHost.textContent = eventData.hostName ? `HOSTED BY ${String(eventData.hostName).toUpperCase()}` : "ONE EVENT · EVERYONE CAPTURES";
 
-    if (!auth.currentUser) await signInAnonymously(auth);
+  // ==============================================
+  // ANONYMOUS AUTHENTICATION
+  // ==============================================
+
+  if (!auth.currentUser) {
+    console.log(
+      "Live View: signing in anonymously..."
+    );
+
+    await signInAnonymously(auth);
+  }
+
+  if (!auth.currentUser) {
+    throw new Error(
+      "Live View authentication failed."
+    );
+  }
+
+  console.log(
+    "Live View authenticated:",
+    auth.currentUser.uid
+  );
+
+
+  // ==============================================
+  // LOAD EVENT
+  // ==============================================
+
+  const eventSnap =
+    await getDoc(
+      doc(
+        db,
+        "events",
+        eventId
+      )
+    );
+
+  if (!eventSnap.exists()) {
+    throw new Error(
+      "This event could not be found."
+    );
+  }
+
+  const eventData =
+    eventSnap.data();
+
+
+  // ==============================================
+  // EVENT HEADER
+  // ==============================================
+
+  liveEventName.textContent =
+    eventData.eventName ||
+    "Live Memories";
+
+  liveEventHost.textContent =
+    eventData.hostName
+      ? `HOSTED BY ${String(
+          eventData.hostName
+        ).toUpperCase()}`
+      : "ONE EVENT · EVERYONE CAPTURES";
+
+
+  // ==============================================
+  // REALTIME PHOTOS
+  // ==============================================
+
+  if (liveUnsubscribe) {
+    liveUnsubscribe();
+    liveUnsubscribe = null;
+  }
+
+  const photosQuery =
+    query(
+      collection(db, "photos"),
+      where(
+        "eventId",
+        "==",
+        eventId
+      )
+    );
+
+  liveUnsubscribe =
+    onSnapshot(
+      photosQuery,
+      function(snapshot) {
+
+        // kode kamu yang sekarang
+        // lanjutkan di sini...
+      },
+      function(error) {
+
+        console.error(
+          "Live view realtime listener error:",
+          error
+        );
+
+        if (liveEmptyState) {
+          liveEmptyState.hidden =
+            false;
+
+          const paragraph =
+            liveEmptyState.querySelector("p");
+
+          if (paragraph) {
+            paragraph.textContent =
+              "Unable to load live memories right now.";
+          }
+        }
+
+      }
+    );
+
+} catch (error) {
+
+  console.error(
+    "Live view loading error:",
+    error
+  );
+
+  liveView.classList.remove(
+    "is-visible"
+  );
+
+  liveView.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  document.body.classList.remove(
+    "live-view-active"
+  );
+
+  document.querySelector("header")
+    ?.style.removeProperty("display");
+
+  document.querySelector("main")
+    ?.style.removeProperty("display");
+
+  document.querySelector("footer")
+    ?.style.removeProperty("display");
+
+  alert(
+    error.message ||
+    "Unable to load this live view."
+  );
+}
     if (liveUnsubscribe) { liveUnsubscribe(); liveUnsubscribe = null; }
 
     const photosQuery = query(collection(db, "photos"), where("eventId", "==", eventId));
@@ -12401,19 +12542,40 @@ async function handleGuestEventAccess() {
     );
 
 
-    // ==============================================
-    // LOAD EVENT
-    // ==============================================
+// ==============================================
+// ANONYMOUS AUTHENTICATION
+// ==============================================
 
-    const eventRef =
-      doc(
-        db,
-        "events",
-        eventId
-      );
+if (!auth.currentUser) {
+  console.log("Guest: signing in anonymously...");
+  await signInAnonymously(auth);
+}
 
-    const eventSnap =
-      await getDoc(eventRef);
+if (!auth.currentUser) {
+  throw new Error(
+    "Guest authentication failed."
+  );
+}
+
+console.log(
+  "Guest authenticated:",
+  auth.currentUser.uid
+);
+
+
+// ==============================================
+// LOAD EVENT
+// ==============================================
+
+const eventRef =
+  doc(
+    db,
+    "events",
+    eventId
+  );
+
+const eventSnap =
+  await getDoc(eventRef);
 
 
     if (!eventSnap.exists()) {
@@ -12510,17 +12672,6 @@ async function handleGuestEventAccess() {
 
     guestEventView.dataset.photoLimit =
       eventData.photoLimit || 1;
-
-
-    // ==============================================
-    // ANONYMOUS AUTH
-    // ==============================================
-
-    if (!auth.currentUser) {
-
-      await signInAnonymously(auth);
-
-    }
 
 
     console.log(
