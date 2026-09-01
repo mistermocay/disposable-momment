@@ -5619,7 +5619,6 @@ body.guest-uploading {
 
 </div>
 
-
 <!-- ==================================================
      EVENT CREATED SUCCESS VIEW
      ================================================== -->
@@ -5628,12 +5627,290 @@ body.guest-uploading {
   id="eventSuccessView"
   class="event-success-view"
 >
-   <!-- SEMUA ISI SUCCESS VIEW TETAP DI SINI -->
-</div>
+
+  <!-- SUCCESS HEADER -->
+  <div class="event-success-icon">
+    ✓
+  </div>
+
+  <span class="eyebrow">
+    <span class="dot"></span>
+    Event Created
+  </span>
+
+  <h1>Your event is ready.</h1>
+
+  <p class="event-success-subtitle">
+    Your event has been created successfully.
+    Share the guest link with everyone and keep
+    the management link private.
+  </p>
+
+
+  <!-- EVENT SUMMARY -->
+  <div class="event-success-summary">
+
+    <div class="success-event-name">
+      <span>Event</span>
+      <strong id="successEventName">
+        Your Event
+      </strong>
+    </div>
+
+    <div class="success-event-date">
+      <span>Date</span>
+      <strong id="successEventDate">
+        —
+      </strong>
+    </div>
+
+  </div>
+
+
+  <!-- ==================================================
+       GUEST ACCESS
+       ================================================== -->
+
+  <div class="access-section">
+
+    <div class="access-section-header">
+
+      <span class="access-kicker">
+        GUEST ACCESS
+      </span>
+
+      <strong>
+        Share this with your guests
+      </strong>
+
+    </div>
+
+
+    <!-- GUEST QR -->
+
+    <div class="event-qr-wrapper">
+
+      <div
+        id="eventQRCode"
+        class="event-qr-code"
+      ></div>
+
+      <p>
+        Scan this QR code to join the event.
+      </p>
+
+    </div>
+
+
+    <!-- GUEST LINK -->
+
+    <div class="guest-link-section">
+
+      <label for="guestEventLink">
+        Guest Link
+      </label>
+
+      <div class="guest-link-box">
+
+        <input
+          id="guestEventLink"
+          type="text"
+          readonly
+          autocomplete="off"
+        >
+
+        <button
+          type="button"
+          id="copyGuestLink"
+          class="copy-link-btn"
+        >
+          Copy
+        </button>
+
+      </div>
+
+      <div
+        id="copyGuestLinkMessage"
+        class="copy-link-message"
+        aria-live="polite"
+      ></div>
 
     </div>
 
   </div>
+
+
+  <!-- ==================================================
+       HOST MANAGEMENT ACCESS
+       ================================================== -->
+
+  <div class="access-section host-access-section">
+
+    <div class="access-section-header">
+
+      <span class="access-kicker">
+        HOST MANAGEMENT
+      </span>
+
+      <strong>
+        Private event management
+      </strong>
+
+    </div>
+
+
+    <!-- MANAGEMENT QR -->
+
+    <div class="management-qr-wrapper">
+
+      <div
+        id="managementQRCode"
+        class="event-qr-code management-qr-code"
+      ></div>
+
+      <p>
+        Scan this QR code to manage your event.
+      </p>
+
+    </div>
+
+
+    <!-- MANAGEMENT LINK -->
+
+    <div class="management-link-section">
+
+      <label for="managementEventLink">
+        Management Link
+      </label>
+
+      <div class="guest-link-box">
+
+        <input
+          id="managementEventLink"
+          type="text"
+          readonly
+          autocomplete="off"
+        >
+
+        <button
+          type="button"
+          id="copyManagementLink"
+          class="copy-link-btn"
+        >
+          Copy
+        </button>
+
+      </div>
+
+      <div
+        id="copyManagementLinkMessage"
+        class="copy-link-message"
+        aria-live="polite"
+      ></div>
+
+    </div>
+
+
+    <p class="management-warning">
+      Keep this link private. Anyone with this link
+      can access your event management dashboard.
+    </p>
+
+
+    <!-- MANAGE EVENT -->
+
+    <button
+      type="button"
+      id="manageEventButton"
+      class="btn btn-primary"
+    >
+      Manage Event
+    </button>
+
+  </div>
+
+
+  <!-- ==================================================
+       LIVE / REVEAL ACCESS
+       ================================================== -->
+
+  <div class="access-section">
+
+    <div class="access-section-header">
+
+      <span class="access-kicker">
+        LIVE PHOTO ALBUM
+      </span>
+
+      <strong>
+        Share the live album
+      </strong>
+
+    </div>
+
+
+    <!-- REVEAL QR -->
+
+    <div class="event-qr-wrapper">
+
+      <div
+        id="revealQRCode"
+        class="event-qr-code"
+      ></div>
+
+      <p>
+        Use this link to view the live photo album.
+      </p>
+
+    </div>
+
+
+    <!-- REVEAL LINK -->
+
+    <div class="guest-link-section">
+
+      <label for="revealEventLink">
+        Live Photo Link
+      </label>
+
+      <div class="guest-link-box">
+
+        <input
+          id="revealEventLink"
+          type="text"
+          readonly
+          autocomplete="off"
+        >
+
+        <button
+          type="button"
+          id="copyRevealLink"
+          class="copy-link-btn"
+        >
+          Copy
+        </button>
+
+      </div>
+
+      <div
+        id="copyRevealLinkMessage"
+        class="copy-link-message"
+        aria-live="polite"
+      ></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- FOOTNOTE -->
+
+  <p class="event-success-note">
+    No app required for your guests.
+    They can open the guest link directly in their browser.
+  </p>
+
+</div>
 
 </section>
 <!-- ==================================================
@@ -8722,7 +8999,7 @@ createEventView.setAttribute(
    COPY GUEST LINK
    ================================================== */
 
-copyGuestLink.addEventListener(
+copyGuestLink?.addEventListener(
   "click",
   async function() {
 
@@ -11448,7 +11725,7 @@ managementBackButton?.addEventListener(
    COPY MANAGEMENT LINK
    ================================================== */
 
-copyManagementLink.addEventListener(
+copyManagementLink?.addEventListener(
   "click",
   async function() {
     try {
