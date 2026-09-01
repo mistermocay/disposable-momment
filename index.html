@@ -6832,6 +6832,71 @@ body.guest-uploading {
         </div>
 
       </div>
+                <!-- LIVE / REVEAL -->
+          <div class="management-access-box">
+
+            <div class="management-access-heading">
+
+              <span class="management-access-kicker">
+                LIVE / REVEAL
+              </span>
+
+              <strong>Display your event memories</strong>
+
+              <p>
+                Open this link on a TV, projector, or laptop
+                to display the live photo experience.
+              </p>
+
+            </div>
+
+
+            <div class="management-dashboard-qr-wrapper">
+
+              <div
+                id="dashboardRevealQRCode"
+                class="management-dashboard-qr"
+              ></div>
+
+              <span>
+                Scan to open Live / Reveal Display
+              </span>
+
+            </div>
+
+
+            <div class="management-link-field">
+
+              <label>
+                Live / Reveal Link
+              </label>
+
+              <div class="management-link-row">
+
+                <input
+                  id="dashboardRevealLink"
+                  type="text"
+                  readonly
+                >
+
+                <button
+                  type="button"
+                  id="copyDashboardRevealLink"
+                  class="management-copy-btn"
+                >
+                  Copy
+                </button>
+
+              </div>
+
+              <small
+                id="copyDashboardRevealMessage"
+              ></small>
+
+            </div>
+
+
+          </div>
 <!-- ==================================================
      SHARED MEMORIES
      ================================================== -->
@@ -10164,7 +10229,19 @@ const copyDashboardManagementMessage =
   document.getElementById(
     "copyDashboardManagementMessage"
   );
+const dashboardRevealQRCode =
+  document.getElementById("dashboardRevealQRCode");
 
+const dashboardRevealLink =
+  document.getElementById("dashboardRevealLink");
+
+const copyDashboardRevealLink =
+  document.getElementById("copyDashboardRevealLink");
+
+const copyDashboardRevealMessage =
+  document.getElementById(
+    "copyDashboardRevealMessage"
+  );
 
 /* ==================================================
    FORMATTERS
@@ -11354,6 +11431,41 @@ try {
     const managementUrl =
       `${window.location.origin}${window.location.pathname}?manage=${encodeURIComponent(managementToken)}`;
 
+      /*
+ * Public Live / Reveal URL
+ *
+ * IMPORTANT:
+ * This URL contains only the public event ID.
+ * The private management token is NOT exposed here.
+ */
+const revealUrl =
+  `${window.location.origin}${window.location.pathname}?event=${encodeURIComponent(eventId)}&view=live`;
+
+
+/*
+ * Set Live / Reveal Link
+ */
+dashboardRevealLink.value =
+  revealUrl;
+
+
+/*
+ * Generate Live / Reveal QR
+ */
+dashboardRevealQRCode.innerHTML = "";
+
+new QRCode(
+  dashboardRevealQRCode,
+  {
+    text: revealUrl,
+    width: 166,
+    height: 166,
+    colorDark: "#111111",
+    colorLight: "#ffffff",
+    correctLevel:
+      QRCode.CorrectLevel.H
+  }
+);
 
     /*
      * Set Guest Link
@@ -12292,7 +12404,54 @@ copyDashboardManagementLink?.addEventListener(
 
   }
 );
+/* ==================================================
+   COPY DASHBOARD LIVE / REVEAL LINK
+   ================================================== */
 
+copyDashboardRevealLink?.addEventListener(
+  "click",
+  async function() {
+
+    try {
+
+      await navigator.clipboard.writeText(
+        dashboardRevealLink.value
+      );
+
+      copyDashboardRevealLink.textContent =
+        "Copied!";
+
+      copyDashboardRevealMessage.textContent =
+        "Live / Reveal link copied.";
+
+      setTimeout(function() {
+
+        copyDashboardRevealLink.textContent =
+          "Copy";
+
+        copyDashboardRevealMessage.textContent =
+          "";
+
+      }, 2000);
+
+    } catch (error) {
+
+      console.error(
+        "Dashboard reveal copy failed:",
+        error
+      );
+
+      dashboardRevealLink.select();
+
+      document.execCommand("copy");
+
+      copyDashboardRevealLink.textContent =
+        "Copied!";
+
+    }
+
+  }
+);
 /* ==================================================
    GUEST PHOTO UPLOAD
    ================================================== */
