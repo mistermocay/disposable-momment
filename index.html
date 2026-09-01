@@ -12284,210 +12284,368 @@ function appendLivePhoto(photo) {
 }
 
 async function handleLiveViewAccess(eventId) {
-  if (!eventId || !liveView) return;
-  document.querySelector("header")?.style.setProperty("display", "none");
-  document.querySelector("main")?.style.setProperty("display", "none");
-  document.querySelector("footer")?.style.setProperty("display", "none");
+
+  if (!eventId || !liveView) {
+    return;
+  }
+
+  /*
+   * ==============================================
+   * HIDE NORMAL WEBSITE
+   * ==============================================
+   */
+
+  document.querySelector("header")
+    ?.style.setProperty("display", "none");
+
+  document.querySelector("main")
+    ?.style.setProperty("display", "none");
+
+  document.querySelector("footer")
+    ?.style.setProperty("display", "none");
+
   liveView.classList.add("is-visible");
-  liveView.setAttribute("aria-hidden", "false");
-  document.body.classList.add("live-view-active");
-
-  try {
-
-  // ==============================================
-  // ANONYMOUS AUTHENTICATION
-  // ==============================================
-
-  if (!auth.currentUser) {
-    console.log(
-      "Live View: signing in anonymously..."
-    );
-
-    await signInAnonymously(auth);
-  }
-
-  if (!auth.currentUser) {
-    throw new Error(
-      "Live View authentication failed."
-    );
-  }
-
-  console.log(
-    "Live View authenticated:",
-    auth.currentUser.uid
-  );
-
-
-  // ==============================================
-  // LOAD EVENT
-  // ==============================================
-
-  const eventSnap =
-    await getDoc(
-      doc(
-        db,
-        "events",
-        eventId
-      )
-    );
-
-  if (!eventSnap.exists()) {
-    throw new Error(
-      "This event could not be found."
-    );
-  }
-
-  const eventData =
-    eventSnap.data();
-
-
-  // ==============================================
-  // EVENT HEADER
-  // ==============================================
-
-  liveEventName.textContent =
-    eventData.eventName ||
-    "Live Memories";
-
-  liveEventHost.textContent =
-    eventData.hostName
-      ? `HOSTED BY ${String(
-          eventData.hostName
-        ).toUpperCase()}`
-      : "ONE EVENT · EVERYONE CAPTURES";
-
-
-  // ==============================================
-  // REALTIME PHOTOS
-  // ==============================================
-
-  if (liveUnsubscribe) {
-    liveUnsubscribe();
-    liveUnsubscribe = null;
-  }
-
-  const photosQuery =
-    query(
-      collection(db, "photos"),
-      where(
-        "eventId",
-        "==",
-        eventId
-      )
-    );
-
-  liveUnsubscribe =
-    onSnapshot(
-      photosQuery,
-      function(snapshot) {
-
-        // kode kamu yang sekarang
-        // lanjutkan di sini...
-      },
-      function(error) {
-
-        console.error(
-          "Live view realtime listener error:",
-          error
-        );
-
-        if (liveEmptyState) {
-          liveEmptyState.hidden =
-            false;
-
-          const paragraph =
-            liveEmptyState.querySelector("p");
-
-          if (paragraph) {
-            paragraph.textContent =
-              "Unable to load live memories right now.";
-          }
-        }
-
-      }
-    );
-
-} catch (error) {
-
-  console.error(
-    "Live view loading error:",
-    error
-  );
-
-  liveView.classList.remove(
-    "is-visible"
-  );
 
   liveView.setAttribute(
     "aria-hidden",
-    "true"
+    "false"
   );
 
-  document.body.classList.remove(
+  document.body.classList.add(
     "live-view-active"
   );
 
-  document.querySelector("header")
-    ?.style.removeProperty("display");
 
-  document.querySelector("main")
-    ?.style.removeProperty("display");
+  try {
 
-  document.querySelector("footer")
-    ?.style.removeProperty("display");
+    /*
+     * ==============================================
+     * ANONYMOUS AUTHENTICATION
+     * ==============================================
+     */
 
-  alert(
-    error.message ||
-    "Unable to load this live view."
-  );
-}
-    if (liveUnsubscribe) { liveUnsubscribe(); liveUnsubscribe = null; }
+    if (!auth.currentUser) {
 
-    const photosQuery = query(collection(db, "photos"), where("eventId", "==", eventId));
-    liveUnsubscribe = onSnapshot(photosQuery, function(snapshot) {
-      const incoming = [];
-      snapshot.forEach(function(docSnap) {
-        const data = docSnap.data();
-        if (data.status !== "active" || !data.imageUrl) return;
-        incoming.push({ id: docSnap.id, ...data });
-      });
-      incoming.sort((a,b) => getLivePhotoMillis(a.createdAt) - getLivePhotoMillis(b.createdAt));
+      console.log(
+        "Live View: signing in anonymously..."
+      );
 
-      if (!livePhotoIds.size && !livePhotos.length) { renderLiveWall(incoming); return; }
+      await signInAnonymously(auth);
+    }
 
-      let requiresFullRender = false;
-      snapshot.docChanges().forEach(function(change) {
-        const data = change.doc.data();
-        const photo = { id: change.doc.id, ...data };
-        if (change.type === "added") {
-          if (data.status === "active" && data.imageUrl) appendLivePhoto(photo);
-        } else if (change.type === "removed") {
-          livePhotos = livePhotos.filter(item => item.id !== change.doc.id);
-          livePhotoIds.delete(change.doc.id);
-          requiresFullRender = true;
-        } else if (change.type === "modified") {
-          requiresFullRender = true;
+    if (!auth.currentUser) {
+
+      throw new Error(
+        "Live View authentication failed."
+      );
+    }
+
+    console.log(
+      "Live View authenticated:",
+      auth.currentUser.uid
+    );
+
+
+    /*
+     * ==============================================
+     * LOAD EVENT
+     * ==============================================
+     */
+
+    const eventSnap =
+      await getDoc(
+        doc(
+          db,
+          "events",
+          eventId
+        )
+      );
+
+
+    if (!eventSnap.exists()) {
+
+      throw new Error(
+        "This event could not be found."
+      );
+    }
+
+
+    const eventData =
+      eventSnap.data();
+
+
+    /*
+     * ==============================================
+     * EVENT HEADER
+     * ==============================================
+     */
+
+    liveEventName.textContent =
+      eventData.eventName ||
+      "Live Memories";
+
+    liveEventHost.textContent =
+      eventData.hostName
+        ? `HOSTED BY ${String(
+            eventData.hostName
+          ).toUpperCase()}`
+        : "ONE EVENT · EVERYONE CAPTURES";
+
+
+    /*
+     * ==============================================
+     * CLEAN PREVIOUS LISTENER
+     * ==============================================
+     */
+
+    if (liveUnsubscribe) {
+
+      liveUnsubscribe();
+      liveUnsubscribe = null;
+
+    }
+
+
+    /*
+     * ==============================================
+     * LOAD REALTIME PHOTOS
+     * ==============================================
+     */
+
+    const photosQuery =
+      query(
+        collection(db, "photos"),
+        where(
+          "eventId",
+          "==",
+          eventId
+        )
+      );
+
+
+    liveUnsubscribe =
+      onSnapshot(
+        photosQuery,
+
+        function(snapshot) {
+
+          const incoming = [];
+
+
+          snapshot.forEach(
+            function(docSnap) {
+
+              const data =
+                docSnap.data();
+
+
+              if (
+                data.status !== "active" ||
+                !data.imageUrl
+              ) {
+                return;
+              }
+
+
+              incoming.push({
+                id: docSnap.id,
+                ...data
+              });
+
+            }
+          );
+
+
+          incoming.sort(
+            (a, b) =>
+              getLivePhotoMillis(
+                a.createdAt
+              ) -
+              getLivePhotoMillis(
+                b.createdAt
+              )
+          );
+
+
+          /*
+           * Initial render
+           */
+
+          if (
+            !livePhotoIds.size &&
+            !livePhotos.length
+          ) {
+
+            renderLiveWall(
+              incoming
+            );
+
+            return;
+          }
+
+
+          /*
+           * Handle realtime changes
+           */
+
+          let requiresFullRender =
+            false;
+
+
+          snapshot.docChanges()
+            .forEach(
+              function(change) {
+
+                const data =
+                  change.doc.data();
+
+                const photo = {
+                  id: change.doc.id,
+                  ...data
+                };
+
+
+                if (
+                  change.type === "added"
+                ) {
+
+                  if (
+                    data.status === "active" &&
+                    data.imageUrl
+                  ) {
+
+                    appendLivePhoto(
+                      photo
+                    );
+
+                  }
+
+                }
+
+                else if (
+                  change.type === "removed"
+                ) {
+
+                  livePhotos =
+                    livePhotos.filter(
+                      item =>
+                        item.id !==
+                        change.doc.id
+                    );
+
+                  livePhotoIds.delete(
+                    change.doc.id
+                  );
+
+                  requiresFullRender =
+                    true;
+
+                }
+
+                else if (
+                  change.type === "modified"
+                ) {
+
+                  requiresFullRender =
+                    true;
+
+                }
+
+              }
+            );
+
+
+          if (
+            requiresFullRender
+          ) {
+
+            renderLiveWall(
+              incoming
+            );
+
+          }
+
+        },
+
+
+        function(error) {
+
+          console.error(
+            "Live view realtime listener error:",
+            error
+          );
+
+
+          if (liveEmptyState) {
+
+            liveEmptyState.hidden =
+              false;
+
+
+            const paragraph =
+              liveEmptyState.querySelector(
+                "p"
+              );
+
+
+            if (paragraph) {
+
+              paragraph.textContent =
+                "Unable to load live memories right now.";
+
+            }
+
+          }
+
         }
-      });
-      if (requiresFullRender) renderLiveWall(incoming);
-    }, function(error) {
-      console.error("Live view realtime listener error:", error);
-      if (liveEmptyState) {
-        liveEmptyState.hidden = false;
-        const paragraph = liveEmptyState.querySelector("p");
-        if (paragraph) paragraph.textContent = "Unable to load live memories right now.";
-      }
-    });
+      );
+
+
   } catch (error) {
-    console.error("Live view loading error:", error);
-    liveView.classList.remove("is-visible");
-    liveView.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("live-view-active");
-    document.querySelector("header")?.style.removeProperty("display");
-    document.querySelector("main")?.style.removeProperty("display");
-    document.querySelector("footer")?.style.removeProperty("display");
-    alert(error.message || "Unable to load this live view.");
+
+    console.error(
+      "Live view loading error:",
+      error
+    );
+
+
+    liveView.classList.remove(
+      "is-visible"
+    );
+
+    liveView.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+    document.body.classList.remove(
+      "live-view-active"
+    );
+
+
+    document.querySelector("header")
+      ?.style.removeProperty(
+        "display"
+      );
+
+    document.querySelector("main")
+      ?.style.removeProperty(
+        "display"
+      );
+
+    document.querySelector("footer")
+      ?.style.removeProperty(
+        "display"
+      );
+
+
+    alert(
+      error.message ||
+      "Unable to load this live view."
+    );
+
   }
+
 }
 
 /* ==================================================
