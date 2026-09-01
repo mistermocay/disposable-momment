@@ -1148,6 +1148,8 @@ p{ margin:0; }
 
   align-items: center;
 
+  flex-wrap: wrap;
+
   gap: 8px;
 }
 
@@ -1202,7 +1204,37 @@ p{ margin:0; }
   background: var(--bg-deep);
   border-color: var(--ink);
 }
+.admin-event-live {
+  min-height: 38px;
 
+  padding: 0 13px;
+
+  border-radius: 10px;
+
+  border: 1px solid var(--accent);
+
+  background: var(--accent-wash);
+
+  color: var(--accent-deep);
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background .2s ease,
+    color .2s ease,
+    border-color .2s ease,
+    transform .2s ease;
+}
+
+.admin-event-live:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
 
 .admin-event-delete {
   min-height: 38px;
@@ -1318,9 +1350,10 @@ p{ margin:0; }
     width: 100%;
   }
   .admin-event-management,
+  .admin-event-live,
   .admin-event-delete {
-  width: 100%;
-}
+    width: 100%;
+  }
 
 }
 
@@ -8168,6 +8201,16 @@ function renderAdminEvents(
         </button>
 
         <button
+        type="button"
+        class="admin-event-live"
+        data-admin-open-live="${escapeHtml(
+          event.id
+        )}"
+        >
+          Open Live View →
+        </button>
+
+        <button
           type="button"
           class="admin-event-delete"
           data-admin-delete-event="${escapeHtml(
@@ -8213,6 +8256,55 @@ function renderAdminEvents(
 
           }
         );
+  /* ==================================================
+   OPEN LIVE VIEW FROM ADMIN
+   ================================================== */
+
+adminEventsList
+  .querySelectorAll(
+    "[data-admin-open-live]"
+  )
+  .forEach(
+    function(button) {
+
+      button.addEventListener(
+        "click",
+        function() {
+
+          const eventId =
+            button.dataset
+              .adminOpenLive;
+
+          if (!eventId) {
+
+            alert(
+              "Event ID is missing."
+            );
+
+            return;
+          }
+
+
+          /*
+           * Public Live / Reveal URL
+           *
+           * No management token is exposed.
+           */
+          const liveUrl =
+            `${window.location.origin}${window.location.pathname}?event=${encodeURIComponent(eventId)}&view=live`;
+
+
+          /*
+           * Open Live View
+           */
+          window.location.href =
+            liveUrl;
+
+        }
+      );
+
+    }
+  );      
 
       }
     );
