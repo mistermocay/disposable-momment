@@ -4434,53 +4434,7 @@ body.guest-uploading {
   }
 
 }
-/* ==================================================
-   CREATE EVENT — SUCCESS CARD LAYOUT FIX
-   ================================================== */
 
-#createEventView .create-event-card.is-success {
-  width: 100% !important;
-  max-width: 640px !important;
-  min-height: 520px !important;
-  box-sizing: border-box !important;
-}
-
-#createEventView .create-event-card.is-success #eventSuccessView {
-  display: block !important;
-  position: relative !important;
-
-  width: 100% !important;
-  min-width: 0 !important;
-
-  height: auto !important;
-  min-height: 520px !important;
-
-  box-sizing: border-box !important;
-
-  padding: 42px 32px 48px !important;
-
-  overflow: visible !important;
-
-  flex: none !important;
-
-  opacity: 1 !important;
-  visibility: visible !important;
-  transform: none !important;
-}
-
-@media (max-width: 600px) {
-
-  #createEventView .create-event-card.is-success {
-    width: 100% !important;
-    min-height: 0 !important;
-  }
-
-  #createEventView .create-event-card.is-success #eventSuccessView {
-    min-height: 0 !important;
-    padding: 32px 18px 40px !important;
-  }
-
-}
 </style>
 </head>
 
@@ -5634,415 +5588,38 @@ body.guest-uploading {
 
     <div class="create-event-container">
 
-      <div class="create-event-card">
+<div class="create-event-card">
 
-        <!-- CLOSE -->
-        <button
-          type="button"
-          class="create-event-close"
-          id="backToLanding"
-          aria-label="Close create event"
-        >
-          ×
-        </button>
+    <!-- CLOSE -->
+    <button
+      type="button"
+      class="create-event-close"
+      id="backToLanding"
+      aria-label="Close create event"
+    >
+      ×
+    </button>
 
+    <!-- HEADER -->
+    <div class="create-event-header">
+      ...
+    </div>
 
-        <!-- HEADER -->
-        <div class="create-event-header">
+    <!-- FORM -->
+    <form
+      id="createEventForm"
+      class="create-form"
+    >
+      ...
+    </form>
 
-          <span class="eyebrow">
-            <span class="dot"></span>
-            Create your event
-          </span>
+    <div class="create-event-note">
+      No app required for your guests.
+    </div>
 
-          <h1>
-            Set the stage<br>
-            for your memories.
-          </h1>
-
-          <p>
-            Create your event in seconds, then invite everyone
-            with one simple QR code.
-          </p>
-
-        </div>
-
-
-        <!-- FORM -->
-        <form
-          id="createEventForm"
-          class="create-form"
-        >
-
-          <!-- EVENT NAME -->
-          <div
-            class="form-field"
-            data-field="eventName"
-          >
-
-            <label
-              class="form-label"
-              for="eventName"
-            >
-              Event Name
-            </label>
-
-            <input
-              id="eventName"
-              name="eventName"
-              class="form-input"
-              type="text"
-              placeholder="Sarah & Fahral Wedding"
-              autocomplete="off"
-            >
-
-            <div class="form-error"></div>
-
-          </div>
-
-
-          <!-- HOST NAME -->
-          <div
-            class="form-field"
-            data-field="hostName"
-          >
-
-            <label
-              class="form-label"
-              for="hostName"
-            >
-              Your Name
-            </label>
-
-            <input
-              id="hostName"
-              name="hostName"
-              class="form-input"
-              type="text"
-              placeholder="Fahral"
-              autocomplete="name"
-            >
-
-            <div class="form-error"></div>
-
-          </div>
-
-
-          <!-- DATE -->
-          <div
-            class="form-field"
-            data-field="eventDate"
-          >
-
-            <label
-              class="form-label"
-              for="eventDate"
-            >
-              Event Date
-            </label>
-
-            <input
-              id="eventDate"
-              name="eventDate"
-              class="form-input"
-              type="date"
-            >
-
-            <div class="form-error"></div>
-
-          </div>
-
-
-          <!-- TIME -->
-          <div class="form-row">
-
-            <div
-              class="form-field"
-              data-field="startTime"
-            >
-
-              <label
-                class="form-label"
-                for="startTime"
-              >
-                Start Time
-              </label>
-
-              <input
-                id="startTime"
-                name="startTime"
-                class="form-input"
-                type="time"
-              >
-
-              <div class="form-error"></div>
-
-            </div>
-
-
-            <div
-              class="form-field"
-              data-field="endTime"
-            >
-
-              <label
-                class="form-label"
-                for="endTime"
-              >
-                End Time
-              </label>
-
-              <input
-                id="endTime"
-                name="endTime"
-                class="form-input"
-                type="time"
-              >
-
-              <div class="form-error"></div>
-
-            </div>
-
-          </div>
-
-
-          <!-- PHOTO LIMIT -->
-          <div
-            class="form-field"
-            data-field="photoLimit"
-          >
-
-            <label
-              class="form-label"
-              for="photoLimit"
-            >
-              Photos Per Guest
-            </label>
-
-            <input
-              id="photoLimit"
-              name="photoLimit"
-              class="form-input"
-              type="number"
-              min="1"
-              max="999"
-              value="15"
-            >
-
-            <div class="form-hint">
-              Set the maximum number of photos each guest can take.
-            </div>
-
-            <div class="form-error"></div>
-
-          </div>
-
-
-          <!-- REVEAL -->
-          <div class="form-field">
-
-            <div class="form-label">
-  How should photos appear?
 </div>
 
-<div class="reveal-options">
 
-  <!-- LIVE -->
-  <div class="reveal-option">
-
-    <input
-      type="radio"
-      id="revealLive"
-      name="revealMode"
-      value="live"
-      checked
-    >
-
-    <label for="revealLive">
-
-      <span class="reveal-radio"></span>
-
-      <div>
-
-        <strong>Live</strong>
-
-        <span>
-          Approved photos appear on the live display during the event.
-        </span>
-
-      </div>
-
-    </label>
-
-  </div>
-
-
-  <!-- AFTER EVENT -->
-  <div class="reveal-option">
-
-    <input
-      type="radio"
-      id="revealAfterEvent"
-      name="revealMode"
-      value="after-event"
-    >
-
-    <label for="revealAfterEvent">
-
-      <span class="reveal-radio"></span>
-
-      <div>
-
-        <strong>After the event</strong>
-
-        <span>
-          Keep photos hidden until the event ends.
-        </span>
-
-      </div>
-
-    </label>
-
-  </div>
-
-
-  <!-- SCHEDULED -->
-  <div class="reveal-option">
-
-    <input
-      type="radio"
-      id="revealScheduled"
-      name="revealMode"
-      value="scheduled"
-    >
-
-    <label for="revealScheduled">
-
-      <span class="reveal-radio"></span>
-
-      <div>
-
-        <strong>Scheduled</strong>
-
-        <span>
-          Reveal the memories at a specific date and time.
-        </span>
-
-      </div>
-
-    </label>
-
-  </div>
-
-
-  <!-- MANUAL -->
-  <div class="reveal-option">
-
-    <input
-      type="radio"
-      id="revealManual"
-      name="revealMode"
-      value="manual"
-    >
-
-    <label for="revealManual">
-
-      <span class="reveal-radio"></span>
-
-      <div>
-
-        <strong>Manual</strong>
-
-        <span>
-          Start the reveal whenever you're ready.
-        </span>
-
-      </div>
-
-    </label>
-
-  </div>
-
-</div>
-<!-- SCHEDULED REVEAL SETTINGS -->
-
-<div
-  class="custom-reveal"
-  id="customReveal"
->
-
-  <div
-    class="form-field"
-    data-field="revealDate"
-  >
-
-    <label
-      class="form-label"
-      for="revealDate"
-    >
-      Reveal Date
-    </label>
-
-    <input
-      id="revealDate"
-      name="revealDate"
-      class="form-input"
-      type="date"
-    >
-
-    <div class="form-error"></div>
-
-  </div>
-
-
-  <div
-    class="form-field"
-    data-field="revealTime"
-  >
-
-    <label
-      class="form-label"
-      for="revealTime"
-    >
-      Reveal Time
-    </label>
-
-    <input
-      id="revealTime"
-      name="revealTime"
-      class="form-input"
-      type="time"
-    >
-
-    <div class="form-error"></div>
-
-  </div>
-
-</div>
-          <!-- SUBMIT -->
-          <button
-            type="submit"
-            class="btn btn-primary create-submit"
-            id="createEventSubmit"
-          >
-
-            Create Event
-
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M5 12h14"/>
-              <path d="M13 6l6 6-6 6"/>
-            </svg>
-
-          </button>
-
-        </form>
 <!-- ==================================================
      EVENT CREATED SUCCESS VIEW
      ================================================== -->
@@ -6051,227 +5628,8 @@ body.guest-uploading {
   id="eventSuccessView"
   class="event-success-view"
 >
-
-  <div class="event-success-icon">
-    ✓
-  </div>
-
-  <span class="eyebrow">
-    <span class="dot"></span>
-    Event ready
-  </span>
-
-  <h1>
-    Your event<br>
-    is ready.
-  </h1>
-
-  <p class="event-success-subtitle">
-    Your guests can now join the event using the link
-    or QR code below.
-  </p>
-
-
-  <!-- EVENT SUMMARY -->
-
-  <div class="event-success-summary">
-
-    <div class="success-event-name">
-      <span>Event</span>
-      <strong id="successEventName">
-        Your Event
-      </strong>
-    </div>
-
-    <div class="success-event-date">
-      <span>Date</span>
-      <strong id="successEventDate">
-        —
-      </strong>
-    </div>
-
-  </div>
-
-
-  <!-- GUEST ACCESS -->
-
-  <div class="access-section guest-access-section">
-
-    <div class="access-section-header">
-      <span class="access-kicker">GUEST ACCESS</span>
-      <strong>Share this with your guests</strong>
-    </div>
-
-    <div class="event-qr-wrapper">
-      <div
-        id="eventQRCode"
-        class="event-qr-code"
-      ></div>
-      <p>Scan to join the event</p>
-    </div>
-
-    <div class="guest-link-section">
-      <label>Guest Link</label>
-      <div class="guest-link-box">
-        <input
-          type="text"
-          id="guestEventLink"
-          readonly
-        >
-        <button
-          type="button"
-          id="copyGuestLink"
-          class="copy-link-btn"
-        >Copy</button>
-      </div>
-      <div
-        id="copyGuestLinkMessage"
-        class="copy-link-message"
-      ></div>
-    </div>
-
-  </div>
-
-
-  <!-- HOST MANAGEMENT ACCESS -->
-
-  <div class="access-section host-access-section">
-
-    <div class="access-section-header">
-      <span class="access-kicker">HOST MANAGEMENT</span>
-      <strong>Keep this QR private</strong>
-    </div>
-
-    <div class="management-qr-wrapper">
-      <div
-        id="managementQRCode"
-        class="event-qr-code management-qr-code"
-      ></div>
-      <p>Scan this QR to access host management</p>
-    </div>
-
-    <div class="guest-link-section">
-      <label>Management Link</label>
-      <div class="guest-link-box">
-        <input
-          type="text"
-          id="managementEventLink"
-          readonly
-        >
-        <button
-          type="button"
-          id="copyManagementLink"
-          class="copy-link-btn"
-        >Copy</button>
-      </div>
-      <div
-        id="copyManagementLinkMessage"
-        class="copy-link-message"
-      ></div>
-    </div>
-
-    <p class="management-warning">
-      Anyone with this QR or link can access your event management. Do not share it publicly.
-    </p>
-
-  </div>
-
-
-  <button
-    type="button"
-    id="manageEventButton"
-    class="btn btn-primary create-submit"
-  >
-    Open Host Management
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    >
-      <path d="M5 12h14"/>
-      <path d="M13 6l6 6-6 6"/>
-    </svg>
-  </button>
-
-
-  <p class="event-success-note">
-    Your event is ready. Save the host management QR before closing this window.
-  </p>
-<!-- ==================================================
-     LIVE / REVEAL ACCESS
-     ================================================== -->
-
-<div class="access-section reveal-access-section">
-
-  <div class="access-section-header">
-
-    <span class="access-kicker">
-      LIVE / REVEAL
-    </span>
-
-    <strong>
-      Keep this link for your event display
-    </strong>
-
-  </div>
-
-
-  <div class="management-qr-wrapper">
-
-    <div
-      id="revealQRCode"
-      class="event-qr-code"
-    ></div>
-
-    <p>
-      Scan to open the live memories
-    </p>
-
-  </div>
-
-
-  <div class="guest-link-section">
-
-    <label>
-      Live Photo Link
-    </label>
-
-    <div class="guest-link-box">
-
-      <input
-        type="text"
-        id="revealEventLink"
-        readonly
-      >
-
-      <button
-        type="button"
-        id="copyRevealLink"
-        class="copy-link-btn"
-      >
-        Copy
-      </button>
-
-    </div>
-
-    <div
-      id="copyRevealLinkMessage"
-      class="copy-link-message"
-    ></div>
-
-  </div>
-
+   <!-- SEMUA ISI SUCCESS VIEW TETAP DI SINI -->
 </div>
-</div>
-
-        <div class="create-event-note">
-          No app required for your guests.
-        </div>
-
-      </div>
 
     </div>
 
@@ -8930,10 +8288,6 @@ if (form) {
   );
 }
 
-if (card) {
-  card.classList.add("is-success");
-}
-
 createEventView.classList.add("is-active");
 
 createEventView.setAttribute(
@@ -9337,6 +8691,28 @@ createEventView.setAttribute(
             success.children.length
         }
       );
+      console.log(
+      "SUCCESS SCREEN FINAL:",
+      {
+    display:
+      getComputedStyle(success).display,
+
+    width:
+      success.getBoundingClientRect().width,
+
+    height:
+      success.getBoundingClientRect().height,
+
+    children:
+      success.children.length,
+
+    parentWidth:
+      success.parentElement?.getBoundingClientRect().width,
+
+    parentHeight:
+      success.parentElement?.getBoundingClientRect().height
+  }
+);
 
     }
   );
