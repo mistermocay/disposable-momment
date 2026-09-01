@@ -4468,6 +4468,63 @@ body.guest-uploading {
 
 }
 
+
+/* ==================================================
+   LIVE MEMORY WALL — PUBLIC DISPLAY
+   ================================================== */
+#liveView {
+  --live-bg: #0b0a09;
+  --live-card: #fffdf8;
+  --live-muted: rgba(255,255,255,.56);
+  --live-line: rgba(255,255,255,.13);
+  position: fixed;
+  inset: 0;
+  z-index: 999998;
+  display: none;
+  overflow: hidden;
+  background: var(--live-bg);
+  color: #fff;
+}
+#liveView.is-visible { display: block; }
+body.live-view-active { overflow: hidden !important; background: var(--live-bg) !important; }
+.live-view-shell { position: relative; z-index: 3; width: 100%; height: 100%; min-height: 100vh; display: flex; flex-direction: column; box-sizing: border-box; padding: clamp(20px,3vw,46px) clamp(20px,4vw,64px) clamp(16px,2.5vw,34px); }
+.live-view-noise { position:absolute; inset:-50%; z-index:1; pointer-events:none; opacity:.055; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.65'/%3E%3C/svg%3E"); transform:rotate(.001deg); }
+.live-view-vignette { position:absolute; inset:0; z-index:2; pointer-events:none; background:radial-gradient(circle at 50% 46%,transparent 0 38%,rgba(0,0,0,.18) 72%,rgba(0,0,0,.68) 100%),linear-gradient(180deg,rgba(0,0,0,.30),transparent 18%,transparent 82%,rgba(0,0,0,.38)); }
+.live-view-header,.live-view-footer { position:relative; z-index:5; display:flex; align-items:center; justify-content:space-between; gap:24px; flex:0 0 auto; }
+.live-brand { font-family:"DM Mono",monospace; font-size:10px; line-height:1; letter-spacing:.18em; color:rgba(255,255,255,.62); }
+.live-event-name { margin-top:8px; max-width:min(58vw,720px); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-family:"Space Grotesk",sans-serif; font-size:clamp(18px,2.2vw,30px); font-weight:500; letter-spacing:-.035em; }
+.live-status-block { display:flex; align-items:center; gap:9px; white-space:nowrap; font-family:"DM Mono",monospace; font-size:10px; letter-spacing:.12em; color:rgba(255,255,255,.68); }
+.live-status-dot { width:7px; height:7px; border-radius:50%; background:#e85b24; box-shadow:0 0 0 5px rgba(232,91,36,.10),0 0 18px rgba(232,91,36,.55); animation:livePulse 1.8s ease-in-out infinite; }
+.live-status-divider { width:1px; height:12px; margin:0 3px; background:var(--live-line); }
+@keyframes livePulse { 0%,100%{opacity:.72;transform:scale(.9)} 50%{opacity:1;transform:scale(1.08)} }
+.live-memory-stage { position:relative; flex:1 1 auto; min-height:0; display:flex; flex-direction:column; justify-content:center; gap:clamp(8px,1.2vw,18px); margin:clamp(16px,2vw,30px) -12vw 0; overflow:hidden; transform:rotate(-1deg) scale(1.03); }
+.live-lane { position:relative; width:max-content; flex:0 0 auto; }
+.live-lane-track { display:flex; width:max-content; align-items:flex-start; will-change:transform; }
+.live-lane-one .live-lane-track { animation:liveRollLeft 52s linear infinite; }
+.live-lane-two .live-lane-track { animation:liveRollRight 64s linear infinite; }
+.live-lane-three .live-lane-track { animation:liveRollLeft 59s linear infinite; }
+.live-lane-sequence { display:flex; align-items:flex-start; gap:clamp(18px,2vw,34px); padding-right:clamp(18px,2vw,34px); }
+@keyframes liveRollLeft { from{transform:translate3d(0,0,0)} to{transform:translate3d(-50%,0,0)} }
+@keyframes liveRollRight { from{transform:translate3d(-50%,0,0)} to{transform:translate3d(0,0,0)} }
+.live-polaroid { position:relative; flex:0 0 auto; width:clamp(148px,13vw,245px); padding:clamp(9px,.8vw,14px) clamp(9px,.8vw,14px) clamp(30px,2.4vw,45px); box-sizing:border-box; background:var(--live-card); color:#171512; box-shadow:0 24px 45px rgba(0,0,0,.28),0 5px 12px rgba(0,0,0,.16); transform:rotate(var(--polaroid-rotate,0deg)); transition:transform .35s ease,box-shadow .35s ease; }
+.live-polaroid:hover { transform:translateY(-5px) rotate(0deg) scale(1.015); box-shadow:0 28px 55px rgba(0,0,0,.34),0 7px 15px rgba(0,0,0,.18); }
+.live-polaroid-photo { position:relative; width:100%; aspect-ratio:1/1.08; overflow:hidden; background:#e9e6df; }
+.live-polaroid-photo img { display:block; width:100%; height:100%; object-fit:cover; }
+.live-polaroid-caption { position:absolute; left:clamp(9px,.8vw,14px); right:clamp(9px,.8vw,14px); bottom:clamp(8px,.65vw,12px); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-family:"DM Mono",monospace; font-size:clamp(8px,.62vw,11px); letter-spacing:.05em; color:#5c574f; }
+.live-polaroid-new { position:absolute; top:-18px; right:-4px; padding:5px 7px; border-radius:999px; background:#e85b24; color:#fff; font-family:"DM Mono",monospace; font-size:7px; letter-spacing:.08em; box-shadow:0 6px 16px rgba(0,0,0,.18); animation:liveNewBadge 4s ease forwards; }
+@keyframes liveNewBadge { 0%{opacity:0;transform:translateY(5px)} 12%,72%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-3px)} }
+.live-empty-state { position:absolute; inset:0; z-index:4; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; pointer-events:none; }
+.live-empty-state[hidden] { display:none; }
+.live-empty-kicker { font-family:"DM Mono",monospace; font-size:9px; letter-spacing:.2em; color:#e85b24; }
+.live-empty-state h1 { margin:16px 0 10px; font-family:"Space Grotesk",sans-serif; font-size:clamp(38px,6vw,82px); line-height:.92; letter-spacing:-.055em; font-weight:500; }
+.live-empty-state p { margin:0; color:var(--live-muted); font-size:13px; }
+.live-empty-mark { margin-top:28px; font-size:28px; color:rgba(255,255,255,.28); animation:liveEmptySpin 2.8s linear infinite; }
+@keyframes liveEmptySpin { to{transform:rotate(360deg)} }
+.live-view-footer { justify-content:center; margin-top:clamp(12px,1.8vw,24px); color:rgba(255,255,255,.36); font-family:"DM Mono",monospace; font-size:8px; letter-spacing:.16em; }
+.live-footer-line { width:42px; height:1px; background:rgba(255,255,255,.16); }
+@media (max-width:900px) { .live-view-shell{padding:20px 18px 16px}.live-memory-stage{margin-left:-28vw;margin-right:-28vw;transform:rotate(-1deg) scale(1.02)}.live-lane-three{display:none}.live-polaroid{width:clamp(145px,23vw,210px)} }
+@media (max-width:560px) { .live-view-header{align-items:flex-start}.live-status-block{font-size:8px}.live-event-name{max-width:62vw;font-size:18px}.live-memory-stage{margin-left:-48vw;margin-right:-48vw;gap:8px}.live-lane-two{display:none}.live-polaroid{width:158px;padding:8px 8px 28px}.live-view-footer{font-size:7px} }
+@media (prefers-reduced-motion:reduce) { .live-lane-one .live-lane-track,.live-lane-two .live-lane-track,.live-lane-three .live-lane-track,.live-status-dot,.live-empty-mark{animation-play-state:paused} }
 </style>
 </head>
 
@@ -5611,6 +5668,60 @@ body.guest-uploading {
   </div>
 
 </section>
+<!-- ==================================================
+     LIVE MEMORY WALL
+     ================================================== -->
+<section
+  id="liveView"
+  aria-hidden="true"
+>
+  <div class="live-view-noise"></div>
+  <div class="live-view-vignette"></div>
+
+  <div class="live-view-shell">
+    <header class="live-view-header">
+      <div class="live-brand-block">
+        <div class="live-brand">DISPOSABLE MOMMENT</div>
+        <div class="live-event-name" id="liveEventName">Live Memories</div>
+      </div>
+
+      <div class="live-status-block">
+        <span class="live-status-dot"></span>
+        <span>LIVE</span>
+        <span class="live-status-divider"></span>
+        <span id="livePhotoCount">0 MOMENTS</span>
+      </div>
+    </header>
+
+    <main class="live-memory-stage" aria-live="polite">
+      <div class="live-lane live-lane-one">
+        <div class="live-lane-track" id="liveLaneOne"></div>
+      </div>
+
+      <div class="live-lane live-lane-two">
+        <div class="live-lane-track" id="liveLaneTwo"></div>
+      </div>
+
+      <div class="live-lane live-lane-three">
+        <div class="live-lane-track" id="liveLaneThree"></div>
+      </div>
+
+      <div class="live-empty-state" id="liveEmptyState" hidden>
+        <span class="live-empty-kicker">LIVE ALBUM</span>
+        <h1>Memories are<br>being captured.</h1>
+        <p>Waiting for the first photo to arrive.</p>
+        <span class="live-empty-mark">◌</span>
+      </div>
+    </main>
+
+    <footer class="live-view-footer">
+      <span>MEMORIES ARE BEING CAPTURED</span>
+      <span class="live-footer-line"></span>
+      <span id="liveEventHost">ONE EVENT · EVERYONE CAPTURES</span>
+    </footer>
+  </div>
+</section>
+
 <!-- ==================================================
      CREATE EVENT MODAL
      ================================================== -->
@@ -7256,6 +7367,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
 
   query,
   where,
@@ -12070,6 +12182,174 @@ function getRevealState(eventData) {
 
 }
 /* ==================================================
+   LIVE MEMORY WALL
+   ================================================== */
+const liveView = document.getElementById("liveView");
+const liveEventName = document.getElementById("liveEventName");
+const livePhotoCount = document.getElementById("livePhotoCount");
+const liveEventHost = document.getElementById("liveEventHost");
+const liveEmptyState = document.getElementById("liveEmptyState");
+const liveLaneElements = [document.getElementById("liveLaneOne"), document.getElementById("liveLaneTwo"), document.getElementById("liveLaneThree")];
+let liveUnsubscribe = null;
+let livePhotos = [];
+let livePhotoIds = new Set();
+
+function getLivePhotoMillis(timestamp) {
+  if (!timestamp) return 0;
+  if (typeof timestamp.toMillis === "function") return timestamp.toMillis();
+  if (typeof timestamp.toDate === "function") return timestamp.toDate().getTime();
+  if (timestamp instanceof Date) return timestamp.getTime();
+  return 0;
+}
+
+function livePhotoRotation(index, laneIndex) {
+  const values = [-4.2, 3.2, -2.4, 4.6, -3.1, 2.1, -5.0, 3.8];
+  return values[(index * 2 + laneIndex * 3) % values.length];
+}
+
+function createLivePolaroid(photo, index, laneIndex, isNew = false) {
+  const article = document.createElement("article");
+  article.className = "live-polaroid";
+  article.style.setProperty("--polaroid-rotate", `${livePhotoRotation(index, laneIndex)}deg`);
+
+  const photoWrap = document.createElement("div");
+  photoWrap.className = "live-polaroid-photo";
+
+  const image = document.createElement("img");
+  image.src = photo.imageUrl || "";
+  image.alt = `Photo uploaded by ${photo.guestName || "Anonymous"}`;
+  image.loading = "lazy";
+  image.decoding = "async";
+  image.onerror = function() { article.remove(); };
+  photoWrap.appendChild(image);
+  article.appendChild(photoWrap);
+
+  const caption = document.createElement("div");
+  caption.className = "live-polaroid-caption";
+  caption.textContent = photo.guestName || "Anonymous";
+  article.appendChild(caption);
+
+  if (isNew) {
+    const badge = document.createElement("span");
+    badge.className = "live-polaroid-new";
+    badge.textContent = "JUST CAPTURED";
+    article.appendChild(badge);
+  }
+  return article;
+}
+
+function buildLiveSequence(photos, laneIndex) {
+  const sequence = document.createElement("div");
+  sequence.className = "live-lane-sequence";
+  if (!photos.length) return sequence;
+  const minimumItems = Math.max(7, photos.length);
+  for (let i = 0; i < minimumItems; i++) {
+    const photo = photos[(i + laneIndex) % photos.length];
+    sequence.appendChild(createLivePolaroid(photo, i, laneIndex));
+  }
+  return sequence;
+}
+
+function renderLiveWall(photos) {
+  const safePhotos = Array.isArray(photos) ? photos : [];
+  livePhotos = safePhotos.slice().sort((a,b) => getLivePhotoMillis(a.createdAt) - getLivePhotoMillis(b.createdAt));
+  livePhotoIds = new Set(livePhotos.map(photo => photo.id));
+  const count = livePhotos.length;
+  if (livePhotoCount) livePhotoCount.textContent = `${count} ${count === 1 ? "MOMENT" : "MOMENTS"}`;
+  if (liveEmptyState) liveEmptyState.hidden = count !== 0;
+
+  liveLaneElements.forEach((lane, laneIndex) => {
+    if (!lane) return;
+    lane.innerHTML = "";
+    if (!count) return;
+    lane.appendChild(buildLiveSequence(livePhotos, laneIndex));
+    lane.appendChild(buildLiveSequence(livePhotos, laneIndex + 1));
+  });
+}
+
+function appendLivePhoto(photo) {
+  if (!photo || !photo.id || livePhotoIds.has(photo.id)) return;
+  livePhotos.push(photo);
+  livePhotos.sort((a,b) => getLivePhotoMillis(a.createdAt) - getLivePhotoMillis(b.createdAt));
+  livePhotoIds.add(photo.id);
+  const count = livePhotos.length;
+  if (livePhotoCount) livePhotoCount.textContent = `${count} ${count === 1 ? "MOMENT" : "MOMENTS"}`;
+  if (liveEmptyState) liveEmptyState.hidden = true;
+  liveLaneElements.forEach((lane, laneIndex) => {
+    if (!lane) return;
+    lane.querySelectorAll(".live-lane-sequence").forEach((sequence, sequenceIndex) => {
+      sequence.appendChild(createLivePolaroid(photo, sequence.children.length, laneIndex, sequenceIndex === 0));
+    });
+  });
+}
+
+async function handleLiveViewAccess(eventId) {
+  if (!eventId || !liveView) return;
+  document.querySelector("header")?.style.setProperty("display", "none");
+  document.querySelector("main")?.style.setProperty("display", "none");
+  document.querySelector("footer")?.style.setProperty("display", "none");
+  liveView.classList.add("is-visible");
+  liveView.setAttribute("aria-hidden", "false");
+  document.body.classList.add("live-view-active");
+
+  try {
+    const eventSnap = await getDoc(doc(db, "events", eventId));
+    if (!eventSnap.exists()) throw new Error("This event could not be found.");
+    const eventData = eventSnap.data();
+    liveEventName.textContent = eventData.eventName || "Live Memories";
+    liveEventHost.textContent = eventData.hostName ? `HOSTED BY ${String(eventData.hostName).toUpperCase()}` : "ONE EVENT · EVERYONE CAPTURES";
+
+    if (!auth.currentUser) await signInAnonymously(auth);
+    if (liveUnsubscribe) { liveUnsubscribe(); liveUnsubscribe = null; }
+
+    const photosQuery = query(collection(db, "photos"), where("eventId", "==", eventId));
+    liveUnsubscribe = onSnapshot(photosQuery, function(snapshot) {
+      const incoming = [];
+      snapshot.forEach(function(docSnap) {
+        const data = docSnap.data();
+        if (data.status !== "active" || !data.imageUrl) return;
+        incoming.push({ id: docSnap.id, ...data });
+      });
+      incoming.sort((a,b) => getLivePhotoMillis(a.createdAt) - getLivePhotoMillis(b.createdAt));
+
+      if (!livePhotoIds.size && !livePhotos.length) { renderLiveWall(incoming); return; }
+
+      let requiresFullRender = false;
+      snapshot.docChanges().forEach(function(change) {
+        const data = change.doc.data();
+        const photo = { id: change.doc.id, ...data };
+        if (change.type === "added") {
+          if (data.status === "active" && data.imageUrl) appendLivePhoto(photo);
+        } else if (change.type === "removed") {
+          livePhotos = livePhotos.filter(item => item.id !== change.doc.id);
+          livePhotoIds.delete(change.doc.id);
+          requiresFullRender = true;
+        } else if (change.type === "modified") {
+          requiresFullRender = true;
+        }
+      });
+      if (requiresFullRender) renderLiveWall(incoming);
+    }, function(error) {
+      console.error("Live view realtime listener error:", error);
+      if (liveEmptyState) {
+        liveEmptyState.hidden = false;
+        const paragraph = liveEmptyState.querySelector("p");
+        if (paragraph) paragraph.textContent = "Unable to load live memories right now.";
+      }
+    });
+  } catch (error) {
+    console.error("Live view loading error:", error);
+    liveView.classList.remove("is-visible");
+    liveView.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("live-view-active");
+    document.querySelector("header")?.style.removeProperty("display");
+    document.querySelector("main")?.style.removeProperty("display");
+    document.querySelector("footer")?.style.removeProperty("display");
+    alert(error.message || "Unable to load this live view.");
+  }
+}
+
+/* ==================================================
    GUEST EVENT ACCESS
    ================================================== */
 
@@ -12082,9 +12362,17 @@ async function handleGuestEventAccess() {
 
   const eventId =
     params.get("event");
+  const viewMode =
+    params.get("view");
 
   // Tidak ada ?event= → bukan guest page
   if (!eventId) {
+    return;
+  }
+
+  // Public live / reveal display mode
+  if (viewMode === "live") {
+    await handleLiveViewAccess(eventId);
     return;
   }
 
