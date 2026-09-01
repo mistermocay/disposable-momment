@@ -5600,18 +5600,388 @@ body.guest-uploading {
       ×
     </button>
 
-    <!-- HEADER -->
-    <div class="create-event-header">
-      ...
+<!-- HEADER -->
+<div class="create-event-header">
+
+  <span class="eyebrow">
+    <span class="dot"></span>
+    Create Event
+  </span>
+
+  <h1>Create your event.</h1>
+
+  <p>
+    Set up your shared photo album and invite
+    everyone to capture the moments together.
+  </p>
+
+</div>
+
+
+<!-- FORM -->
+<form
+  id="createEventForm"
+  class="create-form"
+>
+
+  <!-- EVENT NAME -->
+  <div
+    class="form-field"
+    data-field="eventName"
+  >
+
+    <label
+      class="form-label"
+      for="eventName"
+    >
+      Event Name
+    </label>
+
+    <input
+      id="eventName"
+      class="form-input"
+      type="text"
+      placeholder="e.g. Sarah & John's Wedding"
+      autocomplete="off"
+    >
+
+    <div class="form-error"></div>
+
+  </div>
+
+
+  <!-- HOST NAME -->
+  <div
+    class="form-field"
+    data-field="hostName"
+  >
+
+    <label
+      class="form-label"
+      for="hostName"
+    >
+      Host
+    </label>
+
+    <input
+      id="hostName"
+      class="form-input"
+      type="text"
+      placeholder="Your name"
+      autocomplete="name"
+    >
+
+    <div class="form-error"></div>
+
+  </div>
+
+
+  <!-- EVENT DATE -->
+  <div
+    class="form-field"
+    data-field="eventDate"
+  >
+
+    <label
+      class="form-label"
+      for="eventDate"
+    >
+      Event Date
+    </label>
+
+    <input
+      id="eventDate"
+      class="form-input"
+      type="date"
+    >
+
+    <div class="form-error"></div>
+
+  </div>
+
+
+  <!-- EVENT TIME -->
+  <div class="form-row">
+
+    <div
+      class="form-field"
+      data-field="startTime"
+    >
+
+      <label
+        class="form-label"
+        for="startTime"
+      >
+        Start Time
+      </label>
+
+      <input
+        id="startTime"
+        class="form-input"
+        type="time"
+      >
+
+      <div class="form-error"></div>
+
     </div>
 
-    <!-- FORM -->
-    <form
-      id="createEventForm"
-      class="create-form"
+
+    <div
+      class="form-field"
+      data-field="endTime"
     >
-      ...
-    </form>
+
+      <label
+        class="form-label"
+        for="endTime"
+      >
+        End Time
+      </label>
+
+      <input
+        id="endTime"
+        class="form-input"
+        type="time"
+      >
+
+      <div class="form-error"></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- PHOTO LIMIT -->
+  <div
+    class="form-field"
+    data-field="photoLimit"
+  >
+
+    <label
+      class="form-label"
+      for="photoLimit"
+    >
+      Photos Per Guest
+    </label>
+
+    <input
+      id="photoLimit"
+      class="form-input"
+      type="number"
+      min="1"
+      max="999"
+      value="10"
+    >
+
+    <div class="form-hint">
+      Set the maximum number of photos each guest can upload.
+    </div>
+
+    <div class="form-error"></div>
+
+  </div>
+
+
+  <!-- REVEAL MODE -->
+  <div
+    class="form-field"
+    data-field="revealMode"
+  >
+
+    <div class="form-label">
+      When should the album be revealed?
+    </div>
+
+
+    <div class="reveal-options">
+
+
+      <!-- IMMEDIATELY -->
+      <div class="reveal-option">
+
+        <input
+          type="radio"
+          id="revealImmediately"
+          name="revealMode"
+          value="live"
+          checked
+        >
+
+        <label
+          for="revealImmediately"
+        >
+
+          <span class="reveal-radio"></span>
+
+          <div>
+
+            <strong>
+              Immediately
+            </strong>
+
+            <span>
+              Photos become visible right away.
+            </span>
+
+          </div>
+
+        </label>
+
+      </div>
+
+
+      <!-- AFTER EVENT -->
+      <div class="reveal-option">
+
+        <input
+          type="radio"
+          id="revealAfterEvent"
+          name="revealMode"
+          value="after-event"
+        >
+
+        <label
+          for="revealAfterEvent"
+        >
+
+          <span class="reveal-radio"></span>
+
+          <div>
+
+            <strong>
+              After the event
+            </strong>
+
+            <span>
+              Keep the album hidden until the event ends.
+            </span>
+
+          </div>
+
+        </label>
+
+      </div>
+
+
+      <!-- SCHEDULED -->
+      <div class="reveal-option">
+
+        <input
+          type="radio"
+          id="revealScheduled"
+          name="revealMode"
+          value="scheduled"
+        >
+
+        <label
+          for="revealScheduled"
+        >
+
+          <span class="reveal-radio"></span>
+
+          <div>
+
+            <strong>
+              Custom time
+            </strong>
+
+            <span>
+              Choose exactly when the memories are revealed.
+            </span>
+
+          </div>
+
+        </label>
+
+      </div>
+
+    </div>
+
+
+    <!-- CUSTOM REVEAL -->
+    <div
+      class="custom-reveal"
+      id="customReveal"
+    >
+
+      <div
+        class="form-field"
+        data-field="revealDate"
+      >
+
+        <label
+          class="form-label"
+          for="revealDate"
+        >
+          Reveal Date
+        </label>
+
+        <input
+          id="revealDate"
+          class="form-input"
+          type="date"
+        >
+
+        <div class="form-error"></div>
+
+      </div>
+
+
+      <div
+        class="form-field"
+        data-field="revealTime"
+      >
+
+        <label
+          class="form-label"
+          for="revealTime"
+        >
+          Reveal Time
+        </label>
+
+        <input
+          id="revealTime"
+          class="form-input"
+          type="time"
+        >
+
+        <div class="form-error"></div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- SUBMIT -->
+  <button
+    type="submit"
+    id="createEventSubmit"
+    class="btn btn-primary create-submit"
+  >
+
+    Create Event
+
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+
+      <path d="M5 12h14"/>
+
+      <path d="M13 6l6 6-6 6"/>
+
+    </svg>
+
+  </button>
+
+</form>
 
     <div class="create-event-note">
       No app required for your guests.
