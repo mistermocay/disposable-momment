@@ -4434,7 +4434,53 @@ body.guest-uploading {
   }
 
 }
+/* ==================================================
+   CREATE EVENT — SUCCESS CARD LAYOUT FIX
+   ================================================== */
 
+#createEventView .create-event-card.is-success {
+  width: 100% !important;
+  max-width: 640px !important;
+  min-height: 520px !important;
+  box-sizing: border-box !important;
+}
+
+#createEventView .create-event-card.is-success #eventSuccessView {
+  display: block !important;
+  position: relative !important;
+
+  width: 100% !important;
+  min-width: 0 !important;
+
+  height: auto !important;
+  min-height: 520px !important;
+
+  box-sizing: border-box !important;
+
+  padding: 42px 32px 48px !important;
+
+  overflow: visible !important;
+
+  flex: none !important;
+
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+}
+
+@media (max-width: 600px) {
+
+  #createEventView .create-event-card.is-success {
+    width: 100% !important;
+    min-height: 0 !important;
+  }
+
+  #createEventView .create-event-card.is-success #eventSuccessView {
+    min-height: 0 !important;
+    padding: 32px 18px 40px !important;
+  }
+
+}
 </style>
 </head>
 
@@ -8850,6 +8896,12 @@ function showEventSuccess(
       "eventSuccessView"
     );
 
+  const card =
+  document.querySelector(
+    "#createEventView .create-event-card"
+  );
+  
+
   if (!success) {
 
     console.error(
@@ -8878,6 +8930,10 @@ if (form) {
   );
 }
 
+if (card) {
+  card.classList.add("is-success");
+}
+
 createEventView.classList.add("is-active");
 
 createEventView.setAttribute(
@@ -8885,12 +8941,9 @@ createEventView.setAttribute(
   "false"
 );
 
-success.classList.add("is-visible");
-
-success.style.setProperty(
-  "display",
-  "block",
-  "important"
+createEventView.setAttribute(
+  "aria-hidden",
+  "false"
 );
   /* ==================================================
      PREPARE EVENT DATA
