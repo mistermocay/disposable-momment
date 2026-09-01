@@ -21,6 +21,7 @@ import {
   getDocs,
   query,
   where,
+  onSnapshot,
   setDoc,
   updateDoc,
   deleteDoc,
@@ -101,6 +102,7 @@ export {
 
   query,
   where,
+  onSnapshot,
 
   setDoc,
   updateDoc,
